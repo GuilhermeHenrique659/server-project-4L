@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+    db:
+      image: neo4j:latest
+      ports:
+        - 7474:7474
+        - 7687:7687
+      volumes:
+        - ./conf:/conf
+        - ./data:/data
+        - ./import:/import
+        - ./logs:/logs
+        - ./plugins:/plugins
+      environment: 
+        - NEO4J_AUTH=neo4j/admin123
+        - NEO4J_dbms_memory_pagecache_size=1G
+        - NEO4J_dbms.memory.heap.initial_size=1G
+        - NEO4J_dbms_memory_heap_max__size=1G
