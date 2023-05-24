@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 class User implements IEntity {
     public readonly id: string;
 
-    public readonly label: string;
+    public readonly label = User.name;
 
     public name: string;
 
@@ -14,8 +14,8 @@ class User implements IEntity {
 
     constructor (props: Omit<User, 'id' | 'label' | keyof User>, id?: string) {
         Object.assign(this, props);
-
-        this.label = 'User';
+        console.log(this.label);
+        
         if (!id) {
             this.id = uuidv4()
         }

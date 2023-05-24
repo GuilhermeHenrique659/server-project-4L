@@ -4,8 +4,6 @@ import neo4j, { Driver } from 'neo4j-driver'
 export default class DataBase {
     private _driver: Driver;
 
-    constructor () {}
-
     public getDriver(){        
         return this._driver;
     }

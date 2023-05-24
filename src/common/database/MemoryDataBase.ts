@@ -17,7 +17,7 @@ class NodeCacheDataBase implements IMemoryDataBase {
     }
 
     async delete(key: string): Promise<void> {
-        await this._database.del(key)
+        this._database.del(key)
     }
 }
 

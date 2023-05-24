@@ -23,12 +23,8 @@ export default class Application {
     }
 
     private setUpAllHandles(){
-        this._sockets.forEach(socket => {
-            socket.setUpHandles();
-        });
-        this._routes.forEach(route => {
-            route.setUpHandles();
-        });
+        const handles = [...this._routes, ...this._sockets];
+        handles.forEach(handle => handle.setUpHandles());
     }
 
     private setUpRoutes(){
