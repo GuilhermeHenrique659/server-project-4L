@@ -1,35 +1,26 @@
 import { HttpMethods } from "@common/emun/HttpMethod";
 import RouterConfigurator from "@common/routes/RouterConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
-import CreateUserHandle from "./CreateUserHandle";
-import CreateUserService from "../domain/service/CreateUserService";
-import UserRepository from "../domain/repository/UserRepository";
-import DataSourse from "@common/database/repository/DataSource";
-import User from "../domain/entity/User";
-import { database } from "@common/database/neo4j/DataBase";
-import QueryBuilder from "@common/database/repository/QueryBuilder";
-
-const factory = () => {
-    return new CreateUserHandle(new CreateUserService(
-        new UserRepository(new DataSourse<User>(new QueryBuilder(database.getDriver()), User))
-    ))
-}
-
+import CreateUserControllerFactory from "./controller/CreateUserController/CreateUserControllerFactory";
+import UserValidation from "../validation/UserValidation";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
+    private _validator: UserValidation;
 
-    constructor(router: RouterConfigurator) {
+    constructor(router: RouterConfigurator, validator: UserValidation) {
         this._routerConfigurator = router;
+        this._validator = validator
     }
 
     public setUpHandles(): void {
-        this._routerConfigurator.prefix = 'user',
+        this._routerConfigurator.prefix = 'user';
         this._routerConfigurator.routesConfig = [
             {
                 method: HttpMethods.POST,
                 path: '/',
-                controller: factory()
+                controller: CreateUserControllerFactory(),
+                validator: this._validator.validateCreateUser(),
             }
         ]
     }
@@ -38,4 +29,4 @@ class UserRouter implements IHandleDomain {
     }
 }
 
-export const userRouter = new UserRouter(new RouterConfigurator())
+export const userRouter = new UserRouter(new RouterConfigurator(), new UserValidation())
