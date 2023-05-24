@@ -14,7 +14,6 @@ class User implements IEntity {
 
     constructor (props: Omit<User, 'id' | 'label' | keyof User>, id?: string) {
         Object.assign(this, props);
-        console.log(this.label);
         
         if (!id) {
             this.id = uuidv4()
