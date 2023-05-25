@@ -1,6 +1,6 @@
 import { Driver } from 'neo4j-driver';
-import IQueryBuilder from '@common/database/repository/IQueryBuilder';
-import { executeType } from '@common/database/repository//types/executeTypes';
+import IQueryBuilder from '@common/database/datasource/IQueryBuilder';
+import { executeType } from '@common/database/datasource//types/executeTypes';
 
 export default class QueryBuilder implements IQueryBuilder {
     private _query: string = '';

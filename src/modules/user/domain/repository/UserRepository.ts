@@ -1,4 +1,4 @@
-import IDataSource from "@common/database/repository/IDataSource";
+import IDataSource from "@common/database/datasource/IDataSource";
 import User from "../entity/User";
 import IUserRepository from "./IUserRepository";
 

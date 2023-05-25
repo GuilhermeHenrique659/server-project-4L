@@ -1,4 +1,4 @@
-import IEntity from "@common/database/repository/types/IEntity";
+import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import { v4 as uuidv4 } from 'uuid';
 
