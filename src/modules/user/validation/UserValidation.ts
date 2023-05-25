@@ -1,7 +1,7 @@
 import Joi from "joi"
 
 class UserValidation {
-
+    
     public validateCreateUser() {
         return Joi.object({
             name: Joi.string().required(),

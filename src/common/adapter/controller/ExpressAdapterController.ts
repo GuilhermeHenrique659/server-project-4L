@@ -15,6 +15,7 @@ export default class ExpressAdapterController {
                 if (err instanceof AppError) {
                     return response.status(err.statusCode ?? 500).send({ error: err.message});
                 } else {
+                    console.log(err);
                     return response.status(500).send({ error: err });
                 }
             }

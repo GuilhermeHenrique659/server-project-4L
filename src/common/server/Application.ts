@@ -52,10 +52,8 @@ export default class Application {
         this.setUpRoutes()
     }
 
-    public async run() {
+    public run() {
         console.log('Starting server...')
-        await this._database.getConnection()
-
         this.setUpAllHandles()
         this.setUpApplication();
         this._server = http.createServer(this._app);

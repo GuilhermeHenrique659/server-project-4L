@@ -1,8 +1,12 @@
-import ConfigEnv from '@config/env/ConfigEnv';
+import { DataBaseConnectionConfig } from '@common/types/DataBaseConnectionConfig';
 import neo4j, { Driver } from 'neo4j-driver'
 
 export default class DataBase {
     private _driver: Driver;
+
+    constructor (private _connectionConfig: DataBaseConnectionConfig) {
+        this.getConnection()
+    }
 
     public getDriver(){        
         return this._driver;
@@ -10,10 +14,10 @@ export default class DataBase {
 
     public async getConnection() {
         try {
-            this._driver = neo4j.driver(ConfigEnv.getDBConnection().conn, 
+            this._driver = neo4j.driver(this._connectionConfig.conn, 
                 neo4j.auth.basic(
-                    ConfigEnv.getDBConnection().user, 
-                    ConfigEnv.getDBConnection().password,
+                    this._connectionConfig.user,
+                    this._connectionConfig.password
                 ));
             const serverInfo = await this._driver.getServerInfo();
             console.log('Connection estabilished');
@@ -24,5 +28,3 @@ export default class DataBase {
         return this._driver
     }
 }
-
-export const database = new DataBase();

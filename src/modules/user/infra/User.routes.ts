@@ -1,16 +1,19 @@
 import { HttpMethods } from "@common/emun/HttpMethod";
 import RouterConfigurator from "@common/routes/RouterConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
-import CreateUserControllerFactory from "./controller/CreateUserController/CreateUserControllerFactory";
 import UserValidation from "../validation/UserValidation";
+import UserControllerFactory from "./controller/UserControllerFactory";
+import { userControllerFactory } from "./controller";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
     private _validator: UserValidation;
+    private _controllers: UserControllerFactory
 
-    constructor(router: RouterConfigurator, validator: UserValidation) {
+    constructor(router: RouterConfigurator, validator: UserValidation, controllers: UserControllerFactory) {
         this._routerConfigurator = router;
         this._validator = validator
+        this._controllers = controllers
     }
 
     public setUpHandles(): void {
@@ -19,7 +22,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/',
-                controller: CreateUserControllerFactory(),
+                controller: this._controllers.getCreateUser(),
                 validator: this._validator.validateCreateUser(),
             }
         ]
@@ -29,4 +32,4 @@ class UserRouter implements IHandleDomain {
     }
 }
 
-export const userRouter = new UserRouter(new RouterConfigurator(), new UserValidation())
+export const userRouter = new UserRouter(new RouterConfigurator(), new UserValidation(), userControllerFactory)

@@ -1,7 +1,8 @@
 import IDataSource from "@common/database/repository/IDataSource";
 import User from "../entity/User";
+import IUserRepository from "./IUserRepository";
 
-class UserRepository {
+class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
 
     constructor (dataSource: IDataSource<User>) {
