@@ -1,23 +1,16 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
-import Tag from "@modules/tag/domain/entity/Tag";
 import { v4 as uuidv4 } from 'uuid';
 
 @InjectEntityLabel
-class User implements IEntity {
+class Tag implements IEntity {
     public readonly id: string;
 
     public readonly label: string;
 
-    public name: string;
+    public description: string;
 
-    public email: string;
-
-    public password: string;
-
-    public tags: Tag[];
-
-    constructor (props: Omit<User, 'id' | 'label'| 'tag' | keyof User>, id?: string) {
+    constructor (props: Omit<Tag, 'id' | 'label' | keyof Tag>, id?: string) {
         Object.assign(this, props);
         
         if (!id) {
@@ -26,4 +19,4 @@ class User implements IEntity {
     }
 }
 
-export default User;
+export default Tag;

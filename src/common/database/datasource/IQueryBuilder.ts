@@ -1,4 +1,4 @@
-import { executeType } from "@common/database/repository//types/executeTypes";
+import { executeType } from "@common/database/datasource/types/executeTypes";
 import IEntity from "./types/IEntity";
 
 export default interface IQueryBuilder {

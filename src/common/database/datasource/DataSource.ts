@@ -1,9 +1,9 @@
 import IDataSource from "./IDataSource";
-import IEntity from "@common/database/repository/types/IEntity";
+import IEntity from "@common/database/datasource/types/IEntity";
 import IQueryBuilder from "./IQueryBuilder";
 import { relationType } from "./types/RelationTypes";
 
-class DataSourse<E extends IEntity> implements IDataSource<E> {
+class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
     private _label: string
 
@@ -60,17 +60,16 @@ class DataSourse<E extends IEntity> implements IDataSource<E> {
         return res
     }
 
-    public async createRelationshipt<E extends IEntity>(from: E, relation: string, to: E): Promise<void> {
-        if (from.id && to.id) return;
+    public async createRelationship<E extends IEntity>(from: E, relation: string, to: IEntity): Promise<void> {
+        if (!from.id && !to.id) return;
 
         await this._queryBuilder
-            .match('(f:${this._label}), (t:${this._label})')
-            .where('id(f) = $fid AND id(t) = $tid', {
+            .match(`(f:${from.label}), (t:${to.label})`)
+            .where('f.id = $fid AND t.id = $tid', {
                 fid: from.id,
                 tid: to.id
             })
             .createRelation('f', relation, 't')
-            .return('type(r)')
             .run('executeWrite')
     }
 
@@ -79,4 +78,4 @@ class DataSourse<E extends IEntity> implements IDataSource<E> {
     }
 }
 
-export default DataSourse;
+export default DataSource;

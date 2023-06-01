@@ -1,4 +1,4 @@
-export type serviceOutputType<T = any> = T 
+export type serviceOutputType<T = any | void> = T 
 
 export type serviceDTOType<T = Record<string, unknown>> = T 
 

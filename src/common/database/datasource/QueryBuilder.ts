@@ -23,20 +23,22 @@ export default class QueryBuilder implements IQueryBuilder {
     }
 
     public goOut(relatation?: string | undefined, to?: string | undefined): IQueryBuilder {
-        this._query += '-'
+        this._query += '-';
         if (relatation)
-            this._query += `[r:${relatation}]`
+            this._query += `[r:${relatation}]`;
 
-        this._query += `->${to ? `(${to})` : '()'}`
+        const toLabel = to ? `(${to})` : '()';
+        this._query += `->${toLabel}`;
         return this;
     }
 
     public goIn(relatation?: string | undefined, from?: string | undefined): IQueryBuilder {
-        this._query += '<-'
+        this._query += '<-';
         if (relatation)
-            this._query += `[r:${relatation}]`
+            this._query += `[r:${relatation}]`;
 
-        this._query += `-${from ? `(${from})` : '()'}`
+        const fromLabel = from ? `(${from})` : '()';
+        this._query += `-${fromLabel}`;
         return this;
     }
 
@@ -59,7 +61,7 @@ export default class QueryBuilder implements IQueryBuilder {
     }
 
     public createRelation(fromNode: string, relation: string, toNode: string, properties?: object): IQueryBuilder {
-        this._query += `CREATE (${fromNode})-[r:${relation} ${properties ? this._formatProperties(properties) : ''}]->(${toNode}) `;
+        this._query += `CREATE (${fromNode})-[r:${relation}${properties ? this._formatProperties(properties) : ''}]->(${toNode}) `;
         return this;
     }
 
