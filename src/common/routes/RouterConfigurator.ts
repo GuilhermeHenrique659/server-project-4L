@@ -1,5 +1,4 @@
 import ExpressAdapterController from "@common/adapter/controller/ExpressAdapterController";
-import ValidationMiddleware from "@common/middleware/ValidationMiddleware";
 import { RoutesConfig } from "@common/types/RoutesConfig";
 import { Router } from "express";
 
@@ -30,7 +29,7 @@ export default class RouterConfigurator {
 
     public inicializeRoutes() {
         this._routesConfig.forEach(route => {
-            this._router[route.method](route.path, ValidationMiddleware.validateRoute(route.validator) ,ExpressAdapterController.adapter(route.controller, route.status ?? 200));
+            this._router[route.method](route.path ,ExpressAdapterController.adapter(route.controller, route.status ?? 200, route.middleware));
         })
     }
 }

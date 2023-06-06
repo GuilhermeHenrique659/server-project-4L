@@ -6,7 +6,7 @@ class UserValidation {
         return Joi.object({
             name: Joi.string().required(),
             email: Joi.string().email().required(),
-            password: Joi.string().min(8),
+            password: Joi.string().min(8).required(),
             tags: Joi.array().items(
                 Joi.object({
                     description: Joi.string(),

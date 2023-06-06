@@ -1,10 +1,9 @@
 import IController from "@common/controller/IController"
-import Joi from "joi";
+import { MiddlewareInputType } from "./middlewareInputType";
 
 export type ListenerConfig = { 
     path: string;
     controller: IController;
-    isAuthenticate?: boolean;
-    validator: Joi.Schema
+    middleware?: MiddlewareInputType
     room?: string;
 }

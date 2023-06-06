@@ -3,6 +3,8 @@ import http from 'http'
 import { ListenerConfig } from "@common/types/ListernerConfig";
 import SocketAdapterController from "@common/adapter/controller/SocketAdapterController";
 import { EmmitterToType } from "@common/types/EmitterToType";
+import AuthenticateMiddleware from "@common/middleware/AuthenticateMiddleware";
+import MiddlewareAdapter from "@common/middleware/MidllewareAdapter";
 
 export default class SocketConfigurator {
     private static instance: SocketConfigurator
@@ -22,14 +24,15 @@ export default class SocketConfigurator {
         return SocketConfigurator.instance;
     }
 
-    private configureListeners(socket: Socket) {
+    private configureListeners(socket: Socket, userId: string) {
         this._listenerConfig.forEach(listener => {
-            socket.on(listener.path, async (data: any, callback: Function) => {
+            socket.on(listener.path, async (data: Record<string, any>, callback: Function) => {
                 try {
                     if (listener.room) {
                         socket.join(listener.room)
                     }
-                    const response = await SocketAdapterController.adapter(listener.controller, data);
+                    data.user = { id: userId }
+                    const response = await SocketAdapterController.adapter(listener.controller, data, listener.middleware);
                     callback(response);
                 } catch (error) {
                     callback(error);
@@ -45,10 +48,15 @@ export default class SocketConfigurator {
 
     
     public inicializerSocket() {
-        this._socket.on("connection", async (socket: Socket) => {
-            const userId = '123123';
+        this._socket.on("connection", async (socket: Socket) => {            
+            const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization);
+            if (!userId) {          
+                socket.disconnect();
+                return
+            }
+
             await this._dataBase.set(userId, socket.id);
-            this.configureListeners(socket);
+            this.configureListeners(socket, userId);
             socket.on("disconnect", () => {
                 this._dataBase.delete(userId);
             });
