@@ -9,7 +9,7 @@ import AuthenticateMiddleware from "./AuthenticateMiddleware";
 
 class MiddlewareAdapter {
 
-    static validator(payload?: ControllerInput, schema?: Joi.Schema) {
+    static validator(payload?: ControllerInput<any>, schema?: Joi.Schema) {
         if(!schema || !payload) return;
 
         const error = ValidationMiddleware.run(schema, payload);
@@ -19,9 +19,8 @@ class MiddlewareAdapter {
         }
     }
 
-    static isAuthenticate(token?: string, payload?: ControllerInput, isAuthenticate?: boolean){
+    static isAuthenticate(token?: string, isAuthenticate?: boolean, payload?: ControllerInput<any>){
         if(!isAuthenticate) return;
-        console.log(token);
         
         if (!token) throw new AppError("token is missing.")
 
@@ -31,11 +30,11 @@ class MiddlewareAdapter {
             payload.user = {
                 id: userId
             }
-        else 
-            return userId
+
+        return userId;
     }
 
-    static run(middleware?: MiddlewareInputType, payload?: ControllerInput, token?: string){                
+    static run(middleware?: MiddlewareInputType, payload?: ControllerInput<any>, token?: string){                
         if (!middleware) {
             return;
         }
@@ -43,7 +42,7 @@ class MiddlewareAdapter {
         return [
             this.validator(payload, middleware.validator),
 
-            this.isAuthenticate(token, payload, middleware.isAuthenticate)
+            this.isAuthenticate(token, middleware.isAuthenticate, payload)
         ];
     }
 

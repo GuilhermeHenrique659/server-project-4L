@@ -10,10 +10,10 @@ class Tag implements IEntity {
 
     public description: string;
 
-    constructor (props: Omit<Tag, 'id' | 'label' | keyof Tag>, id?: string) {
+    constructor (props: Partial<Tag>) {
         Object.assign(this, props);
         
-        if (!id) {
+        if (!props.id) {
             this.id = uuidv4()
         }
     }

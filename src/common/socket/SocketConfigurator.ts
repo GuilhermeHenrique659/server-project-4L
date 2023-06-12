@@ -48,18 +48,20 @@ export default class SocketConfigurator {
 
     
     public inicializerSocket() {
-        this._socket.on("connection", async (socket: Socket) => {            
-            const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization);
-            if (!userId) {          
+        this._socket.on("connection", async (socket: Socket) => {                        
+            try {
+                const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization, true) as string;
+                await this._dataBase.set(userId, socket.id);
+                
+                this.configureListeners(socket, userId);
+                socket.on("disconnect", () => {
+                    this._dataBase.delete(userId);
+                });
+
+            } catch {
                 socket.disconnect();
                 return
             }
-
-            await this._dataBase.set(userId, socket.id);
-            this.configureListeners(socket, userId);
-            socket.on("disconnect", () => {
-                this._dataBase.delete(userId);
-            });
         });
     }
     

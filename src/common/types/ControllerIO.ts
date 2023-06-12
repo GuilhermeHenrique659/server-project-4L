@@ -1,7 +1,7 @@
-export type ControllerInput<T = any> = T & {
+export type ControllerInput<T> = T & {
     user?: {
         id: string;
     }
 };
 
-export type ControllerOutput<T = any> = T;
+export type ControllerOutput<T> = T;

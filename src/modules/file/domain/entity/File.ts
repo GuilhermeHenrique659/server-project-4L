@@ -1,26 +1,18 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
-import File from "@modules/file/domain/entity/File";
-import Tag from "@modules/tag/domain/entity/Tag";
 import { v4 as uuidv4 } from 'uuid';
 
 @InjectEntityLabel
-class User implements IEntity {
+class File implements IEntity {
     public readonly id: string;
 
     public readonly label: string;
 
-    public name: string;
+    public filename: string;
 
-    public email: string;
+    public type: string;
 
-    public password: string;
-
-    public avatar?: File;
-
-    public tags: Tag[];
-
-    constructor (props: Partial<User>) {
+    constructor (props: Partial<File>){
         Object.assign(this, props);
         
         if (!props.id) {
@@ -29,4 +21,4 @@ class User implements IEntity {
     }
 }
 
-export default User;
+export default File

@@ -26,6 +26,14 @@ class UserRouter implements IHandleDomain {
                 middleware: {
                     validator: this._validator.validateCreateUser(),
                 },
+            },
+            {
+                method: HttpMethods.POST,
+                path: '/login',
+                controller: this._controllers.getCreateSession(),
+                middleware: {
+                    validator: this._validator.validateCreateSession()
+                }
             }
         ]
     }

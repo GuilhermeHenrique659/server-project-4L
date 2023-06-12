@@ -15,6 +15,13 @@ class UserValidation {
             )
         })
     }
+
+    public validateCreateSession(){
+        return Joi.object({
+            email: Joi.string().email().required(),
+            password: Joi.string().min(8).required(),
+        });
+    }
 }
 
 export default UserValidation

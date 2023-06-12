@@ -6,9 +6,13 @@ import GetDatasource from "@common/helpers/GetDataSource";
 import TagRepository from "@modules/tag/infrastructure/repository/TagRepository";
 import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 import Tag from "@modules/tag/domain/entity/Tag";
+import MockHashProvider from "@common/provider/hash/MockHashProvider";
+import AuthenticateProvider from "@common/provider/auth/AuthenticateProvider";
 
 const userRepository = new UserRepository(GetDatasource(User));
 const tagRepository = new TagRepository(GetDatasource(Tag));
 const tagServices = new TagServiceFactory(tagRepository);
-const userServices = new UserServiceFactory(userRepository);
+const mockHashProvider = new MockHashProvider();
+const authProvider = new AuthenticateProvider();
+const userServices = new UserServiceFactory(userRepository, mockHashProvider, authProvider);
 export const userControllerFactory = new UserControllerFactory(userServices, tagServices);

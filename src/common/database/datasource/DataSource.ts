@@ -7,7 +7,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
     private _label: string
 
-    constructor(queryBuilder: IQueryBuilder, entity: new ({ }) => IEntity) {
+    constructor(queryBuilder: IQueryBuilder, entity: new (props: Partial<E>) => IEntity) {
         this._queryBuilder = queryBuilder;
         this._label = entity.name
     }

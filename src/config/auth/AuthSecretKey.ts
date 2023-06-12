@@ -1,1 +1,4 @@
-export const AuthsecretKey = 'bb7d55e5e54194264bec9';
+export const auth = {
+    secretKey: 'dsajfggui1291yd9atf12vcc72gc9',
+    expiresIn: "1d"
+}

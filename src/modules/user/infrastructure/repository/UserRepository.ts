@@ -2,6 +2,7 @@ import IDataSource from "@common/database/datasource/IDataSource";
 import User from "../../domain/entity/User";
 import IUserRepository from "../../domain/repository/IUserRepository";
 import Tag from "@modules/tag/domain/entity/Tag";
+import File from "@modules/file/domain/entity/File";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
@@ -22,6 +23,13 @@ class UserRepository implements IUserRepository {
 
     public async saveTag(user: User, tag: Tag): Promise<void> {        
         await this._dataSource.createRelationship(user, 'INTEREST', tag);
+    }
+
+    public async removeAvatar(userId: string): Promise<void> {
+        return;
+    }
+    public async saveAvatar(user: User, file: File): Promise<void> {
+        return;
     }
 }
 

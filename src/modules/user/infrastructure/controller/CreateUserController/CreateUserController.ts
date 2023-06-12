@@ -4,6 +4,7 @@ import User from "../../../domain/entity/User";
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import { CreateUserControllerDTO } from "./CreateUserControllerDTO";
 import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
+import Tag from "@modules/tag/domain/entity/Tag";
 
 class CreateUserController implements IController {
     constructor (
@@ -17,19 +18,18 @@ class CreateUserController implements IController {
 
         if (tags) {
             for (const tag of tags) {
+                let userTag: Tag
                 if (tag.description) {
-                    const createdTag = await this._tagServices.getCreateTag().execute(tag)
-                    await this._userServices.getCreateInterestUser().execute({
-                        user: createdUser,
-                        tag: createdTag
-                    });
+                    userTag = await this._tagServices.getCreateTag().execute(tag)
+
                 } else {
-                    const findTag = await this._tagServices.getFindTag().execute({ id: tag.id})
-                    await this._userServices.getCreateInterestUser().execute({
-                        user: createdUser,
-                        tag: findTag
-                    });
+                    userTag = await this._tagServices.getFindTag().execute({ id: tag.id})
                 }
+                
+                await this._userServices.getCreateInterestUser().execute({
+                    user: createdUser,
+                    tag: userTag
+                });
             }
         }
 
