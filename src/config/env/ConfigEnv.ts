@@ -1,17 +1,21 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export default class ConfigEnv {
-    static getPort() {
-        return 3001
+    static getPort(): number {        
+        return Number(process.env.PORT) ?? 3001
     }
 
     static getIpServer() {
-        return '0.0.0.0'
+        return process.env.IP ?? '0.0.0.0'
     }
 
-    static getDBConnection() {
+    static getDBConnection() {        
         return {
-            conn: 'neo4j://localhost:7687',
-            user: 'neo4j',
-            password: 'admin123',
+            conn: process.env.DB_CONNECTION ?? 'neo4j://localhost:7687',
+            user: process.env.DB_USER ?? 'neo4j',
+            password: process.env.DB_PASSWORD ?? 'admin123',
         };
     }
 }

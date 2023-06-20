@@ -4,5 +4,6 @@ import database from "@config/database/DatabaseConnection";
 import { userRouter } from "@modules/user/infrastructure/User.routes";
 import express from "express";
 
+
 const app = new Application(express(), nodeCacheDataBase, database, [userRouter], [])
 app.run()

@@ -36,12 +36,13 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
 
     public async update(entity: E): Promise<E> {
         const { label, id, ...data } = entity;
-
+        data.updatedAt = new Date().toISOString();
         return await this._queryBuilder.match(`(e:${label})`).where(`e.id = $id`, { id }).set(data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
     public async create(entity: E): Promise<E> {
         const { label, ...data } = entity
+        data.createdAt = new Date().toISOString()        
         return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 

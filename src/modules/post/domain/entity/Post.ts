@@ -1,28 +1,30 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
+import User from "@modules/user/domain/entity/User";
 import { v4 as uuidv4 } from 'uuid';
 
 @InjectEntityLabel
-class File implements IEntity {
+class Post implements IEntity {
     public readonly id: string;
 
     public readonly label: string;
 
-    public filename: string;
+    public content: string;
 
-    public type: string;
+    public user: User;
 
-    public createdAt: Date;
+    public createdAt: string;
 
-    public updatedAt?: Date;
+    public updatedAt?: string;
 
-    constructor (props: Partial<File>){
+
+    constructor (props: Partial<Post>) {
         Object.assign(this, props);
-        
-        if (!props.id) {
+
+        if (props.id) {
             this.id = uuidv4()
         }
     }
 }
 
-export default File
+export default Post

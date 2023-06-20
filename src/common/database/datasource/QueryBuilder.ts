@@ -122,6 +122,7 @@ export default class QueryBuilder implements IQueryBuilder {
             return this._normalizeData(result);
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
+            throw new Error('Query Fail');
         } finally {
             session.close();
         }

@@ -20,6 +20,10 @@ class User implements IEntity {
 
     public tags: Tag[];
 
+    public createdAt: string;
+
+    public updatedAt?: string;
+
     constructor (props: Partial<User>) {
         Object.assign(this, props);
         
