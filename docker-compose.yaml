@@ -15,5 +15,8 @@ services:
       environment: 
         - NEO4J_AUTH=neo4j/admin123
         - NEO4J_dbms_memory_pagecache_size=1G
+        - NEO4J_AUTH=neo4j/pleaseletmein
+        - NEO4J_PLUGINS=["apoc"]
+        - NEO4J_apoc_import_file_enabled=true
         - NEO4J_dbms.memory.heap.initial_size=1G
         - NEO4J_dbms_memory_heap_max__size=1G

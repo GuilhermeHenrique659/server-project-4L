@@ -8,9 +8,14 @@ export default interface IQueryBuilder {
     goOut(relatationLabel?: string, to?: string): IQueryBuilder;
     goIn(relatationLabel?: string, from?: string): IQueryBuilder;
     set(properties: object): IQueryBuilder;
+    with(pattern: string): IQueryBuilder;
+    optional(): IQueryBuilder;
+    delete(pattern: string): IQueryBuilder;
     create(node: string, properties?: object): IQueryBuilder;
     createRelation(fromNode: string, relation: string, toNode: string, properties?: object): IQueryBuilder;
     return(...fields: string[]): IQueryBuilder;
     build(): string;
-    run<T extends IEntity>(execute?: executeType): Promise<T[] | undefined>;
+    getMany<T = any>(execute?: executeType): Promise<T[] | undefined>;
+    getOne<T = any>(execute?: executeType): Promise<T | undefined>;
+    setData(execute?: executeType): Promise<void>;
   }

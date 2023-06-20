@@ -12,25 +12,13 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         this._label = entity.name
     }
 
-    public async findOne<E extends IEntity>(attribute: Partial<E>, relations?: relationType<E>[]): Promise<E | undefined> {
+    public async findOne<E extends IEntity>(attribute: Partial<E>): Promise<E | undefined> {
         const [key] = Object.entries(attribute)[0];
+        const query_prop = this._label.toLocaleLowerCase()
 
-        const query = this._queryBuilder.match(`(e:${this._label})`).where(`e.${key} = $${key}`, attribute)
+        const query = this._queryBuilder.match(`(${query_prop}:${this._label} {${key}: $${key}})`, attribute)
 
-        if (relations) {
-            relations.forEach((relation) => {
-                if (relation.direction == 'in') {
-                    query.goIn(relation.relationLabel, relation.nodeLabel as string);
-                } else if (relation.direction == 'out') {
-                    query.goOut(relation.relationLabel, relation.nodeLabel as string);
-                } else {
-                    query.goOut(relation.relationLabel, relation.nodeLabel as string);
-                }
-            })
-        }
-
-        const res = await query.return('*').run<E>('executeRead');
-        return res && res[0];
+        return await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
     }
 
     public async store(entity: E): Promise<E> {
@@ -49,15 +37,12 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     public async update(entity: E): Promise<E> {
         const { label, id, ...data } = entity;
 
-        const [res] = await this._queryBuilder.match(`(e:${label})`).where(`e.id = $id`, { id }).set(data).return('*').run('executeWrite') as E[]
-
-        return res
+        return await this._queryBuilder.match(`(e:${label})`).where(`e.id = $id`, { id }).set(data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
     public async create(entity: E): Promise<E> {
         const { label, ...data } = entity
-        const [res] = await this._queryBuilder.create(label, data).return(`*`).run('executeWrite') as E[];
-        return res
+        return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
     public async createRelationship<E extends IEntity>(from: E, relation: string, to: IEntity): Promise<void> {
@@ -70,7 +55,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
                 tid: to.id
             })
             .createRelation('f', relation, 't')
-            .run('executeWrite')
+            .getMany('executeWrite')
     }
 
     public getQueryBuilder(): IQueryBuilder {

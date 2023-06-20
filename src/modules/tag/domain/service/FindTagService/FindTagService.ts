@@ -6,11 +6,11 @@ import AppError from "@common/errors/AppError";
 class FindTagService implements IService {
     constructor (private readonly _tagRepository: ITagRepository) {}
 
-    public async execute(data: serviceDTOType<{id: string}>): Promise<serviceOutputType<Tag>> {
+    public async execute(data: serviceDTOType<{id: string}>): Promise<serviceOutputType<Tag | undefined>> {
         const tag = await this._tagRepository.findById(data.id);
 
         if (!tag) {
-           throw new AppError('Tag não encontrada');
+           return;
         }
 
         return tag

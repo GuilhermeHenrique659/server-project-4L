@@ -21,7 +21,8 @@ class CreateUserService implements IService {
         data.password = await this._hashProvider.generateHash(data.password);
         const user = new User(data);
 
-        return await this._userRepository.save(user);
+        await this._userRepository.save(user);
+        return user
     }
 }
 

@@ -3,4 +3,8 @@ import User from "@modules/user/domain/entity/User";
 
 export type CreateUserControllerDTO = Omit<User, 'id' | 'label'> & {
     tags?: Partial<Tag[]>;
+    avatar?: {
+        data: string,
+        type: string,
+    }
 }

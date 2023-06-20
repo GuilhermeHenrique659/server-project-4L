@@ -5,7 +5,7 @@ import { relationType } from "./types/RelationTypes";
 interface IDataSource<T extends IEntity> {
     store(entity: T): Promise<T>;
     createRelationship(from: T, relation: string, to: IEntity): Promise<void>;
-    findOne(attribute: Partial<T>, relation?: relationType<T>[]): Promise<T | undefined>;
+    findOne(attribute: Partial<T>): Promise<T | undefined>;
     create(entity: T): Promise<T>;
     update(entity: T): Promise<T>;
     getQueryBuilder(): IQueryBuilder;

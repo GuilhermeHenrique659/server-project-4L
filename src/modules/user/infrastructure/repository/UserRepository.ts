@@ -26,10 +26,15 @@ class UserRepository implements IUserRepository {
     }
 
     public async removeAvatar(userId: string): Promise<void> {
-        return;
+        await this._dataSource.getQueryBuilder().
+            optional().match('(u:User {id: $userId})', { userId }).
+            goOut('AVATAR', 'file:File').
+            delete('r').
+            delete('file').
+            setData('executeWrite');
     }
     public async saveAvatar(user: User, file: File): Promise<void> {
-        return;
+        await this._dataSource.createRelationship(user, 'AVATAR', file);
     }
 }
 
