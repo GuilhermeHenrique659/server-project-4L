@@ -2,7 +2,7 @@ import { executeType } from "@common/database/datasource/types/executeTypes";
 import IEntity from "./types/IEntity";
 
 export default interface IQueryBuilder {
-    query(query: string): void;
+    query(query: string): IQueryBuilder;
     match(pattern: string, params?: object): IQueryBuilder;
     where(condition: string, params?: object): IQueryBuilder;
     goOut(relatationLabel?: string, to?: string): IQueryBuilder;
