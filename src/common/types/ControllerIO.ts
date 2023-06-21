@@ -1,4 +1,5 @@
-export type ControllerInput<T> = T & {
+export type ControllerInput<T> = {
+    data: T,
     user?: {
         id: string;
     }

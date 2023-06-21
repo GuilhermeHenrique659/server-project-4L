@@ -8,7 +8,7 @@ class CreateUserSessionController implements IController {
     constructor (private userServices: UserServiceFactory) {}
 
     public async handle(payload: ControllerInput<CreateUserSessionDTO>) {
-        const token = this.userServices.getCreateSession().execute(payload);
+        const token = this.userServices.getCreateSession().execute(payload.data);
 
         return token
     }

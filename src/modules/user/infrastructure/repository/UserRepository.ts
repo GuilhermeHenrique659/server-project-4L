@@ -3,11 +3,12 @@ import User from "../../domain/entity/User";
 import IUserRepository from "../../domain/repository/IUserRepository";
 import Tag from "@modules/tag/domain/entity/Tag";
 import File from "@modules/file/domain/entity/File";
+import Post from "@modules/post/domain/entity/Post";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
 
-    constructor (dataSource: IDataSource<User>) {
+    constructor(dataSource: IDataSource<User>) {
         this._dataSource = dataSource;
     }
 
@@ -21,8 +22,22 @@ class UserRepository implements IUserRepository {
         });
     }
 
-    public async saveTag(user: User, tag: Tag): Promise<void> {        
+    public async findById(id: string): Promise<User | undefined> {
+        return await this._dataSource.findOne({
+            id: id
+        })
+    }
+
+    public async saveUserPost(user: User, post: Post): Promise<void> {
+        await this._dataSource.createRelationship(user, 'HAS', post);
+    }
+
+    public async saveTag(user: User, tag: Tag): Promise<void> {
         await this._dataSource.createRelationship(user, 'INTEREST', tag);
+    }
+    
+    public async saveAvatar(user: User, file: File): Promise<void> {
+        await this._dataSource.createRelationship(user, 'AVATAR', file);
     }
 
     public async removeAvatar(userId: string): Promise<void> {
@@ -32,9 +47,6 @@ class UserRepository implements IUserRepository {
             delete('r').
             delete('file').
             setData('executeWrite');
-    }
-    public async saveAvatar(user: User, file: File): Promise<void> {
-        await this._dataSource.createRelationship(user, 'AVATAR', file);
     }
 }
 

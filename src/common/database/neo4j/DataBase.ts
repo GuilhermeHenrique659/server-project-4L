@@ -32,6 +32,7 @@ export default class DataBase {
                 ));
 
         }catch (err) {
+            Error("Connection enclosed")
             console.log(`Connection error\n${err}\n`); 
         }
         return this._driver

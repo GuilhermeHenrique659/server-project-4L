@@ -10,6 +10,10 @@ class Tag implements IEntity {
 
     public description: string;
 
+    public createdAt: string;
+
+    public updatedAt?: string;
+
     constructor (props: Partial<Tag>) {
         Object.assign(this, props);
         

@@ -21,7 +21,7 @@ class Post implements IEntity {
     constructor (props: Partial<Post>) {
         Object.assign(this, props);
 
-        if (props.id) {
+        if (!props.id) {
             this.id = uuidv4()
         }
     }

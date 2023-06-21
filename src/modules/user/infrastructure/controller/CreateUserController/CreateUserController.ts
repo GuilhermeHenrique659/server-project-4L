@@ -13,7 +13,8 @@ class CreateUserController implements IController {
     ) {}
 
     public async handle(payload: ControllerInput<CreateUserControllerDTO>): Promise<ControllerOutput<User>> {
-        const { tags, avatar, ...user } = payload       
+        const { tags, avatar, ...user } = payload.data;
+            
         const createdUser = await this._userServices.getCreateUser().execute(user);
 
         if (tags) {

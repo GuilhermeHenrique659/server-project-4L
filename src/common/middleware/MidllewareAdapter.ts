@@ -40,7 +40,7 @@ class MiddlewareAdapter {
         }
         
         return [
-            this.validator(payload, middleware.validator),
+            this.validator(payload?.data, middleware.validator),
 
             this.isAuthenticate(token, middleware.isAuthenticate, payload)
         ];

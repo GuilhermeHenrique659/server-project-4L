@@ -1,7 +1,6 @@
 import { Driver, QueryResult } from 'neo4j-driver';
 import IQueryBuilder from '@common/database/datasource/IQueryBuilder';
 import { executeType } from '@common/database/datasource//types/executeTypes';
-import IEntity from './types/IEntity';
 
 export default class QueryBuilder implements IQueryBuilder {
     private _query: string = '';
@@ -104,6 +103,7 @@ export default class QueryBuilder implements IQueryBuilder {
             return data;
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
+            throw new Error('Query Fail');
         } finally {
             session.close();
         }
@@ -139,6 +139,7 @@ export default class QueryBuilder implements IQueryBuilder {
             this._clearQuery();
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
+            throw new Error('Query Fail');
         } finally {
             session.close();
         }

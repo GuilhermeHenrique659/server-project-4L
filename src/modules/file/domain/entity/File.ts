@@ -12,9 +12,9 @@ class File implements IEntity {
 
     public type: string;
 
-    public createdAt: Date;
+    public createdAt: string;
 
-    public updatedAt?: Date;
+    public updatedAt?: string;
 
     constructor (props: Partial<File>){
         Object.assign(this, props);

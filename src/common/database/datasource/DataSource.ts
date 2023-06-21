@@ -27,7 +27,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         const exists = await this.findOne({
             id: id
         });
-
+        
         if (exists)
             return await this.update(entity);
         else

@@ -10,7 +10,7 @@ import { Request, Response } from "express";
 export default class ExpressAdapterController {
     static adapter(controller: IController, statusResponse: HttpReturnMethods, middleware?: MiddlewareInputType) {
         return async (request: Request, response: Response) => {            
-            const controllerInput: ControllerInput = { ...request.body, ...request.params, ...request.query }
+            const controllerInput: ControllerInput<any> = { data: { ...request.body, ...request.params, ...request.query}}
             try {
                 MiddlewareAdapter.run(middleware, controllerInput, request.headers.authorization);
 

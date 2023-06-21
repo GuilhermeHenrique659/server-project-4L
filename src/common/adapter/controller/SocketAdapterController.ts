@@ -6,10 +6,10 @@ import { MiddlewareInputType } from "@common/types/middlewareInputType";
 
 export default class SocketAdapterController {
     static async adapter(controller: IController, data: any, middleware?: MiddlewareInputType) {     
-            const controllerInput = data;
+            const controllerInput = { data };
 
             try {
-                MiddlewareAdapter.run(middleware, controllerInput);
+                MiddlewareAdapter.run(middleware, controllerInput.data);
 
                 const controllerOutput = await controller.handle(controllerInput);
 
