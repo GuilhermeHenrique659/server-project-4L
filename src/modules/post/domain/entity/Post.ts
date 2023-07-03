@@ -1,5 +1,6 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
+import Tag from "@modules/tag/domain/entity/Tag";
 import User from "@modules/user/domain/entity/User";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,6 +13,8 @@ class Post implements IEntity {
     public content: string;
 
     public user: User;
+
+    public tags: Tag[];
 
     public createdAt: string;
 

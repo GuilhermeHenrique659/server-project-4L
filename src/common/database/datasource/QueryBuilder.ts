@@ -27,7 +27,7 @@ export default class QueryBuilder implements IQueryBuilder {
     public goOut(relatation?: string | undefined, to?: string | undefined): IQueryBuilder {
         this._query += '-';
         if (relatation)
-            this._query += `[r:${relatation}]`;
+            this._query += `[${relatation}]`;
 
         const toLabel = to ? `(${to})` : '()';
         this._query += `->${toLabel} `;
@@ -37,7 +37,7 @@ export default class QueryBuilder implements IQueryBuilder {
     public goIn(relatation?: string | undefined, from?: string | undefined): IQueryBuilder {
         this._query += '<-';
         if (relatation)
-            this._query += `[r:${relatation}]`;
+            this._query += `[${relatation}]`;
 
         const fromLabel = from ? `(${from})` : '()';
         this._query += `-${fromLabel} `;
@@ -111,7 +111,7 @@ export default class QueryBuilder implements IQueryBuilder {
         }
     }
 
-    public async getMany<T = any>(execute: executeType = 'executeRead'): Promise<T[] | undefined> {
+    public async getMany<T = any>(execute: executeType = 'executeRead'): Promise<T[]> {
         console.log(this.build());
 
         const session = this._driver.session();
@@ -121,6 +121,7 @@ export default class QueryBuilder implements IQueryBuilder {
             });
 
             this._clearQuery();
+            
             return this._normalizeData(result);
         } catch (err) {
             console.log(`query fail because:\n ${err}`);

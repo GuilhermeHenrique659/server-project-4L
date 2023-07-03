@@ -4,6 +4,7 @@ import File from "@modules/file/domain/entity/File";
 import { CreateAvatarServiceDTO } from "./CreateAvatarServiceDTO";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
+import UserAvatar from "../../entity/UserAvatar";
 
 class CreateAvatarService implements IService {
     constructor (private readonly _userRepository: IUserRepository,
@@ -23,7 +24,8 @@ class CreateAvatarService implements IService {
 
         await this._fileRepository.save(file);
 
-        await this._userRepository.saveAvatar(user, file);
+        const userAvatar = new UserAvatar(user, file);
+        await this._userRepository.saveAvatar(userAvatar);
 
         return file;
     }

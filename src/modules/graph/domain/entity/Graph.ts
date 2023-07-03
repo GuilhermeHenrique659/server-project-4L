@@ -9,8 +9,8 @@ class Graph implements IEntity {
 
     public createdAt: string;
 
-    constructor(name: string) {
-        this.name = name
+    constructor(props: Partial<Graph>) {
+        Object.assign(props)
     }
 }
 

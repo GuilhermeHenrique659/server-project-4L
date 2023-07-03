@@ -2,6 +2,7 @@ import IDataSource from "./IDataSource";
 import IEntity from "@common/database/datasource/types/IEntity";
 import IQueryBuilder from "./IQueryBuilder";
 import { relationType } from "./types/RelationTypes";
+import IEdge from "./types/IEdge";
 
 class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
@@ -46,7 +47,8 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
-    public async createRelationship<E extends IEntity>(from: E, relation: string, to: IEntity): Promise<void> {
+    public async createRelationship(edge: IEdge): Promise<void> {
+        const { from, to, label } = edge;
         if (!from.id && !to.id) return;
 
         await this._queryBuilder
@@ -55,7 +57,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
                 fid: from.id,
                 tid: to.id
             })
-            .createRelation('f', relation, 't')
+            .createRelation('f', label, 't')
             .getMany('executeWrite')
     }
 

@@ -1,6 +1,7 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import File from "@modules/file/domain/entity/File";
+import Post from "@modules/post/domain/entity/Post";
 import Tag from "@modules/tag/domain/entity/Tag";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,7 +19,9 @@ class User implements IEntity {
 
     public avatar?: File;
 
-    public tags: Tag[];
+    public tags?: Tag[];
+
+    public posts?: Post[]
 
     public createdAt: string;
 

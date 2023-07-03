@@ -46,7 +46,9 @@ CALL gds.pageRank.stream('socialGraph', {
   sourceNodes: [user]
 })
 YIELD nodeId, score
-WITH gds.util.asNode(nodeId) as node, score, labels(gds.util.asNode(nodeId))[0] as label
-WHERE label = 'Post'
-RETURN node.id AS id, label , score
+WITH gds.util.asNode(nodeId) as node, nodeId, score
+WHERE labels(gds.util.asNode(nodeId))[0] = 'Post'
+MATCH (node)<-[:HAS]-(user:User)
+WITH user{.*, label: labels(node)[0] } as user, gds.util.asNode(nodeId) as node, score, labels(gds.util.asNode(nodeId))[0] as label
+RETURN node{.*, label: label ,user: user}
 ORDER BY score DESC

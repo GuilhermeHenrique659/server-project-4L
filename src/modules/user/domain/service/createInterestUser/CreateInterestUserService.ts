@@ -1,6 +1,7 @@
 import IService, { serviceDTOType } from "@common/service/IService";
 import IUserRepository from "../../repository/IUserRepository";
 import { CreateInterestUserServiceDTO } from "./CreateInterestUserServiceDTO";
+import UserTags from "../../entity/UserTags";
 
 
 class CreateInterestUserService implements IService {
@@ -8,7 +9,8 @@ class CreateInterestUserService implements IService {
 
     public async execute(data: serviceDTOType<CreateInterestUserServiceDTO>): Promise<void> {
         const { user, tag } = data;
-        await this._userRepository.saveTag(user, tag);
+        const userTags = new UserTags(user, tag)
+        await this._userRepository.saveTag(userTags);
     }
 }
 

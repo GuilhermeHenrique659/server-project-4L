@@ -4,6 +4,7 @@ import Post from "../../entity/Post";
 import IUserRepository from "@modules/user/domain/repository/IUserRepository";
 import IPostRepository from "../../repository/IPostRepository";
 import AppError from "@common/errors/AppError";
+import UserPosts from "@modules/user/domain/entity/UserPosts";
 
 class CreatePostService implements IService {
     constructor (private readonly _userRepository: IUserRepository, 
@@ -17,7 +18,9 @@ class CreatePostService implements IService {
         const post = new Post({ content: data.content });
         
         await this._postRepository.save(post);
-        await this._userRepository.saveUserPost(user, post);
+        
+        const userPosts = new UserPosts(user, post)
+        await this._userRepository.saveUserPost(userPosts);
 
         return post;
     }

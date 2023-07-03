@@ -1,6 +1,7 @@
 import IService from "@common/service/IService";
 import IPostRepository from "../../repository/IPostRepository";
 import { CreatePostTagServiceDTO } from "./CreatePostTagServiceDTO";
+import PostTags from "../../entity/PostTags";
 
 
 class CreatePostTagService implements IService {
@@ -8,7 +9,9 @@ class CreatePostTagService implements IService {
 
     public async execute(data: CreatePostTagServiceDTO): Promise<void> {
         const { post, tag } = data;
-        await this._postRepository.savePostTag(post, tag);
+        
+        const postTags = new PostTags(post, tag)
+        await this._postRepository.savePostTag(postTags);
     }
 }
 

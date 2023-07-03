@@ -26,6 +26,15 @@ class PostRouter implements IHandleDomain {
                     validator: this.postValidation.createPostValidate(),
                 },
                 status: HttpReturnMethods.SUCCESS
+            },
+            {
+                method: HttpMethods.GET,
+                path: '/',
+                controller: this.postControllerFactory.getListPostController(),
+                middleware: {
+                    isAuthenticate: true
+                },
+                status: HttpReturnMethods.SUCCESS
             }
         ]
     }
