@@ -11,9 +11,9 @@ class UserAvatar implements IEdge {
     public readonly to: File 
 
     constructor (from: User, to: File){
-        this.label = 'AVATAR',
+        this.label = 'AVATAR';
         this.from = from;
-        this.to = to
+        this.to = to;
     }
 }
 

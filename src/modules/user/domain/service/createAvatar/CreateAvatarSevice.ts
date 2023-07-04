@@ -13,6 +13,7 @@ class CreateAvatarService implements IService {
 
     public async execute(data: CreateAvatarServiceDTO): Promise<File> {
         const { user, type, fileData } = data
+        
         await this._userRepository.removeAvatar(user.id);
 
         const [filename] = await this._fileProvider.save([{ type, data: fileData}]);

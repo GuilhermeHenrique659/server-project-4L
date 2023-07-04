@@ -11,9 +11,9 @@ class UserPosts implements IEdge {
     public readonly to: Post 
 
     constructor (from: User, to: Post){
-        this.label = 'POSTED',
+        this.label = 'POSTED';
         this.from = from;
-        this.to = to
+        this.to = to;
     }
 }
 

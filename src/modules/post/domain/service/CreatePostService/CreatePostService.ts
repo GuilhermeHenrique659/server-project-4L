@@ -11,11 +11,13 @@ class CreatePostService implements IService {
         private readonly _postRepository: IPostRepository) {}
 
     public async execute(data: CreatePostServiceDTO): Promise<Post> {
-        const user = await this._userRepository.findById(data.userId);
+        const { content, userId } = data;
+
+        const user = await this._userRepository.findById(userId);
 
         if(!user) throw new AppError('Usuario não encontrado');
 
-        const post = new Post({ content: data.content });
+        const post = new Post({ content });
         
         await this._postRepository.save(post);
         

@@ -9,6 +9,7 @@ class CreateInterestUserService implements IService {
 
     public async execute(data: serviceDTOType<CreateInterestUserServiceDTO>): Promise<void> {
         const { user, tag } = data;
+        
         const userTags = new UserTags(user, tag)
         await this._userRepository.saveTag(userTags);
     }

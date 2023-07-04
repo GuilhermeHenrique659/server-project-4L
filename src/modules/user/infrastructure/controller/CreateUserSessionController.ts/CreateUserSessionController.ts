@@ -1,5 +1,5 @@
 import IController from "@common/controller/IController";
-import { ControllerInput, ControllerOutput } from "@common/types/ControllerIO";
+import { ControllerInput } from "@common/types/ControllerIO";
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import { CreateUserSessionDTO } from "@modules/user/domain/service/createUserSession/CreateUserSessionDTO";
 
