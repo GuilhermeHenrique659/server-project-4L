@@ -12,4 +12,10 @@ export default class PostValidation {
             )
         })
     }
+
+    public createLike(){
+        return Joi.object({
+            postId: Joi.string().required()
+        })
+    }
 }

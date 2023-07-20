@@ -35,6 +35,16 @@ class PostRouter implements IHandleDomain {
                     isAuthenticate: true
                 },
                 status: HttpReturnMethods.SUCCESS
+            },
+            {
+                method: HttpMethods.POST,
+                path: '/:postId/like',
+                controller: this.postControllerFactory.getCreateLikeController(),
+                middleware: {
+                    validator: this.postValidation.createLike(),
+                    isAuthenticate: true
+                },
+                status: HttpReturnMethods.SUCCESS
             }
         ]
     }

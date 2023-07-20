@@ -3,6 +3,7 @@ import CreatePostService from "./CreatePostService/CreatePostService";
 import IPostRepository from "../repository/IPostRepository";
 import CreatePostTagService from "./CreatePostTagService/CreatePostTagService";
 import ListRecommendPostService from "./ListRecommendPostService/ListRecommendPostService";
+import CreatePostLikedService from "./CreatePostLikedService/CreatePostLikedService";
 
 class PostServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
@@ -14,6 +15,10 @@ class PostServiceFactory {
 
     public getCreatePostTag(){
         return new CreatePostTagService(this._postRepository);
+    }
+
+    public getCreateLiked(){
+        return new CreatePostLikedService(this._userRepository, this._postRepository);
     }
 
     public getListPost(){

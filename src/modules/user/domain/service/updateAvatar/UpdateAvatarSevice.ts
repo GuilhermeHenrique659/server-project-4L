@@ -1,19 +1,24 @@
 import IService from "@common/service/IService";
 import IUserRepository from "../../repository/IUserRepository";
 import File from "@modules/file/domain/entity/File";
-import { CreateAvatarServiceDTO } from "./CreateAvatarServiceDTO";
+import { CreateAvatarServiceDTO } from "./UpdateAvatarServiceDTO";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
 import UserAvatar from "../../entity/UserAvatar";
+import AppError from "@common/errors/AppError";
 
-class CreateAvatarService implements IService {
+class UpdateAvatarService implements IService {
     constructor (private readonly _userRepository: IUserRepository,
         private readonly _fileProvider: IFileProvider,
         private readonly _fileRepository: IFileRepository) { }
 
     public async execute(data: CreateAvatarServiceDTO): Promise<File> {
-        const { user, type, fileData } = data
+        const { userId, type, fileData } = data
         
+        const user = await this._userRepository.findById(userId);
+
+        if (!user) throw new AppError('User not found')
+
         await this._userRepository.removeAvatar(user.id);
 
         const [filename] = await this._fileProvider.save([{ type, data: fileData}]);
@@ -32,4 +37,4 @@ class CreateAvatarService implements IService {
     }
 }
 
-export default CreateAvatarService;
+export default UpdateAvatarService;

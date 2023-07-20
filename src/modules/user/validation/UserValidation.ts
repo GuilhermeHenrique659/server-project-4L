@@ -7,16 +7,28 @@ class UserValidation {
             name: Joi.string().required(),
             email: Joi.string().email().required(),
             password: Joi.string().min(8).required(),
+        })
+    }
+
+    public validateUpdateAvatar(){
+        return Joi.object({
+            userId: Joi.string().required(),
             avatar: Joi.object({
-                data: Joi.string().base64().required(),
+                data: Joi.string().required(),
                 type: Joi.string().required(),
-            }),
+            }).required(),
+        })
+    }
+
+    public validateCreateTag() {
+        return Joi.object({
+            userId: Joi.string().required(),
             tags: Joi.array().items(
                 Joi.object({
                     description: Joi.string(),
                     id: Joi.string(),
                 }).or('description', 'id')
-            )
+            ).required()
         })
     }
 

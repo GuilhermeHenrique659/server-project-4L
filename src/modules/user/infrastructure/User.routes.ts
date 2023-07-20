@@ -4,6 +4,7 @@ import IHandleDomain from "@common/types/IHandleDomain";
 import UserValidation from "../validation/UserValidation";
 import UserControllerFactory from "./controller/UserControllerFactory";
 import { userControllerFactory } from "./controller";
+import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
@@ -26,6 +27,26 @@ class UserRouter implements IHandleDomain {
                 middleware: {
                     validator: this._validator.validateCreateUser(),
                 },
+            },
+            {
+                method: HttpMethods.POST,
+                path: '/tags',
+                controller: this._controllers.getCreateUserTags(),
+                status: HttpReturnMethods.SUCCESS,
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this._validator.validateCreateTag(),
+                }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/avatar',
+                controller: this._controllers.getUpdateUserAvatar(),
+                status: HttpReturnMethods.SUCCESS,
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this._validator.validateUpdateAvatar()
+                }
             },
             {
                 method: HttpMethods.POST,

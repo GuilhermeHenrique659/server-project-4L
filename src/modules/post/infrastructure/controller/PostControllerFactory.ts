@@ -3,6 +3,7 @@ import CreatePostController from "./CreatePostController.ts/CreatePostController
 import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFactory";
 import ListRecommendPostController from "./ListRecommendPostController/ListRecoomendPostController";
+import CreatePostLikedController from "./CreateUserLikedController.ts/CreateUserLikedController";
 
 class PostControllerFactory {
     constructor (private postServiceFactory: PostServiceFactory,
@@ -15,6 +16,10 @@ class PostControllerFactory {
 
     public getListPostController() {
         return new ListRecommendPostController(this.graphServiceFactory, this.postServiceFactory);
+    }
+
+    public getCreateLikeController() {
+        return new CreatePostLikedController(this.postServiceFactory);
     }
 }
 

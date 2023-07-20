@@ -3,5 +3,5 @@ import User from "../../entity/User";
 
 export type CreateInterestUserServiceDTO = {
     tag: Tag;
-    user: User;
+    userId: string;
 }

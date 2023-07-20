@@ -3,7 +3,7 @@ import Post from "@modules/post/domain/entity/Post";
 import User from "./User";
 
 
-class UserPosts implements IEdge {
+class UserPosted implements IEdge {
     public readonly label: string;
     
     public readonly from: User;
@@ -17,4 +17,4 @@ class UserPosts implements IEdge {
     }
 }
 
-export default UserPosts;
+export default UserPosted;

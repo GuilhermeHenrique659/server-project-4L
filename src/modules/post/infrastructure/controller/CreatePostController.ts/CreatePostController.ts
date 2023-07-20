@@ -15,7 +15,7 @@ class CreatePostController implements IController {
         const { content, tags } = payload.data;
         const user = payload.user
 
-        if (!user) throw new AppError('Usuario não auteticado');
+        if (!user) throw new AppError('Usuario não autenticado');
 
         const createdPost = await this._postService.getCreatePost().execute({ content, userId: user.id });
 

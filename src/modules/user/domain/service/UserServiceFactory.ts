@@ -6,7 +6,7 @@ import AuthenticateProvider from "@common/provider/auth/AuthenticateProvider";
 import CreateUserSessionService from "./createUserSession/CreateUserSessionService";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
-import CreateAvatarService from "./createAvatar/CreateAvatarSevice";
+import UpdateAvatarService from "./updateAvatar/UpdateAvatarSevice";
 
 class UserServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
@@ -23,8 +23,8 @@ class UserServiceFactory {
         return new CreateUserSessionService(this._userRepository, this._hashProvider, this._authProvider);
     }
 
-    public getCreateAtavat(){
-        return new CreateAvatarService(this._userRepository, this._fileProvider, this._fileRepository);
+    public getUpdateAvatar(){
+        return new UpdateAvatarService(this._userRepository, this._fileProvider, this._fileRepository);
     }
 
     public getCreateInterestUser() {
