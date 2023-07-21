@@ -8,7 +8,7 @@ class LocalFileProvider implements IFileProvider {
         const filenames: string[] = [];
         for (const file of files) {
             const filename = uploadConfig.storage.filename()
-            await fs.promises.writeFile(`${uploadConfig.directory}/${filename}.${file.type}`, file.data);
+            await fs.promises.writeFile(`${uploadConfig.directory}/${filename}.${file.type}`, file.data, 'base64');
             filenames.push(filename + `.${file.type}`);
         }
         return filenames;

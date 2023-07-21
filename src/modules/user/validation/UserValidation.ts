@@ -12,12 +12,9 @@ class UserValidation {
 
     public validateUpdateAvatar(){
         return Joi.object({
-            userId: Joi.string().required(),
-            avatar: Joi.object({
                 data: Joi.string().required(),
                 type: Joi.string().required(),
-            }).required(),
-        })
+            }).required()
     }
 
     public validateCreateTag() {

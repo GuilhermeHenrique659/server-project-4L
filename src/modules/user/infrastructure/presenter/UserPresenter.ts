@@ -5,7 +5,8 @@ class UserPresenter {
         return {
             user: {
                 id: user.id,
-                name: user.name
+                name: user.name,
+                avatar: user.avatar?.filename
             },
             token
         }

@@ -9,12 +9,12 @@ class UpdateUserAvatarController implements IController {
         private _userServices: UserServiceFactory,
     ) {}
 
-    public async handle({user, data}: ControllerInput<IUpdateUserAvatarControllerDTO>): Promise<{ saved: boolean}> {
+    public async handle({user, data}: ControllerInput<IUpdateUserAvatarControllerDTO>): Promise<{ filename: string}> {
         const userId = user?.id as string
         
-        await this._userServices.getUpdateAvatar().execute({ userId, fileData: data.data, type: data.type});
+        const { filename } = await this._userServices.getUpdateAvatar().execute({ userId, fileData: data.data, type: data.type});
     
-        return { saved: true }
+        return { filename }
     }
 }
 

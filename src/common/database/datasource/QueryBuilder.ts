@@ -157,7 +157,7 @@ export default class QueryBuilder implements IQueryBuilder {
             for (const key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key];
-                    if (typeof value === 'object' && 'low' in value && 'high' in value) {
+                    if (value && typeof value === 'object' && 'low' in value && 'high' in value) {
                         obj[key] = value.low + (value.high * Math.pow(2, 32));
                     } else if (typeof value === 'object') {
                         obj[key] = this._parseObjectInteger64(value);

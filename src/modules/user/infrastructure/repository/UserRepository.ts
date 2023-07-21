@@ -3,7 +3,7 @@ import User from "../../domain/entity/User";
 import IUserRepository from "../../domain/repository/IUserRepository";
 import UserAvatar from "@modules/user/domain/entity/UserAvatar";
 import UserTags from "@modules/user/domain/entity/UserTags";
-import UserPosts from "@modules/user/domain/entity/UserPosts";
+import UserPosted from "@modules/user/domain/entity/UserPosted";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
@@ -17,9 +17,12 @@ class UserRepository implements IUserRepository {
     }
 
     public async findByEmail(email: string) {
-        return await this._dataSource.findOne({
-            email: email
-        });
+        return await this._dataSource.getQueryBuilder()
+            .match('(u:User {email: $email})', { email })
+            .optional().match('(u)')
+            .goOut('r:AVATAR', 'file:File')
+            .return('u{.*, avatar: file{.*}}')
+            .getOne<User>('executeRead');
     }
 
     public async findById(id: string): Promise<User | undefined> {
@@ -28,7 +31,7 @@ class UserRepository implements IUserRepository {
         })
     }
 
-    public async saveUserPost(userPosts: UserPosts): Promise<void> {
+    public async saveUserPost(userPosts: UserPosted): Promise<void> {
         await this._dataSource.createRelationship(userPosts);
     }
 

@@ -20,10 +20,10 @@ export default class ExpressAdapterController {
             } catch (err) {
 
                 if (err instanceof AppError) {
-                    return response.status(err.statusCode ?? 500).send({ error: err.message});
+                    return response.status(err.statusCode ?? 500).send({ error: err});
 
                 } else if (err instanceof ValidationError) {
-                    return response.status(err.statusCode).send({errors: err.messages})
+                    return response.status(err.statusCode).send({error: err.messages})
                     
                 }else {
                     console.log(err);

@@ -6,6 +6,8 @@ export type CreateUserSessionDTO = {
 }
 
 export type CreateUserSessionDTOOutput = {
-    user: Pick<User, 'id' | 'name'>;
+    user: Pick<User, 'id' | 'name'> & {
+        avatar?: string
+    };
     token: string
 }

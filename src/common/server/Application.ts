@@ -3,6 +3,7 @@ import RouterConfigurator from '@common/routes/RouterConfigurator';
 import SocketConfigurator from '@common/socket/SocketConfigurator';
 import IHandleDomain from '@common/types/IHandleDomain';
 import ConfigEnv from '@config/env/ConfigEnv';
+import cors from 'cors';
 import express, { Express } from 'express'
 import http from 'http'
 
@@ -48,8 +49,10 @@ export default class Application {
     }
 
     private setUpApplication(){
-        this._app.use(express.json())
-        this.setUpRoutes()
+        this._app.use(express.json({limit: '20mb'}));
+        this._app.use('/file', express.static('uploads'))
+        this._app.use(cors());
+        this.setUpRoutes();
     }
 
     public async run() {
