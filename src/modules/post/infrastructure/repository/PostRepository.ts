@@ -1,5 +1,6 @@
 import IDataSource from "@common/database/datasource/IDataSource";
 import Post from "@modules/post/domain/entity/Post";
+import PostFiles from "@modules/post/domain/entity/PostFiles";
 import PostTags from "@modules/post/domain/entity/PostTags";
 import IPostRepository from "@modules/post/domain/repository/IPostRepository";
 import UserLiked from "@modules/user/domain/entity/UserLiked";
@@ -17,6 +18,10 @@ export default class PostRepository implements IPostRepository {
 
     public async findById(id: string): Promise<Post | undefined> {
         return await this._dataSource.findOne({ id });
+    }
+
+    public async savePostFile(postFiles: PostFiles): Promise<void> {
+        await this._dataSource.createRelationship(postFiles);
     }
 
     public async saveLike(like: UserLiked): Promise<void> {

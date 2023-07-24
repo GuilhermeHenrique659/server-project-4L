@@ -4,10 +4,15 @@ import IPostRepository from "../repository/IPostRepository";
 import CreatePostTagService from "./CreatePostTagService/CreatePostTagService";
 import ListRecommendPostService from "./ListRecommendPostService/ListRecommendPostService";
 import CreatePostLikedService from "./CreatePostLikedService/CreatePostLikedService";
+import IFileRepository from "@modules/file/domain/repository/IFileRepository";
+import IFileProvider from "@common/provider/file/IFileProvider";
+import CreatePostFileService from "./CreatePostFile/CreatePostFileService";
 
 class PostServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
-        private readonly _postRepository: IPostRepository) {}
+        private readonly _postRepository: IPostRepository,
+        private readonly _fileRepository: IFileRepository,
+        private readonly _fileProvider: IFileProvider) {}
 
     public getCreatePost() {
         return new CreatePostService(this._userRepository, this._postRepository);
@@ -23,6 +28,10 @@ class PostServiceFactory {
 
     public getListPost(){
         return new ListRecommendPostService(this._postRepository);
+    }
+
+    public getCreatePostFile(){
+        return new CreatePostFileService(this._postRepository, this._fileRepository, this._fileProvider);
     }
 }
 

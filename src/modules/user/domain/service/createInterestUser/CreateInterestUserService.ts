@@ -3,7 +3,6 @@ import IUserRepository from "../../repository/IUserRepository";
 import { CreateInterestUserServiceDTO } from "./CreateInterestUserServiceDTO";
 import UserTags from "../../entity/UserTags";
 import AppError from "@common/errors/AppError";
-import ITagRepository from "@modules/tag/domain/repository/ITagRepository";
 
 
 class CreateInterestUserService implements IService {

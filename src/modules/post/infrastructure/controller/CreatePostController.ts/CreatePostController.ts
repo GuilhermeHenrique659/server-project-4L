@@ -5,15 +5,16 @@ import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory";
 import AppError from "@common/errors/AppError";
 import Tag from "@modules/tag/domain/entity/Tag";
+import Post from "@modules/post/domain/entity/Post";
 
 
 class CreatePostController implements IController {
     constructor(private readonly _postService: PostServiceFactory,
         private readonly _tagService: TagServiceFactory) { }
 
-    public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<any> {
-        const { content, tags } = payload.data;
-        const user = payload.user
+    public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<Post> {
+        const { content, tags, files } = payload.data;
+        const user = payload.user        
 
         if (!user) throw new AppError('Usuario não autenticado');
 
@@ -21,6 +22,7 @@ class CreatePostController implements IController {
 
         if (!tags) return createdPost
 
+        createdPost.tags = []
         for (const tag of tags) {
             let postTag: Tag | undefined;
             if (tag.description) {
@@ -28,14 +30,24 @@ class CreatePostController implements IController {
             } else {
                 postTag = await this._tagService.getFindTag().execute(tag);
             }
-            if (postTag)
+            if (postTag){
+                createdPost.tags.push(postTag)
                 await this._postService.getCreatePostTag().execute({
                     post: createdPost,
                     tag: postTag
                 });
+            }
         }
 
-        return createdPost
+        if (!files) return createdPost;
+
+        createdPost.files = [];
+        for (const file of files){
+            const createFile = await this._postService.getCreatePostFile().execute({ post: createdPost, file});
+            createdPost.files.push(createFile);
+        }
+
+        return createdPost;
     }
 }
 

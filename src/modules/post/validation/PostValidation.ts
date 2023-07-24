@@ -9,6 +9,12 @@ export default class PostValidation {
                     description: Joi.string(),
                     id: Joi.string(),
                 }).or('description', 'id')
+            ),
+            files: Joi.array().items(
+                Joi.object({
+                    data: Joi.string().required(),
+                    type: Joi.string().required(),
+                })
             )
         })
     }
