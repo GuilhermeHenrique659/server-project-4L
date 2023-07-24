@@ -28,23 +28,19 @@ export default class PostRepository implements IPostRepository {
         await this._dataSource.createRelationship(like);
     }
 
-    public async listRecommendPost(userId: string): Promise<Post[]> {
-        return await this._dataSource.getQueryBuilder().query(`
-        MATCH (user:User  {id: "${userId}"})
-        CALL gds.pageRank.stream("${userId}", {
-          maxIterations: 100,
-          dampingFactor: 0.85,
-          sourceNodes: [user]
-        })
-        YIELD nodeId, score
-        WITH gds.util.asNode(nodeId) as node, nodeId, score
-        WHERE labels(gds.util.asNode(nodeId))[0] = 'Post'
-        MATCH (node)<-[:POSTED]-(user:User)
-        MATCH (node)-[:TAGGED]->(postTag:Tag)
-        WHERE NOT user.id = $userId
-        WITH user{.*, label: labels(user)[0] } as user, node{.*, label: labels(node)[0]} as post, collect(postTag{.*}) as tags, score
-        RETURN post{.*,user: user, tags: tags, score}
-        ORDER BY score DESC
-        `, {userId}).getMany('executeRead');
+    public async listRecommendPost(userId: string, skip: number, limit: number): Promise<Post[]> {
+        return await this._dataSource.getQueryBuilder().
+            match('(post:Post)').goIn('p:POSTED', 'userPost:User').
+            optional().match('(userPost)').goOut('r:AVATAR', 'avatar:File').
+            optional().match('(post)').goOut('t:TAGGED', 'postTags:Tag').
+            optional().match('(post)').goOut('f:HAS', 'file:File').
+            optional().match('(post)').goIn('hl:LIKED', `hu:User {id: '${userId}'}`).
+            optional().match('(post)').goIn('l:LIKED', `u:User`).
+            with('post, userPost{.*, avatar: avatar{.*}} as user, collect(postTags{.*}) as tags, collect(file{.*}) as files, count(hl) > 0 as hasLike, count(l) as likeCount').
+            return('post{.*, user, tags, files, hasLike, likeCount}').
+            orderBy('post.createdAt', 'ASC').
+            skip(skip).
+            limit(limit).
+            getMany<Post>('executeRead')
     }
 }

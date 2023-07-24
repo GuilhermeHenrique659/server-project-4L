@@ -19,6 +19,10 @@ class Post implements IEntity {
 
     public files: File[];
 
+    public hasLike: boolean;
+
+    public likeCount: number;
+
     public createdAt: string;
 
     public updatedAt?: string;

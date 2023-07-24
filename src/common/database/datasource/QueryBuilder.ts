@@ -1,5 +1,5 @@
 import { Driver, QueryResult } from 'neo4j-driver';
-import IQueryBuilder from '@common/database/datasource/IQueryBuilder';
+import IQueryBuilder, { direction } from '@common/database/datasource/IQueryBuilder';
 import { executeType } from '@common/database/datasource//types/executeTypes';
 
 export default class QueryBuilder implements IQueryBuilder {
@@ -84,6 +84,21 @@ export default class QueryBuilder implements IQueryBuilder {
 
     public return(...fields: string[]): IQueryBuilder {
         this._query += `RETURN ${fields.join(', ')}`;
+        return this;
+    }
+
+    public orderBy(query: string, direction: direction = 'ASC'): IQueryBuilder {
+        this._query += `ORDER BY ${query} ${direction} `
+        return this;
+    }
+
+    public skip(skip: number): IQueryBuilder {
+        this._query += `skip ${skip} `;
+        return this;
+    }
+
+    public limit(limit: number): IQueryBuilder {
+        this._query += `LIMIT ${limit} `
         return this;
     }
 

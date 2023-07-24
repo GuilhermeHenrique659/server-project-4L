@@ -1,12 +1,17 @@
 import { executeType } from "@common/database/datasource/types/executeTypes";
 import IEntity from "./types/IEntity";
 
+export type direction = 'ASC' | 'DESC'
+
 export default interface IQueryBuilder {
     query(query: string, params?: object): IQueryBuilder;
     match(pattern: string, params?: object): IQueryBuilder;
     where(condition: string, params?: object): IQueryBuilder;
     goOut(relatationLabel?: string, to?: string): IQueryBuilder;
     goIn(relatationLabel?: string, from?: string): IQueryBuilder;
+    orderBy(query: string, direction: direction): IQueryBuilder;
+    limit(limit: number): IQueryBuilder;
+    skip(skip: number): IQueryBuilder;
     set(properties: object): IQueryBuilder;
     with(pattern: string): IQueryBuilder;
     optional(): IQueryBuilder;

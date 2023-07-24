@@ -7,10 +7,10 @@ import PostFiles from "../entity/PostFiles";
 interface IPostRepository {
     save(post: Post): Promise<Post>;
     savePostTag(postTags: PostTags): Promise<void>;
-    listRecommendPost(userId: string): Promise<Post[]>;
+    listRecommendPost(userId: string, page: number, limit: number): Promise<Post[]>;
     findById(id: string): Promise<Post | undefined>;
     saveLike(like: UserLiked): Promise<void>;
-    savePostFile(postFiles: PostFiles): Promise<void>:
+    savePostFile(postFiles: PostFiles): Promise<void>
 }
 
 export default IPostRepository;

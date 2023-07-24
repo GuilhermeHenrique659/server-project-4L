@@ -19,6 +19,13 @@ export default class PostValidation {
         })
     }
 
+    public listPost(){
+        return Joi.object({
+            limit: Joi.number(),
+            page: Joi.number().required()
+        })
+    }
+
     public createLike(){
         return Joi.object({
             postId: Joi.string().required()
