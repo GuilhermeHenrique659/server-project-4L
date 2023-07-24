@@ -13,7 +13,8 @@ class CreateUserTagsController implements IController{
     ) {}
     
     public async handle(payload: ControllerInput<ICreateUserTagsDTO>): Promise<Tag[]> {
-        const { tags, userId } = payload.data
+        const userId = payload.user?.id as string
+        const { tags } = payload.data
 
         if (tags) {
             for (const tag of tags) {

@@ -43,6 +43,16 @@ class UserRepository implements IUserRepository {
         await this._dataSource.createRelationship(userAvatar);
     }
 
+    public async findUserTag(userId: string, tagId: string): Promise<boolean> {
+        const data = await this._dataSource.getQueryBuilder().
+            match('(user:User {id: $userId})', { userId}).
+            goOut('r:INTEREST', `tag:Tag {id: '${tagId}'}`).
+            return('r').
+            getMany('executeRead');
+
+        return data.length > 0
+    }
+
     public async removeAvatar(userId: string): Promise<void> {
         await this._dataSource.getQueryBuilder().
             optional().match('(u:User {id: $userId})', { userId }).

@@ -29,6 +29,8 @@ export default class RouterConfigurator {
 
     public inicializeRoutes() {
         this._routesConfig.forEach(route => {
+            console.log('inicialize route: ', route.path);
+            
             this._router[route.method](route.path ,ExpressAdapterController.adapter(route.controller, route.status ?? 200, route.middleware));
         })
     }

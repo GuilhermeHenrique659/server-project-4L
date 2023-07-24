@@ -29,7 +29,7 @@ class UserRouter implements IHandleDomain {
                 },
             },
             {
-                method: HttpMethods.POST,
+                method: HttpMethods.PATCH,
                 path: '/tags',
                 controller: this._controllers.getCreateUserTags(),
                 status: HttpReturnMethods.SUCCESS,

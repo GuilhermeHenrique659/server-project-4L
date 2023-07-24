@@ -3,10 +3,11 @@ import IUserRepository from "../../repository/IUserRepository";
 import { CreateInterestUserServiceDTO } from "./CreateInterestUserServiceDTO";
 import UserTags from "../../entity/UserTags";
 import AppError from "@common/errors/AppError";
+import ITagRepository from "@modules/tag/domain/repository/ITagRepository";
 
 
 class CreateInterestUserService implements IService {
-    constructor (private readonly _userRepository: IUserRepository ) {}
+    constructor (private readonly _userRepository: IUserRepository) {}
 
     public async execute(data: serviceDTOType<CreateInterestUserServiceDTO>): Promise<void> {
         const { userId, tag } = data;
@@ -14,6 +15,10 @@ class CreateInterestUserService implements IService {
         const user = await this._userRepository.findById(userId);
         
         if(!user) throw new AppError('User not found');
+
+        const tagAlreadySelected = await this._userRepository.findUserTag(user.id, tag.id);
+
+        if (tagAlreadySelected) return;
         
         const userTags = new UserTags(user, tag)
         await this._userRepository.saveTag(userTags);

@@ -20,6 +20,14 @@ class TagRepository implements ITagRepository {
             id: id,
         });
     }
+
+    public async search(searchTerm: string): Promise<Tag[]> {
+        return this._dataSource.getQueryBuilder().
+            match('(t:Tag)').
+            where(`toLower(t.description) =~ '.*${searchTerm}.*'`).
+            return('t{.*}').
+            getMany<Tag>('executeRead')
+    }
 }
 
 export default TagRepository;
