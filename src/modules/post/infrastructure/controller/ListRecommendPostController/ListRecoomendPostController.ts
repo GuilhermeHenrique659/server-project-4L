@@ -10,9 +10,9 @@ class ListRecommendPostController implements IController {
         private postServices: PostServiceFactory){}
 
     public async handle(payload: ControllerInput<ListRecommendPostControllerDTO>): Promise<any> {
-        const { user } = payload;
-        const limit = payload.data.limit ?? 3;
-        const skip = payload.data.page;
+        const { user, data } = payload;
+        const limit = data.limit ?? 3;
+        const skip = data.page === 0 ? 0 : (data.page * limit)
 
 
         if (!user) throw new AppError("User não autenticado");

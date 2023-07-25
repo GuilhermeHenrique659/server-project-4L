@@ -24,6 +24,8 @@ class CreatePostService implements IService {
         const userPosts = new UserPosted(user, post)
         await this._userRepository.saveUserPost(userPosts);
 
+        post.setUser(user);
+        
         return post;
     }
 }
