@@ -35,10 +35,6 @@ class Post implements IEntity {
             this.id = uuidv4()
         }
     }
-
-    public setUser(user: User){
-        this.user = user
-    }
 }
 
 export default Post
