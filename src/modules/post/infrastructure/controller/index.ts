@@ -14,6 +14,7 @@ import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFacto
 import FileRepository from "@modules/file/infrastructure/repository/FileRepository";
 import File from "@modules/file/domain/entity/File";
 import LocalFileProvider from "@common/provider/file/LocalFileProvider";
+import { likeSubject } from "../observer/LikeSubject";
 
 const postRepository = new PostRepository(GetDatasource(Post));
 const userRepository = new UserRepository(GetDatasource(User));
@@ -24,6 +25,6 @@ const fileProvider = new LocalFileProvider();
 const graphServiceFactory = new GraphServiceFactory(graphRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
 const tagServiceFactory = new TagServiceFactory(tagRepository);
-const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory);
+const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, likeSubject);
 
 export default postControllerFactory;

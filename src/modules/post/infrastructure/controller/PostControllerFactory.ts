@@ -4,11 +4,13 @@ import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFactory";
 import ListRecommendPostController from "./ListRecommendPostController/ListRecoomendPostController";
 import CreatePostLikedController from "./CreateUserLikedController.ts/CreateUserLikedController";
+import ISubject from "@common/observer/ISubject";
 
 class PostControllerFactory {
     constructor (private postServiceFactory: PostServiceFactory,
         private tagServiceFactory: TagServiceFactory,
-        private graphServiceFactory: GraphServiceFactory) {}
+        private graphServiceFactory: GraphServiceFactory,
+        private likeSuject: ISubject) {}
 
     public getCreatePostController() {
         return new CreatePostController(this.postServiceFactory, this.tagServiceFactory);
@@ -19,7 +21,7 @@ class PostControllerFactory {
     }
 
     public getCreateLikeController() {
-        return new CreatePostLikedController(this.postServiceFactory);
+        return new CreatePostLikedController(this.postServiceFactory, this.likeSuject);
     }
 }
 

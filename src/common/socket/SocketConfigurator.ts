@@ -27,7 +27,7 @@ export default class SocketConfigurator {
     private configureListeners(socket: Socket, userId: string) {
         this._listenerConfig.forEach(listener => {
             socket.on(listener.path, async (data: Record<string, any>, callback: Function) => {
-                try {
+                try {                    
                     if (listener.room) {
                         socket.join(listener.room)
                     }
@@ -46,7 +46,6 @@ export default class SocketConfigurator {
         this._socket.attach(server);
     }
 
-    
     public inicializerSocket() {
         this._socket.on("connection", async (socket: Socket) => {                        
             try {
@@ -65,7 +64,7 @@ export default class SocketConfigurator {
         });
     }
     
-    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType): Promise<void> {        
+    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, expect?: string): Promise<void> {        
         if (to) {            
             if (to.clientId){
                 const clientId = await this._dataBase.get<string>(to.clientId);
@@ -75,9 +74,14 @@ export default class SocketConfigurator {
             } else if (to.room) {
                 this._socket.to(to.room).emit(event, data)
             }
+        } else if (expect){
+            const clientId = await this._dataBase.get<string>(expect);
+            if (clientId) {                
+                this._socket.except(clientId).emit(event, data);
+            } 
         } else {
             this._socket.emit(event, data);
-        }
+        } 
     }
 
     public set database (database: IMemoryDataBase) {
