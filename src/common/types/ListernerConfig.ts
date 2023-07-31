@@ -4,6 +4,6 @@ import { MiddlewareInputType } from "./middlewareInputType";
 export type ListenerConfig = { 
     path: string;
     controller: IController;
-    middleware?: MiddlewareInputType
+    middleware?: Pick<MiddlewareInputType, 'validator'>
     room?: string;
 }

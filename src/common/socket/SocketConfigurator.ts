@@ -14,7 +14,7 @@ export default class SocketConfigurator {
     private _listenerConfig: ListenerConfig[] = [];
 
     constructor () {
-        this._socket = new Server();
+        this._socket = new Server(undefined,   {cors: {origin: '*'}});
     }
 
     public static getInstance(): SocketConfigurator {
@@ -58,7 +58,7 @@ export default class SocketConfigurator {
                     this._dataBase.delete(userId);
                 });
 
-            } catch {
+            } catch(error) {      
                 socket.disconnect();
                 return
             }

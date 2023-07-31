@@ -9,8 +9,10 @@ interface IPostRepository {
     savePostTag(postTags: PostTags): Promise<void>;
     listRecommendPost(userId: string, page: number, limit: number): Promise<Post[]>;
     findById(id: string): Promise<Post | undefined>;
+    hasUserLiked(like: UserLiked): Promise<boolean>;
     saveLike(like: UserLiked): Promise<void>;
-    savePostFile(postFiles: PostFiles): Promise<void>
+    savePostFile(postFiles: PostFiles): Promise<void>;
+
 }
 
 export default IPostRepository;

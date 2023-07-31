@@ -21,7 +21,11 @@ class CreatePostLikedService implements IService {
         if (!post) throw new AppError('Post not found', 404);
 
         const like = new UserLiked(user, post);
-
+        
+        if (await this._postRepository.hasUserLiked(like)){
+            throw new AppError('Already like this post', 404);
+        }
+        
         await this._postRepository.saveLike(like)
     }
 }

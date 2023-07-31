@@ -11,11 +11,11 @@ class MiddlewareAdapter {
 
     static validator(payload?: ControllerInput<any>, schema?: Joi.Schema) {
         if(!schema || !payload) return;
-
+        
         const error = ValidationMiddleware.run(schema, payload);
         
         if (error) {
-            throw new ValidationError(error)
+            throw new ValidationError(error.message, error.context)
         }
     }
 

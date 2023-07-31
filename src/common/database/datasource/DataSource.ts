@@ -22,6 +22,17 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         return await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
     }
 
+    public async hasRelationShip({ from, label, to}: IEdge): Promise<boolean> {
+        
+        const data = await this._queryBuilder.
+            match(`(from:${from.label} {id: $id})`, {id: from.id}).
+            goOut(`r:${label}`, `to:${to.label} {id: '${to.id}'}`).
+            return('r').
+            getOne<any>();
+
+        return !!data;
+    }
+
     public async store(entity: E): Promise<E> {
         const { id } = entity;
 

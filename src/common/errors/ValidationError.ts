@@ -1,11 +1,15 @@
-export default class ValidationError {
+import Joi from "joi";
 
-    public messages: string[];
+export default class ValidationError {
+    public message: string;
+
+    public context?: Joi.Context
 
     public statusCode: number;
     
-    constructor(messages: string[], statusCode = 400) {
-        this.messages = messages;
-        this.statusCode = statusCode
+    constructor(message: string, context?: Joi.Context, statusCode = 400) {
+        this.message = message;
+        this.context = context;
+        this.statusCode = statusCode;
     }
 }
