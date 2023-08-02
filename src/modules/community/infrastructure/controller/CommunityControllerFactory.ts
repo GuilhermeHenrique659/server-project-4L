@@ -4,6 +4,7 @@ import GetCommunityFeedController from "./GetCommunityFeedController/GetCommunit
 import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory";
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import GetControllerUserController from "./GetCommunityUsersController/GetCommunityUsersController";
+import GetCommunityDataController from "./GetCommunityDataController/GetCommunityDataController";
 
 class CommunityControllerFactory {
     constructor (private readonly _comunityServicesFactory: CommunityServiceFactory,
@@ -20,6 +21,10 @@ class CommunityControllerFactory {
 
     public getCommunityUsers() {
         return new GetControllerUserController(this._userServiceFactory);
+    }
+
+    public getCommunityData() {
+        return new GetCommunityDataController(this._comunityServicesFactory);
     }
 }
 

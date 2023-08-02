@@ -9,7 +9,6 @@ class GetControllerUserController implements IController {
     public async handle(payload: ControllerInput<{ communityId: string }>): Promise<any> {
         const { data: { communityId } } = payload;
         const userIds = await nodeCacheDataBase.get<Set<string>>(`community/${communityId}`);
-        console.log(userIds);
         
         const users = [];
         if (userIds) {

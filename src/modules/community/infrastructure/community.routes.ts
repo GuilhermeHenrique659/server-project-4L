@@ -25,6 +25,14 @@ class CommunityRouter implements IHandleDomain {
                 },
                 status: HttpReturnMethods.SUCCESS,
             },
+            {
+                method: HttpMethods.GET,
+                path: '/:communityId',
+                controller: this.controller.getCommunityData(),
+                middleware: {
+                    validator: this.validator.getCommunityUsers()
+                }
+            }
         ];
     }
 

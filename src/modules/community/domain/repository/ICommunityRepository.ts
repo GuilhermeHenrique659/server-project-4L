@@ -7,7 +7,8 @@ interface ICommunityRepository {
     findByName(name: string): Promise<Community | undefined>;
     saveCommunityAdmin(communityAdmin: CommunityAdmin): Promise<void>;
     saveCommunityPost(communityPost: CommunityPost): Promise<void>;
-    save(community: Community): Promise<Community>
+    save(community: Community): Promise<Community>;
+    getCommunityData(id: string): Promise<Community | undefined>;
 }
 
 export default ICommunityRepository;

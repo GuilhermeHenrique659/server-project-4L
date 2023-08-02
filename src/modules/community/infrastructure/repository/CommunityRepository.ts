@@ -19,6 +19,19 @@ class CommunityRepository implements ICommunityRepository{
         });
     }
 
+    public async getCommunityData(id: string): Promise<Community | undefined> {
+        return await this._dataSource.getQueryBuilder().
+            match('(community: Community { id: $id})', { id }).
+            match('(community)').goOut('u:ADMIN', 'admin:User').
+            optional().match('(admin)').goOut('au:AVATAR', 'avatarUser:File').
+            optional().match('(community)').goOut('a:AVATAR', 'avatar:File').
+            optional().match('(community)').goOut('c:COVER', 'cover:File').
+            optional().match('(community)').goOut('t:TAGGED', 'comTags:Tag').
+            with('community, admin{ name: admin.name, id: admin.id, avatar: avatarUser{.*} } as admin, cover, avatar, collect(DISTINCT comTags{.*}) as tags').     
+            return('community{.*, avatar, cover, admin, tags}').
+            getOne<Community>('executeRead');
+    }
+
     public async save(community: Community): Promise<Community> {
         return await this._dataSource.store(community);
     }
