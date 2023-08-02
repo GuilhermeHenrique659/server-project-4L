@@ -1,37 +1,39 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
-import Community from "@modules/community/domain/entity/Community";
 import File from "@modules/file/domain/entity/File";
+import Post from "@modules/post/domain/entity/Post";
 import Tag from "@modules/tag/domain/entity/Tag";
 import User from "@modules/user/domain/entity/User";
 import { v4 as uuidv4 } from 'uuid';
 
+
 @InjectEntityLabel
-class Post implements IEntity {
+class Community implements IEntity {
     public readonly id: string;
 
     public readonly label: string;
 
-    public content: string;
+    public name: string
 
-    public user: User;
+    public description: string;
 
-    public tags: Tag[];
+    public admin: User;
 
-    public files: File[];
+    public avatar?: File;
 
-    public community?: Community;
+    public cover?: File;
 
-    public hasLike: boolean;
+    public posts?: Post[];
 
-    public likeCount: number;
+    public users?: User[];
+
+    public tags?: Tag[];
 
     public createdAt: string;
 
     public updatedAt?: string;
 
-
-    constructor (props: Partial<Post>) {
+    constructor(props: Partial<Community>){
         Object.assign(this, props);
 
         if (!props.id) {
@@ -40,4 +42,4 @@ class Post implements IEntity {
     }
 }
 
-export default Post
+export default Community;

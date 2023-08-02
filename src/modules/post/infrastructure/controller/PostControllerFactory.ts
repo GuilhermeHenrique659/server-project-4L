@@ -5,15 +5,17 @@ import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFacto
 import ListRecommendPostController from "./ListRecommendPostController/ListRecoomendPostController";
 import CreatePostLikedController from "./CreateUserLikedController.ts/CreateUserLikedController";
 import ISubject from "@common/observer/ISubject";
+import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
 
 class PostControllerFactory {
     constructor (private postServiceFactory: PostServiceFactory,
         private tagServiceFactory: TagServiceFactory,
         private graphServiceFactory: GraphServiceFactory,
+        private communityServiceFactory: CommunityServiceFactory,
         private likeSuject: ISubject) {}
 
     public getCreatePostController() {
-        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory);
+        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory, this.communityServiceFactory);
     }
 
     public getListPostController() {

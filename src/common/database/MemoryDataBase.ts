@@ -16,6 +16,16 @@ class NodeCacheDataBase implements IMemoryDataBase {
         return data;
     }
 
+    async appendUniqueValues<T>(key: string, data: T): Promise<void> {
+        const set = this._database.get<Set<T>>(key);
+        if(!set) {
+            this._database.set(key, new Set<T>([data]));
+        } else {
+            set.add(data);
+            this._database.set(key, set);
+        }
+    }
+
     async delete(key: string): Promise<void> {
         this._database.del(key)
     }

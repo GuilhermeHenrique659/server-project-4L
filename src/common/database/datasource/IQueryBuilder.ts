@@ -7,8 +7,8 @@ export default interface IQueryBuilder {
     query(query: string, params?: object): IQueryBuilder;
     match(pattern: string, params?: object): IQueryBuilder;
     where(condition: string, params?: object): IQueryBuilder;
-    goOut(relatationLabel?: string, to?: string): IQueryBuilder;
-    goIn(relatationLabel?: string, from?: string): IQueryBuilder;
+    goOut(relatationLabel?: string, to?: string, params?: object): IQueryBuilder;
+    goIn(relatationLabel?: string, from?: string, params?: object): IQueryBuilder;
     orderBy(query: string, direction: direction): IQueryBuilder;
     limit(limit: number): IQueryBuilder;
     skip(skip: number): IQueryBuilder;

@@ -22,7 +22,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         return await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
     }
 
-    public async hasRelationShip({ from, label, to}: IEdge): Promise<boolean> {
+    public async hasRelationShip({ from, label, to}: Required<IEdge>): Promise<boolean> {
         
         const data = await this._queryBuilder.
             match(`(from:${from.label} {id: $id})`, {id: from.id}).
@@ -58,7 +58,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
-    public async createRelationship(edge: IEdge): Promise<void> {
+    public async createRelationship(edge: Required<IEdge>): Promise<void> {
         const { from, to, label } = edge;
         if (!from.id && !to.id) return;
 

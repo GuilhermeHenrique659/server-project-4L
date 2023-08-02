@@ -1,5 +1,6 @@
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
+import Community from "@modules/community/domain/entity/Community";
 import File from "@modules/file/domain/entity/File";
 import Post from "@modules/post/domain/entity/Post";
 import Tag from "@modules/tag/domain/entity/Tag";
@@ -21,7 +22,9 @@ class User implements IEntity {
 
     public tags?: Tag[];
 
-    public posts?: Post[]
+    public posts?: Post[];
+
+    public communities?: Community[];
 
     public createdAt: string;
 

@@ -28,11 +28,14 @@ export default class SocketConfigurator {
         this._listenerConfig.forEach(listener => {
             socket.on(listener.path, async (data: Record<string, any>, callback: Function) => {
                 try {                    
-                    if (listener.room) {
-                        socket.join(listener.room)
-                    }
-                    data.user = { id: userId }
+                    data.user = { id: userId };
                     const response = await SocketAdapterController.adapter(listener.controller, data, listener.middleware);
+
+                    if (listener.room && !response.error) {
+                        const [roomName, roomId] = listener.room.split(':');
+                        socket.join(`${roomName}${data[roomId]}`);
+                        this._dataBase.appendUniqueValues(`${roomName}${data[roomId]}`, userId);
+                    }
                     callback(response);
                 } catch (error) {
                     callback(error);

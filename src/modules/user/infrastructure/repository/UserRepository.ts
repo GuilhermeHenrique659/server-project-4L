@@ -4,6 +4,7 @@ import IUserRepository from "../../domain/repository/IUserRepository";
 import UserAvatar from "@modules/user/domain/entity/UserAvatar";
 import UserTags from "@modules/user/domain/entity/UserTags";
 import UserPosted from "@modules/user/domain/entity/UserPosted";
+import UserCommunity from "@modules/user/domain/entity/UserCommunity";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
@@ -41,6 +42,10 @@ class UserRepository implements IUserRepository {
     
     public async saveAvatar(userAvatar: UserAvatar): Promise<void> {
         await this._dataSource.createRelationship(userAvatar);
+    }
+
+    public async saveUserCommunity(userCommunity: UserCommunity): Promise<void> {
+        await this._dataSource.createRelationship(userCommunity);
     }
 
     public async findUserTag(userId: string, tagId: string): Promise<boolean> {

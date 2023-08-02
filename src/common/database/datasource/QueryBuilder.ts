@@ -24,23 +24,25 @@ export default class QueryBuilder implements IQueryBuilder {
         return this;
     }
 
-    public goOut(relatation?: string | undefined, to?: string | undefined): IQueryBuilder {
+    public goOut(relatation?: string, to?: string, params?: object): IQueryBuilder {
         this._query += '-';
         if (relatation)
             this._query += `[${relatation}]`;
 
         const toLabel = to ? `(${to})` : '()';
         this._query += `->${toLabel} `;
+        this._queryParams = { ...this._queryParams, ...params };
         return this;
     }
 
-    public goIn(relatation?: string | undefined, from?: string | undefined): IQueryBuilder {
+    public goIn(relatation?: string, from?: string, params?: object): IQueryBuilder {
         this._query += '<-';
         if (relatation)
             this._query += `[${relatation}]`;
 
         const fromLabel = from ? `(${from})` : '()';
         this._query += `-${fromLabel} `;
+        this._queryParams = { ...this._queryParams, ...params };
         return this;
     }
 

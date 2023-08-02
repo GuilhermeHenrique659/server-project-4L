@@ -7,14 +7,16 @@ import AppError from "@common/errors/AppError";
 import Tag from "@modules/tag/domain/entity/Tag";
 import { CreatePostControllerResponse } from "./CreatePostControllerResponse";
 import PostPresenter from "../../presenter/PostPresenter";
+import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
 
 
 class CreatePostController implements IController {
     constructor(private readonly _postService: PostServiceFactory,
-        private readonly _tagService: TagServiceFactory) { }
+        private readonly _tagService: TagServiceFactory,
+        private readonly _communityService: CommunityServiceFactory) { }
 
     public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<CreatePostControllerResponse> {
-        const { content, tags, files } = payload.data;
+        const { content, tags, files, communityId } = payload.data;
         const user = payload.user
 
         if (!user) throw new AppError('Usuario não autenticado');
@@ -47,6 +49,9 @@ class CreatePostController implements IController {
                 createdPost.files.push(createFile);
             }
         }
+        
+        if (communityId)
+            createdPost.community = await this._communityService.getCreateCommunityPost().execute({ post: createdPost, communityId });
 
         return PostPresenter.createPostPresenter(createdPost);
     }

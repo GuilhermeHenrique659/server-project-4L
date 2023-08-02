@@ -15,16 +15,21 @@ import FileRepository from "@modules/file/infrastructure/repository/FileReposito
 import File from "@modules/file/domain/entity/File";
 import LocalFileProvider from "@common/provider/file/LocalFileProvider";
 import { likeSubject } from "../observer/LikeSubject";
+import CommunityRepository from "@modules/community/infrastructure/repository/CommunityRepository";
+import Community from "@modules/community/domain/entity/Community";
+import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
 
 const postRepository = new PostRepository(GetDatasource(Post));
 const userRepository = new UserRepository(GetDatasource(User));
 const tagRepository = new TagRepository(GetDatasource(Tag));
+const communityRepository = new CommunityRepository(GetDatasource(Community));
 const graphRepository = new GraphRepository(GetDatasource(Graph));
 const fileRepository = new FileRepository(GetDatasource(File));
 const fileProvider = new LocalFileProvider();
 const graphServiceFactory = new GraphServiceFactory(graphRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
 const tagServiceFactory = new TagServiceFactory(tagRepository);
-const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, likeSubject);
+const communityServiceFactory = new CommunityServiceFactory(communityRepository, userRepository);
+const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, communityServiceFactory, likeSubject);
 
 export default postControllerFactory;

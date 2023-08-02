@@ -7,6 +7,7 @@ import CreatePostLikedService from "./CreatePostLikedService/CreatePostLikedServ
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import CreatePostFileService from "./CreatePostFile/CreatePostFileService";
+import ListPostInsideCommunityService from "./ListPostInsideCommunity/ListPostInsideCommunity";
 
 class PostServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
@@ -28,6 +29,10 @@ class PostServiceFactory {
 
     public getListPost(){
         return new ListRecommendPostService(this._postRepository);
+    }
+
+    public getListCommunityPost() {
+        return new ListPostInsideCommunityService(this._postRepository);
     }
 
     public getCreatePostFile(){

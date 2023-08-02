@@ -12,7 +12,7 @@ interface IPostRepository {
     hasUserLiked(like: UserLiked): Promise<boolean>;
     saveLike(like: UserLiked): Promise<void>;
     savePostFile(postFiles: PostFiles): Promise<void>;
-
+    listPostCommunity(userId: string, page: number, limit: number, communityId: string): Promise<Post[]>;
 }
 
 export default IPostRepository;

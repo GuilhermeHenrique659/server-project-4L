@@ -4,6 +4,7 @@ export default class PostValidation {
     public createPostValidate(){
         return Joi.object({
             content: Joi.string().required(),
+            communityId: Joi.string().uuid(),
             tags: Joi.array().items(
                 Joi.object({
                     description: Joi.string(),

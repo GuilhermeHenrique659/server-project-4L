@@ -32,6 +32,23 @@ export default class PostRepository implements IPostRepository {
         await this._dataSource.createRelationship(like);
     }
 
+    public async listPostCommunity(userId: string, skip: number, limit: number, communityId: string): Promise<Post[]> {
+        return await this._dataSource.getQueryBuilder().
+            match('(community:Community { id: $id})', { id: communityId}).goOut('i:INSIDE', 'post:Post').
+            match('(post)').goIn('p:POSTED', 'userPost:User').
+            optional().match('(userPost)').goOut('r:AVATAR', 'avatar:File').
+            optional().match('(post)').goOut('t:TAGGED', 'postTags:Tag').
+            optional().match('(post)').goOut('f:HAS', 'file:File').
+            optional().match('(post)').goIn('hl:LIKED', `hu:User {id: '${userId}'}`).
+            optional().match('(post)').goIn('l:LIKED', `u:User`).
+            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount').
+            return('post{.*, user, tags, files, hasLike, likeCount}').
+            orderBy('post.createdAt', 'DESC').
+            skip(skip).
+            limit(limit).
+            getMany<Post>('executeRead')
+    }
+
     public async listRecommendPost(userId: string, skip: number, limit: number): Promise<Post[]> {
         return await this._dataSource.getQueryBuilder().
             match('(post:Post)').goIn('p:POSTED', 'userPost:User').
@@ -40,8 +57,9 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goOut('f:HAS', 'file:File').
             optional().match('(post)').goIn('hl:LIKED', `hu:User {id: '${userId}'}`).
             optional().match('(post)').goIn('l:LIKED', `u:User`).
-            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount').
-            return('post{.*, user, tags, files, hasLike, likeCount}').
+            optional().match('(post)').goIn('c:INSIDE', 'community:Community').
+            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*} as community').
+            return('post{.*, user, tags, files, hasLike, likeCount, community}').
             orderBy('post.createdAt', 'DESC').
             skip(skip).
             limit(limit).
