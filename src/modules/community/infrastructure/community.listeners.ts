@@ -19,6 +19,13 @@ class CommunityListener implements IHandleDomain {
                 middleware: {
                     validator: this.validator.getCommunityFeed()
                 }
+            },
+            {
+                path: 'community/list-users',
+                controller: this.controller.getCommunityUsers(),
+                middleware: {
+                    validator: this.validator.getCommunityUsers(),
+                }
             }
         ]
     }

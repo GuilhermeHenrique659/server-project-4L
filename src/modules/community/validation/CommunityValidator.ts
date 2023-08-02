@@ -15,6 +15,12 @@ class CommunityValidator {
             page: Joi.number().required(),
         })
     }
+
+    public getCommunityUsers(){
+        return Joi.object({
+            communityId: Joi.string().uuid().required(),
+        })
+    }
 }
 
 export const communityValidator = new CommunityValidator()

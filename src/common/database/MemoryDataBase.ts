@@ -11,12 +11,15 @@ class NodeCacheDataBase implements IMemoryDataBase {
         return this._database.get(key);
     }
 
-    async set<T>(key: string, data: T): Promise<T> {
-        await this._database.set(key, data)
+    async set<T>(key: string, data: T, ttl?: number): Promise<T> {
+        await this._database.set(key, data);
+
+        if(ttl) this._database.ttl(key, ttl);
+
         return data;
     }
 
-    async appendUniqueValues<T>(key: string, data: T): Promise<void> {
+    async appendUniqueValues<T>(key: string, data: T, ttl?: number): Promise<void> {
         const set = this._database.get<Set<T>>(key);
         if(!set) {
             this._database.set(key, new Set<T>([data]));
@@ -24,6 +27,8 @@ class NodeCacheDataBase implements IMemoryDataBase {
             set.add(data);
             this._database.set(key, set);
         }
+
+        if(ttl) this._database.ttl(key, ttl);
     }
 
     async delete(key: string): Promise<void> {

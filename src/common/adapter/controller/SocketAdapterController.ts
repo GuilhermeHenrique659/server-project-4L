@@ -24,6 +24,8 @@ export default class SocketAdapterController {
                         error: err,
                     }
                 } else {
+                    console.log(err);
+                    
                     return {
                         message: 'internal server error',
                         error: err

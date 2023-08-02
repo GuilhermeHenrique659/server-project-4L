@@ -26,6 +26,15 @@ class UserRepository implements IUserRepository {
             .getOne<User>('executeRead');
     }
 
+    public async findByIdWithAvatar(id: string): Promise<User | undefined> {
+        return await this._dataSource.getQueryBuilder()
+        .match('(u:User {id: $id})', { id })
+        .optional().match('(u)')
+        .goOut('r:AVATAR', 'file:File')
+        .return('u{.*, avatar: file{.*}}')
+        .getOne<User>('executeRead');
+    }
+
     public async findById(id: string): Promise<User | undefined> {
         return await this._dataSource.findOne({
             id: id
