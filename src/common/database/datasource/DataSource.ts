@@ -22,10 +22,10 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         return await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
     }
 
-    public async hasRelationShip({ from, label, to}: Required<IEdge>): Promise<boolean> {
-        
+    public async hasRelationShip({ from, label, to }: Required<IEdge>): Promise<boolean> {
+
         const data = await this._queryBuilder.
-            match(`(from:${from.label} {id: $id})`, {id: from.id}).
+            match(`(from:${from.label} {id: $id})`, { id: from.id }).
             goOut(`r:${label}`, `to:${to.label} {id: '${to.id}'}`).
             return('r').
             getOne<any>();
@@ -39,7 +39,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
         const exists = await this.findOne({
             id: id
         });
-        
+
         if (exists)
             return await this.update(entity);
         else
@@ -54,14 +54,14 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
 
     public async create(entity: E): Promise<E> {
         const { label, ...data } = entity
-        data.createdAt = new Date().toISOString()        
+        data.createdAt = new Date().toISOString()
         return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 
     public async createRelationship(edge: Required<IEdge>): Promise<void> {
         const { from, to, label } = edge;
         if (!from.id && !to.id) return;
-
+        
         await this._queryBuilder
             .match(`(f:${from.label}), (t:${to.label})`)
             .where('f.id = $fid AND t.id = $tid', {
@@ -70,6 +70,18 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
             })
             .createRelation('f', label, 't')
             .getMany('executeWrite')
+    }
+
+    public async remove(id: string): Promise<void> {
+        await this._queryBuilder.query(`MATCH (n:${this._label} {id: $id}) DETACH DELETE n`, { id }).setData('executeWrite');
+    }
+
+    public async removeRelationShip(from: IEntity, to: IEntity, edge: string): Promise<void> {
+        await this._queryBuilder.query(`MATCH (f:${from.label} {id: $fromId})-[r:${edge}]->(t:${to.label} {id: $toId}) DELETE r`,
+            {
+                fromId: from.id,
+                toId: to.id
+            }).setData('executeWrite');
     }
 
     public getQueryBuilder(): IQueryBuilder {

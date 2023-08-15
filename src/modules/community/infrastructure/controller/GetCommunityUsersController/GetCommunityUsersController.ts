@@ -1,21 +1,27 @@
 import IController from "@common/controller/IController";
 import { nodeCacheDataBase } from "@common/database/MemoryDataBase";
 import { ControllerInput } from "@common/types/ControllerIO";
+import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
+import User from "@modules/user/domain/entity/User";
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 
 class GetControllerUserController implements IController {
-    constructor(private readonly userServiceFactory: UserServiceFactory) {}
+    constructor(private readonly userServiceFactory: UserServiceFactory,
+        private readonly communityServiceFactory: CommunityServiceFactory) {}
 
-    public async handle(payload: ControllerInput<{ communityId: string }>): Promise<any> {
+    public async handle(payload: ControllerInput<{ communityId: string }>): Promise<Partial<User>[]> {
         const { data: { communityId } } = payload;
-        const userIds = await nodeCacheDataBase.get<Set<string>>(`community/${communityId}`);
+        const userIds = await this.communityServiceFactory.getCommunityUsers().execute({ communityId });
         
         const users = [];
         if (userIds) {
             for (const userId of userIds) {
-                users.push(
-                    await this.userServiceFactory.getUserBasicInfo().execute({ userId })
-                );
+                const user = await this.userServiceFactory.getUserBasicInfo().execute({ userId });
+                const isOnline = await nodeCacheDataBase.get<Set<string>>(userId);
+                if (isOnline) {
+                    user.isOnline = true
+                }
+                users.push(user);
             }
         }
 

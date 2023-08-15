@@ -5,14 +5,16 @@ import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory"
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import GetControllerUserController from "./GetCommunityUsersController/GetCommunityUsersController";
 import GetCommunityDataController from "./GetCommunityDataController/GetCommunityDataController";
+import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 
 class CommunityControllerFactory {
     constructor (private readonly _comunityServicesFactory: CommunityServiceFactory,
         private readonly _postServiceFactory: PostServiceFactory,
-        private readonly _userServiceFactory: UserServiceFactory) {}
+        private readonly _userServiceFactory: UserServiceFactory,
+        private readonly _tagServiceFactory: TagServiceFactory) {}
 
     public getCreateCommunity(){
-        return new CreateCommunityController(this._comunityServicesFactory);
+        return new CreateCommunityController(this._comunityServicesFactory, this._tagServiceFactory);
     }
 
     public getCommunityFeed() {

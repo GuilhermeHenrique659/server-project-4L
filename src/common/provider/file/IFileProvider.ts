@@ -1,10 +1,10 @@
-export type file = {
+export type fileData = {
     type: string;
     data: string
 }
 
 
 export default interface IFileProvider {
-    save(files: file[]): Promise<string[]>;
+    save(files: fileData[]): Promise<string[]>;
     remove(filename: string): Promise<void> 
 }

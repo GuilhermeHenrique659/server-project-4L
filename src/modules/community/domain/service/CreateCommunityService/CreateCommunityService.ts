@@ -4,7 +4,6 @@ import Community from "../../entity/Community";
 import ICommunityRepository from "../../repository/ICommunityRepository";
 import IUserRepository from "@modules/user/domain/repository/IUserRepository";
 import AppError from "@common/errors/AppError";
-import User from "@modules/user/domain/entity/User";
 import CommunityAdmin from "../../entity/CommunityAdmin";
 import UserCommunity from "@modules/user/domain/entity/UserCommunity";
 
@@ -14,6 +13,7 @@ class CreateCommunityService implements IService {
 
     public async execute(data: CreateCommunityServiceDTO): Promise<Community> {
         const { name, userId, description } = data;
+        const community = new Community({ name, description });
 
         const communityAlreadExists = await this._communityRepository.findByName(name);
 
@@ -22,9 +22,7 @@ class CreateCommunityService implements IService {
         const admin = await this._userRepository.findById(userId);
 
         if (!admin) throw new AppError('Admin não encontrado');
-
-        const community = new Community({ name, description });
-
+        
         const communityAdmin = new CommunityAdmin(community, admin);
         const userCommunity = new UserCommunity(admin, community);
 
@@ -32,7 +30,9 @@ class CreateCommunityService implements IService {
         await this._communityRepository.saveCommunityAdmin(communityAdmin);
         await this._userRepository.saveUserCommunity(userCommunity);
 
-        return {...community, admin};
+        community.admin = admin;
+
+        return community
     }
 }
 

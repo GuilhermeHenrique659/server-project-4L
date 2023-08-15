@@ -1,10 +1,10 @@
 import uploadConfig from "@config/upload/uploadConfig";
-import IFileProvider, { file } from "./IFileProvider";
+import IFileProvider, { fileData } from "./IFileProvider";
 import fs from 'fs'
 import path from 'path'
 
 class LocalFileProvider implements IFileProvider {
-    public async save(files: file[]): Promise<string[]> {
+    public async save(files: fileData[]): Promise<string[]> {
         const filenames: string[] = [];
         for (const file of files) {
             const filename = uploadConfig.storage.filename()

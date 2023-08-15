@@ -14,17 +14,22 @@ import File from "@modules/file/domain/entity/File";
 import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import MockHashProvider from "@common/provider/hash/MockHashProvider";
 import AuthenticateProvider from "@common/provider/auth/AuthenticateProvider";
+import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
+import TagRepository from "@modules/tag/infrastructure/repository/TagRepository";
+import Tag from "@modules/tag/domain/entity/Tag";
 
 
 const communityRepository = new CommunityRepository(GetDatasource(Community));
 const postRepository = new PostRepository(GetDatasource(Post));
 const userRepository = new UserRepository(GetDatasource(User));
 const fileRepository = new FileRepository(GetDatasource(File));
+const tagRepository = new TagRepository(GetDatasource(Tag));
 const mockHashProvider = new MockHashProvider();
 const authProvider = new AuthenticateProvider();
 const fileProvider = new LocalFileProvider();
-const controllerServiceFactory = new CommunityServiceFactory(communityRepository, userRepository)
+const controllerServiceFactory = new CommunityServiceFactory(communityRepository, userRepository, fileProvider, fileRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
 const userServiceFactory = new UserServiceFactory(userRepository, mockHashProvider, authProvider, fileProvider, fileRepository);
-const communityControllerFactory = new CommunityControllerFactory(controllerServiceFactory, postServiceFactory, userServiceFactory);
+const tagServiceFactory = new TagServiceFactory(tagRepository);
+const communityControllerFactory = new CommunityControllerFactory(controllerServiceFactory, postServiceFactory, userServiceFactory, tagServiceFactory);
 export default communityControllerFactory;

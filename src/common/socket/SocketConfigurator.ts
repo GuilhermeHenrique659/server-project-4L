@@ -34,7 +34,7 @@ export default class SocketConfigurator {
                     if (listener.room && !response.error) {
                         const [roomName, roomId] = listener.room.split(':')
                         socket.join(`${roomName}${data[roomId]}`);
-                        await this._dataBase.appendUniqueValues(`${roomName}${data[roomId]}`, userId, 60);
+                        await this._dataBase.appendUniqueValues(`${roomName}${data[roomId]}`, userId);
                     }
                     callback(response);
                 } catch (error) {
@@ -53,7 +53,7 @@ export default class SocketConfigurator {
         this._socket.on("connection", async (socket: Socket) => {                        
             try {
                 const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization, true) as string;
-                await this._dataBase.set(userId, socket.id);
+                await this._dataBase.appendUniqueValues(userId, socket.id);
                 
                 this.configureListeners(socket, userId);
                 socket.on("disconnect", () => {

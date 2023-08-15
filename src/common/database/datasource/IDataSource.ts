@@ -10,6 +10,8 @@ interface IDataSource<T extends IEntity> {
     hasRelationShip(edge: IEdge): Promise<boolean>;
     create(entity: T): Promise<T>;
     update(entity: T): Promise<T>;
+    remove(id: string): Promise<void>;
+    removeRelationShip(from: IEntity, to: IEntity, edge: string): Promise<void>;
     getQueryBuilder(): IQueryBuilder;
 }
 

@@ -34,7 +34,6 @@ class Community implements IEntity {
     public updatedAt?: string;
 
     constructor(props: Partial<Community>){
-        Object.assign(this, props);
 
         if (!props.id) {
             this.id = uuidv4()

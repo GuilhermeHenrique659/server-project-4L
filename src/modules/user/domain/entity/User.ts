@@ -26,6 +26,8 @@ class User implements IEntity {
 
     public communities?: Community[];
 
+    public isOnline?: boolean;
+
     public createdAt: string;
 
     public updatedAt?: string;

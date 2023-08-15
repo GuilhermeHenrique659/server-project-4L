@@ -8,4 +8,8 @@ export default class FileRepository implements IFileRepository {
     public async save(file: File): Promise<File> {
         return await this._dataSource.store(file);
     }
+
+    public async remove(id: string): Promise<void> {
+        await this._dataSource.remove(id);
+    }
 }
