@@ -22,7 +22,7 @@ class CommunityControllerFactory {
     }
 
     public getCommunityUsers() {
-        return new GetControllerUserController(this._userServiceFactory);
+        return new GetControllerUserController(this._userServiceFactory, this._comunityServicesFactory);
     }
 
     public getCommunityData() {

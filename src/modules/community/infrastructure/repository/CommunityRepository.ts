@@ -24,13 +24,13 @@ class CommunityRepository implements ICommunityRepository {
         });
     }
 
-    public async findCommunityUsers(id: string): Promise<string[]> {
+    public async findCommunityUsers(id: string): Promise<{id: string}[]> {
         return await this._dataSource.getQueryBuilder().
             match('(community: Community { id: $id})', { id }).
             optional().match('(community)').goIn('f:FOLLOW', 'user:User').
             with('COLLECT(DISTINCT user{id: user.id}) as users').
-            return('users{.*}').
-            getMany();
+            return('users').
+            getOne() as {id: string}[];
     }
 
     public async findAvatarById(id: string): Promise<File | undefined> {
@@ -57,7 +57,7 @@ class CommunityRepository implements ICommunityRepository {
             optional().match('(community)').goOut('a:AVATAR', 'avatar:File').
             optional().match('(community)').goOut('c:COVER', 'cover:File').
             optional().match('(community)').goOut('t:TAGGED', 'comTags:Tag').
-            with('community, admin{ name: admin.name, id: admin.id, avatar: avatarUser{.*} } as admin, cover, avatar, collect(DISTINCT comTags{.*}) as tags').
+            with('community, admin{ name: admin.name, id: admin.id, avatar: avatarUser{.*} } as admin, cover{.*} as cover, avatar{.*} as avatar, collect(DISTINCT comTags{.*}) as tags').
             return('community{.*, avatar, cover, admin, tags}').
             getOne<Community>('executeRead');
     }

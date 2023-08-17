@@ -11,10 +11,9 @@ class CreateCommunityController implements IController {
 
     public async handle(payload: ControllerInput<CreateCommunityRequestDTO>): Promise<ControllerOutput<CreateCommunityResponseDTO>> {
         const { data: { name, description, tags, cover, avatar }, user } = payload;
-        const userId = user?.id as string;
+        const userId = user?.id as string;        
 
         const community = await this.communityServiceFactory.getCreateCommunity().execute({ name, description, userId });
-        console.log(community.label);
         
         if (avatar){
             community.avatar = await this.communityServiceFactory.getUpdateAvatar().execute({ community, fileData: avatar.data, type: avatar.type });
@@ -38,7 +37,7 @@ class CreateCommunityController implements IController {
             community.tags = await this.communityServiceFactory.getUpdateTag().execute({ community, tags: communityTags });
         }
         
-        return CommunityPresenter.createCommunity(community);
+        return CommunityPresenter.createCommunity(community)
     }
 }
 

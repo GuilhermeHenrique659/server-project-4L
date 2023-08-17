@@ -13,8 +13,9 @@ class CreateCommunityService implements IService {
 
     public async execute(data: CreateCommunityServiceDTO): Promise<Community> {
         const { name, userId, description } = data;
+        
         const community = new Community({ name, description });
-
+        
         const communityAlreadExists = await this._communityRepository.findByName(name);
 
         if(communityAlreadExists) throw new AppError('Esse nome já está em uso');

@@ -10,7 +10,7 @@ import Tag from "@modules/tag/domain/entity/Tag";
 interface ICommunityRepository {
     findById(id: string): Promise<Community | undefined>;
     findByName(name: string): Promise<Community | undefined>;
-    findCommunityUsers(id: string): Promise<string[]>;
+    findCommunityUsers(id: string): Promise<{id: string}[]>;
     findCoverById(id: string): Promise<File | undefined>;
     findAvatarById(id: string): Promise<File | undefined>;
     findCommunityTags(id: string): Promise<Tag[]>;
