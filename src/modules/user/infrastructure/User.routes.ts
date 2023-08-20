@@ -55,6 +55,23 @@ class UserRouter implements IHandleDomain {
                 middleware: {
                     validator: this._validator.validateCreateSession()
                 }
+            },
+            {
+                method: HttpMethods.GET,
+                path: '/community',
+                controller: this._controllers.getFollowingCommunity(),
+                middleware: {
+                    isAuthenticate: true,
+                }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/follow/:communityId',
+                controller: this._controllers.getFollowCommunity(),
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this._validator.validateFollowCommunity(),
+                }
             }
         ]
     }

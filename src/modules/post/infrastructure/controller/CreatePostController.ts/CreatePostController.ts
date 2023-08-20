@@ -8,12 +8,14 @@ import Tag from "@modules/tag/domain/entity/Tag";
 import { CreatePostControllerResponse } from "./CreatePostControllerResponse";
 import PostPresenter from "../../presenter/PostPresenter";
 import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
+import ISubject from "@common/observer/ISubject";
 
 
 class CreatePostController implements IController {
     constructor(private readonly _postService: PostServiceFactory,
         private readonly _tagService: TagServiceFactory,
-        private readonly _communityService: CommunityServiceFactory) { }
+        private readonly _communityService: CommunityServiceFactory,
+        private readonly _createPostSubject: ISubject) { }
 
     public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<CreatePostControllerResponse> {
         const { content, tags, files, communityId } = payload.data;
@@ -50,8 +52,10 @@ class CreatePostController implements IController {
             }
         }
         
-        if (communityId)
+        if (communityId){
             createdPost.community = await this._communityService.getCreateCommunityPost().execute({ post: createdPost, communityId });
+            await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId: user.id });
+        }
 
         return PostPresenter.createPostPresenter(createdPost);
     }

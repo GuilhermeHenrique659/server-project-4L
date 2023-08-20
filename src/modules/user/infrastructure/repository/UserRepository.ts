@@ -41,6 +41,10 @@ class UserRepository implements IUserRepository {
         })
     }
 
+    public async hasFollowingCommunity(userCommunity: UserCommunity): Promise<boolean> {
+        return await this._dataSource.hasRelationShip(userCommunity)
+    }
+
     public async saveUserPost(userPosts: UserPosted): Promise<void> {
         await this._dataSource.createRelationship(userPosts);
     }

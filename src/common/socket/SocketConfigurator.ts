@@ -13,8 +13,12 @@ export default class SocketConfigurator {
     private _dataBase: IMemoryDataBase;
     private _listenerConfig: ListenerConfig[] = [];
 
-    constructor () {
-        this._socket = new Server(undefined,   {cors: {origin: '*'}});
+    constructor() {
+        this._socket = new Server(undefined, {
+            maxHttpBufferSize: 1e8, 
+            pingTimeout: 60000,
+            cors: { origin: '*' }
+        });
     }
 
     public static getInstance(): SocketConfigurator {
@@ -50,47 +54,49 @@ export default class SocketConfigurator {
     }
 
     public inicializerSocket() {
-        this._socket.on("connection", async (socket: Socket) => {                        
+        this._socket.on("connection", async (socket: Socket) => {
             try {
                 const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization, true) as string;
                 await this._dataBase.appendUniqueValues(userId, socket.id);
-                
+
                 this.configureListeners(socket, userId);
                 socket.on("disconnect", () => {
                     this._dataBase.delete(userId);
                 });
 
-            } catch(error) {      
+            } catch (error) {
                 socket.disconnect();
                 return
             }
         });
     }
-    
-    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, expect?: string): Promise<void> {        
-        if (to) {            
-            if (to.clientId){
+
+    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, expect?: string): Promise<void> {
+        console.log(`send message ${to?.clientId || to?.room}`);
+
+        if (to) {
+            if (to.clientId) {
                 const clientId = await this._dataBase.get<string>(to.clientId);
-                if (clientId) {                
+                if (clientId) {
                     this._socket.to(clientId).emit(event, data);
-                } 
+                }
             } else if (to.room) {
                 this._socket.to(to.room).emit(event, data)
             }
-        } else if (expect){
+        } else if (expect) {
             const clientId = await this._dataBase.get<string>(expect);
-            if (clientId) {                
+            if (clientId) {
                 this._socket.except(clientId).emit(event, data);
-            } 
+            }
         } else {
             this._socket.emit(event, data);
-        } 
+        }
     }
 
-    public set database (database: IMemoryDataBase) {
+    public set database(database: IMemoryDataBase) {
         this._dataBase = database;
     }
-    
+
     public set socketConfig(socketConfig: ListenerConfig[]) {
         this._listenerConfig.push(...socketConfig)
     }

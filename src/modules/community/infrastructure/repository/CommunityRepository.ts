@@ -24,13 +24,14 @@ class CommunityRepository implements ICommunityRepository {
         });
     }
 
-    public async findCommunityUsers(id: string): Promise<{id: string}[]> {
-        return await this._dataSource.getQueryBuilder().
+    public async findCommunityUsers(id: string): Promise<string[]> {
+        const data = await this._dataSource.getQueryBuilder().
             match('(community: Community { id: $id})', { id }).
-            optional().match('(community)').goIn('f:FOLLOW', 'user:User').
-            with('COLLECT(DISTINCT user{id: user.id}) as users').
-            return('users').
-            getOne() as {id: string}[];
+            goIn('f:FOLLOW', 'user:User').
+            return('user.id').
+            getMany();
+
+        return data;
     }
 
     public async findAvatarById(id: string): Promise<File | undefined> {
@@ -49,7 +50,7 @@ class CommunityRepository implements ICommunityRepository {
             getOne<File>('executeRead');
     }
 
-    public async getCommunityData(id: string): Promise<Community | undefined> {
+    public async getCommunityData(id: string, userId: string): Promise<Community | undefined> {        
         return await this._dataSource.getQueryBuilder().
             match('(community: Community { id: $id})', { id }).
             match('(community)').goOut('u:ADMIN', 'admin:User').
@@ -57,9 +58,20 @@ class CommunityRepository implements ICommunityRepository {
             optional().match('(community)').goOut('a:AVATAR', 'avatar:File').
             optional().match('(community)').goOut('c:COVER', 'cover:File').
             optional().match('(community)').goOut('t:TAGGED', 'comTags:Tag').
-            with('community, admin{ name: admin.name, id: admin.id, avatar: avatarUser{.*} } as admin, cover{.*} as cover, avatar{.*} as avatar, collect(DISTINCT comTags{.*}) as tags').
-            return('community{.*, avatar, cover, admin, tags}').
-            getOne<Community>('executeRead');
+            optional().match('(community)').goIn('f:FOLLOW', 'uf:User {id: $userId}', { userId: userId }).
+            with('community, admin{ name: admin.name, id: admin.id, avatar: avatarUser{.*} } as admin, cover{.*} as cover, avatar{.*} as avatar, collect(DISTINCT comTags{.*}) as tags, count(DISTINCT f) > 0 as hasFollowing').
+            return('community{.*, avatar, cover, admin, tags, hasFollowing}').
+            getOne('executeRead');
+    }
+
+    public async getFollowingCommunity(userId: string): Promise<Community[]> {
+        return await this._dataSource.getQueryBuilder().
+            match('(user: User {id: $userId})', { userId }).
+            goOut('f:FOLLOW', 'community: Community').
+            optional().match('(community)').goOut('a:AVATAR', 'avatar:File').
+            with('community, avatar{.*} as avatar').
+            return('community{.*, avatar }').
+            getMany('executeRead')
     }
 
     public async save(community: Community): Promise<Community> {

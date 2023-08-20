@@ -11,13 +11,13 @@ class GetControllerUserController implements IController {
 
     public async handle(payload: ControllerInput<{ communityId: string }>): Promise<Partial<User>[]> {
         const { data: { communityId } } = payload;
-        const users = await this.communityServiceFactory.getCommunityUsers().execute({ communityId });
+        const userIds = await this.communityServiceFactory.getCommunityUsers().execute({ communityId });
         
         const usersData = [];
-        if (users) {
-            for (const { id } of users) {                
-                const user = await this.userServiceFactory.getUserBasicInfo().execute({ userId: id });
-                const isOnline = await nodeCacheDataBase.get<Set<string>>(id);
+        if (userIds) {
+            for (const userId of userIds) {                
+                const user = await this.userServiceFactory.getUserBasicInfo().execute({ userId });
+                const isOnline = await nodeCacheDataBase.get<Set<string>>(userId);
                 if (isOnline) {
                     user.isOnline = true
                 }

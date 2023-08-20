@@ -8,7 +8,8 @@ class GetCommunityDataController implements IController {
 
     public async handle(payload: ControllerInput<{communityId: string}>): Promise<Community> {
         const { communityId } = payload.data;
-        const community = await this.communityServiceFactory.getCommunityData().execute({ communityId });
+        const userId = payload.user?.id as string
+        const community = await this.communityServiceFactory.getCommunityData().execute({ communityId, userId });
         
         return community
     }

@@ -85,6 +85,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     }
 
     public getQueryBuilder(): IQueryBuilder {
+        this._queryBuilder.clearQuery()
         return this._queryBuilder;
     }
 }

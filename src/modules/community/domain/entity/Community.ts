@@ -29,6 +29,8 @@ class Community implements IEntity {
 
     public tags?: Tag[];
 
+    public hasFollowing?: boolean;
+
     public createdAt: string;
 
     public updatedAt?: string;

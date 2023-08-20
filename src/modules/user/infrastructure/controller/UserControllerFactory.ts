@@ -4,6 +4,8 @@ import TagServiceFactory from "@modules/tag/domain/service/TagServiceFactory";
 import CreateUserSessionController from "./CreateUserSessionController.ts/CreateUserSessionController";
 import CreateUserTagsController from "./CreateUserTags/CreateUserTagsController";
 import UpdateUserAvatarController from "./CreateUserAvatar/UpdateUserAvatarController";
+import FollowCommunityController from "./FollowCommunityController/FollowCommunityController";
+import GetFollowingCommunityController from "./GetFollowingCommunityController/GetFollowingCommunityController";
 
 class UserControllerFactory {
     constructor (private readonly _userServices: UserServiceFactory,
@@ -23,6 +25,14 @@ class UserControllerFactory {
 
     public getCreateUser () {
         return new CreateUserController(this._userServices);
+    }
+
+    public getFollowCommunity() {
+        return new FollowCommunityController(this._userServices);
+    }
+
+    public getFollowingCommunity() {
+        return new GetFollowingCommunityController(this._userServices);
     }
 }
 

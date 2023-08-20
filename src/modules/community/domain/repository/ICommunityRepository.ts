@@ -10,7 +10,7 @@ import Tag from "@modules/tag/domain/entity/Tag";
 interface ICommunityRepository {
     findById(id: string): Promise<Community | undefined>;
     findByName(name: string): Promise<Community | undefined>;
-    findCommunityUsers(id: string): Promise<{id: string}[]>;
+    findCommunityUsers(id: string): Promise<string[]>;
     findCoverById(id: string): Promise<File | undefined>;
     findAvatarById(id: string): Promise<File | undefined>;
     findCommunityTags(id: string): Promise<Tag[]>;
@@ -20,7 +20,8 @@ interface ICommunityRepository {
     saveCommunityPost(communityPost: CommunityPost): Promise<void>;
     saveCommunityTag(communityTag: CommunityTag): Promise<void>;
     save(community: Community): Promise<Community>;
-    getCommunityData(id: string): Promise<Community | undefined>;
+    getCommunityData(id: string, userId: string): Promise<Community | undefined>;
+    getFollowingCommunity(userId: string): Promise<Community[]>;
     removeCommunityTag(communityTag: CommunityTag): Promise<void>
 }
 

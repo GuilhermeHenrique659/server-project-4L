@@ -12,8 +12,8 @@ class GetCommunityFeedController implements IController {
         const limit = data.limit ?? 3;
         const skip = data.page === 0 ? 0 : (data.page * limit);
         const userId = user?.id as string ;
-
-        return await this.postServiceFactory.getListCommunityPost().execute({ userId, communityId, skip, limit});
+        
+        return await this.postServiceFactory.getListCommunityPost().execute({ userId, communityId, skip, limit });
     }
 }
 

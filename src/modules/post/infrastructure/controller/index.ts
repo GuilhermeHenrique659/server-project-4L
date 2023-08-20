@@ -18,6 +18,8 @@ import { likeSubject } from "../observer/LikeSubject";
 import CommunityRepository from "@modules/community/infrastructure/repository/CommunityRepository";
 import Community from "@modules/community/domain/entity/Community";
 import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
+import { createPostSubject } from "../observer/CreatePost/CreatePostSubject";
+
 
 const postRepository = new PostRepository(GetDatasource(Post));
 const userRepository = new UserRepository(GetDatasource(User));
@@ -29,7 +31,7 @@ const fileProvider = new LocalFileProvider();
 const graphServiceFactory = new GraphServiceFactory(graphRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
 const tagServiceFactory = new TagServiceFactory(tagRepository);
-const communityServiceFactory = new CommunityServiceFactory(communityRepository, userRepository);
-const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, communityServiceFactory, likeSubject);
+const communityServiceFactory = new CommunityServiceFactory(communityRepository, userRepository, fileProvider, fileRepository);
+const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, communityServiceFactory, likeSubject, createPostSubject);
 
 export default postControllerFactory;

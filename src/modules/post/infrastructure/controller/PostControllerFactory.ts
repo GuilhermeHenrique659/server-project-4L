@@ -12,10 +12,11 @@ class PostControllerFactory {
         private tagServiceFactory: TagServiceFactory,
         private graphServiceFactory: GraphServiceFactory,
         private communityServiceFactory: CommunityServiceFactory,
-        private likeSuject: ISubject) {}
+        private likeSuject: ISubject,
+        private createPostSubject: ISubject) {}
 
     public getCreatePostController() {
-        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory, this.communityServiceFactory);
+        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory, this.communityServiceFactory, this.createPostSubject);
     }
 
     public getListPostController() {

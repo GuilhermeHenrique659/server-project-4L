@@ -6,6 +6,8 @@ class GetUserBasicInfoService implements IService {
     constructor (private readonly _userRepository: IUserRepository) {}
 
     public async execute(data: { userId: string}): Promise<Partial<User>> {
+        console.log(data);
+        
         const { name, id, avatar } = await this._userRepository.findByIdWithAvatar(data.userId) as User;
         
         return {

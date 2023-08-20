@@ -117,13 +117,13 @@ export default class QueryBuilder implements IQueryBuilder {
                 return await tx.run(this._query, this._queryParams);
             });
 
-            this._clearQuery();
             const [data] = this._normalizeData(result);
             return data;
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
             throw new Error('Query Fail');
         } finally {
+            this.clearQuery();
             session.close();
         }
     }
@@ -136,14 +136,13 @@ export default class QueryBuilder implements IQueryBuilder {
             const result = await session[execute](async tx => {
                 return await tx.run(this._query, this._queryParams);
             });
-
-            this._clearQuery();
             
             return this._normalizeData(result);
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
             throw new Error('Query Fail');
         } finally {
+            this.clearQuery();
             session.close();
         }
     }
@@ -156,17 +155,17 @@ export default class QueryBuilder implements IQueryBuilder {
             await session[execute](async tx => {
                 await tx.run(this._query, this._queryParams);
             });
-            this._clearQuery();
         } catch (err) {
             console.log(`query fail because:\n ${err}`);
             throw new Error('Query Fail');
         } finally {
+            this.clearQuery();
             session.close();
         }
     }
 
-    private _clearQuery() {
-        this._query = ''
+    public clearQuery() {
+        this._query = ' '
     }
 
     private _parseObjectInteger64(obj: any): QueryResult {

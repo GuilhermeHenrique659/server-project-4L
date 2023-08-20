@@ -8,9 +8,13 @@ import IFileProvider from "@common/provider/file/IFileProvider";
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
 import UpdateAvatarService from "./updateAvatar/UpdateAvatarSevice";
 import GetUserBasicInfoService from "./getUserBasicInfo/GetUserBasicInfoService";
+import FollowCommunityService from "./FollowCommunity/FollowComunityService";
+import ICommunityRepository from "@modules/community/domain/repository/ICommunityRepository";
+import GetFollowingCommunityService from "./GetFollowingCommunity/GetFollowingCommunityService";
 
 class UserServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
+        private readonly _communityRepository: ICommunityRepository,
         private readonly _hashProvider: IHashProvider,
         private readonly _authProvider: AuthenticateProvider,
         private readonly _fileProvider: IFileProvider,
@@ -34,6 +38,14 @@ class UserServiceFactory {
 
     public getCreateInterestUser() {
         return new CreateInterestUserService(this._userRepository);
+    }
+
+    public getFollowCommunity() {
+        return new FollowCommunityService(this._userRepository);
+    }
+
+    public getFollowingCommunity() {
+        return new GetFollowingCommunityService(this._communityRepository);
     }
 }
 

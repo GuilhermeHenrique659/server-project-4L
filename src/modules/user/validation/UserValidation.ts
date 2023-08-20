@@ -34,6 +34,12 @@ class UserValidation {
             password: Joi.string().min(8).required(),
         });
     }
+
+    public validateFollowCommunity() {
+        return Joi.object({
+            communityId: Joi.string().uuid().required(),
+        })
+    }
 }
 
 export default UserValidation

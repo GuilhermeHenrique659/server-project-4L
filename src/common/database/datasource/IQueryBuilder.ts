@@ -23,4 +23,5 @@ export default interface IQueryBuilder {
     getMany<T = any>(execute?: executeType): Promise<T[]>;
     getOne<T = any>(execute?: executeType): Promise<T | undefined>;
     setData(execute?: executeType): Promise<void>;
+    clearQuery(): void;
   }

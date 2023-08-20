@@ -30,6 +30,7 @@ class CommunityRouter implements IHandleDomain {
                 path: '/:communityId',
                 controller: this.controller.getCommunityData(),
                 middleware: {
+                    isAuthenticate: true,
                     validator: this.validator.getCommunityUsers()
                 }
             }

@@ -21,6 +21,13 @@ class PostListener implements IHandleDomain {
                 middleware: {
                     validator: this.postValidation.createLike(),
                 }
+            },
+            {
+                controller: this.postControllerFactory.getCreatePostController(),
+                path: 'post/add',
+                middleware: {
+                    validator: this.postValidation.createPostValidate(),
+                },
             }
         ]
     }
