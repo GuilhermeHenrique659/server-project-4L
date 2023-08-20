@@ -3,6 +3,8 @@ import IEntity from "@common/database/datasource/types/IEntity";
 import IQueryBuilder from "./IQueryBuilder";
 import { relationType } from "./types/RelationTypes";
 import IEdge from "./types/IEdge";
+import QueryBuilder from "./QueryBuilder";
+import database from "@config/database/DatabaseConnection";
 
 class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
@@ -85,8 +87,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     }
 
     public getQueryBuilder(): IQueryBuilder {
-        this._queryBuilder.clearQuery()
-        return this._queryBuilder;
+        return new QueryBuilder(database.getDriver())
     }
 }
 

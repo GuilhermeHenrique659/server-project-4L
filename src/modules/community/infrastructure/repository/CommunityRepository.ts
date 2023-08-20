@@ -25,13 +25,11 @@ class CommunityRepository implements ICommunityRepository {
     }
 
     public async findCommunityUsers(id: string): Promise<string[]> {
-        const data = await this._dataSource.getQueryBuilder().
+        return await this._dataSource.getQueryBuilder().
             match('(community: Community { id: $id})', { id }).
             goIn('f:FOLLOW', 'user:User').
             return('user.id').
             getMany();
-
-        return data;
     }
 
     public async findAvatarById(id: string): Promise<File | undefined> {

@@ -37,8 +37,10 @@ export default class SocketConfigurator {
 
                     if (listener.room && !response.error) {
                         const [roomName, roomId] = listener.room.split(':')
-                        socket.join(`${roomName}${data[roomId]}`);
-                        await this._dataBase.appendUniqueValues(`${roomName}${data[roomId]}`, userId);
+                        const room = `${roomName}${data[roomId]}`
+                        await socket.join(room);
+                        await this._dataBase.set(`room:${userId}`, room);
+                        await this.emit('user/enter', { data: userId }, { room });
                     }
                     callback(response);
                 } catch (error) {
@@ -60,8 +62,10 @@ export default class SocketConfigurator {
                 await this._dataBase.appendUniqueValues(userId, socket.id);
 
                 this.configureListeners(socket, userId);
-                socket.on("disconnect", () => {
+                socket.on("disconnect", async () => {
                     this._dataBase.delete(userId);
+                    const room = await this._dataBase.get<string>(`room:${userId}`);
+                    await this.emit('user/out', { data: userId }, { room });
                 });
 
             } catch (error) {
