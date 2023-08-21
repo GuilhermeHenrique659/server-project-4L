@@ -4,7 +4,7 @@ import
 node_modules
 plugins
 logs
-uploads
+uploads/*
 dist
 .env
 .vscode
