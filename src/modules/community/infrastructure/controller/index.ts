@@ -29,7 +29,7 @@ const authProvider = new AuthenticateProvider();
 const fileProvider = new LocalFileProvider();
 const controllerServiceFactory = new CommunityServiceFactory(communityRepository, userRepository, fileProvider, fileRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
-const userServiceFactory = new UserServiceFactory(userRepository, mockHashProvider, authProvider, fileProvider, fileRepository);
+const userServiceFactory = new UserServiceFactory(userRepository, communityRepository, mockHashProvider, authProvider, fileProvider, fileRepository);
 const tagServiceFactory = new TagServiceFactory(tagRepository);
 const communityControllerFactory = new CommunityControllerFactory(controllerServiceFactory, postServiceFactory, userServiceFactory, tagServiceFactory);
 export default communityControllerFactory;
