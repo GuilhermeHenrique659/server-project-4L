@@ -6,6 +6,7 @@ import CreateUserTagsController from "./CreateUserTags/CreateUserTagsController"
 import UpdateUserAvatarController from "./CreateUserAvatar/UpdateUserAvatarController";
 import FollowCommunityController from "./FollowCommunityController/FollowCommunityController";
 import GetFollowingCommunityController from "./GetFollowingCommunityController/GetFollowingCommunityController";
+import UnfollowCommunityController from "./UnfollowCommunityController/UnfollowCommunityController";
 
 class UserControllerFactory {
     constructor (private readonly _userServices: UserServiceFactory,
@@ -33,6 +34,10 @@ class UserControllerFactory {
 
     public getFollowingCommunity() {
         return new GetFollowingCommunityController(this._userServices);
+    }
+
+    public getUnfollowCommunity() {
+        return new UnfollowCommunityController(this._userServices);
     }
 }
 

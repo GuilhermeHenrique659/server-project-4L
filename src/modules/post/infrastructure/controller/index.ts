@@ -19,6 +19,9 @@ import CommunityRepository from "@modules/community/infrastructure/repository/Co
 import Community from "@modules/community/domain/entity/Community";
 import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
 import { createPostSubject } from "../observer/CreatePost/CreatePostSubject";
+import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
+import MockHashProvider from "@common/provider/hash/MockHashProvider";
+import AuthenticateProvider from "@common/provider/auth/AuthenticateProvider";
 
 
 const postRepository = new PostRepository(GetDatasource(Post));
@@ -28,10 +31,13 @@ const communityRepository = new CommunityRepository(GetDatasource(Community));
 const graphRepository = new GraphRepository(GetDatasource(Graph));
 const fileRepository = new FileRepository(GetDatasource(File));
 const fileProvider = new LocalFileProvider();
+const hashProvider = new MockHashProvider();
+const authProvider = new AuthenticateProvider();
 const graphServiceFactory = new GraphServiceFactory(graphRepository);
 const postServiceFactory = new PostServiceFactory(userRepository, postRepository, fileRepository, fileProvider);
 const tagServiceFactory = new TagServiceFactory(tagRepository);
+const userServiceFactory = new UserServiceFactory(userRepository, communityRepository, hashProvider, authProvider, fileProvider, fileRepository);
 const communityServiceFactory = new CommunityServiceFactory(communityRepository, userRepository, fileProvider, fileRepository);
-const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, communityServiceFactory, likeSubject, createPostSubject);
+const postControllerFactory = new PostControllerFactory(postServiceFactory, tagServiceFactory, graphServiceFactory, communityServiceFactory, likeSubject, createPostSubject, userServiceFactory);
 
 export default postControllerFactory;

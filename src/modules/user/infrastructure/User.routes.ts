@@ -72,6 +72,15 @@ class UserRouter implements IHandleDomain {
                     isAuthenticate: true,
                     validator: this._validator.validateFollowCommunity(),
                 }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/unfollow/:communityId',
+                controller: this._controllers.getUnfollowCommunity(),
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this._validator.validateFollowCommunity(),
+                }
             }
         ]
     }

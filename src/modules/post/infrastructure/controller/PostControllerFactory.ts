@@ -6,6 +6,8 @@ import ListRecommendPostController from "./ListRecommendPostController/ListRecoo
 import CreatePostLikedController from "./CreateUserLikedController.ts/CreateUserLikedController";
 import ISubject from "@common/observer/ISubject";
 import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
+import IUserRepository from "@modules/user/domain/repository/IUserRepository";
+import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 
 class PostControllerFactory {
     constructor (private postServiceFactory: PostServiceFactory,
@@ -13,10 +15,11 @@ class PostControllerFactory {
         private graphServiceFactory: GraphServiceFactory,
         private communityServiceFactory: CommunityServiceFactory,
         private likeSuject: ISubject,
-        private createPostSubject: ISubject) {}
+        private createPostSubject: ISubject,
+        private userServices: UserServiceFactory) {}
 
     public getCreatePostController() {
-        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory, this.communityServiceFactory, this.createPostSubject);
+        return new CreatePostController(this.postServiceFactory, this.tagServiceFactory, this.communityServiceFactory, this.userServices, this.createPostSubject);
     }
 
     public getListPostController() {

@@ -11,6 +11,8 @@ import GetUserBasicInfoService from "./getUserBasicInfo/GetUserBasicInfoService"
 import FollowCommunityService from "./FollowCommunity/FollowComunityService";
 import ICommunityRepository from "@modules/community/domain/repository/ICommunityRepository";
 import GetFollowingCommunityService from "./GetFollowingCommunity/GetFollowingCommunityService";
+import UnfollowCommunityService from "./UnfollowCommunity/UnfollowCommunityService";
+import ValidateUserCommunityService from "./validateUserCommunity/ValidateUserCommunityService";
 
 class UserServiceFactory {
     constructor (private readonly _userRepository: IUserRepository,
@@ -46,6 +48,14 @@ class UserServiceFactory {
 
     public getFollowingCommunity() {
         return new GetFollowingCommunityService(this._communityRepository);
+    }
+
+    public getUnfollowCommunity() {
+        return new UnfollowCommunityService(this._userRepository);
+    }
+
+    public getValidateUserCommunity() {
+        return new ValidateUserCommunityService(this._userRepository);
     }
 }
 

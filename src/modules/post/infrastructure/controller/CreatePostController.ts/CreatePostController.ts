@@ -9,21 +9,23 @@ import { CreatePostControllerResponse } from "./CreatePostControllerResponse";
 import PostPresenter from "../../presenter/PostPresenter";
 import CommunityServiceFactory from "@modules/community/domain/service/CommunityServiceFactory";
 import ISubject from "@common/observer/ISubject";
+import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 
 
 class CreatePostController implements IController {
     constructor(private readonly _postService: PostServiceFactory,
         private readonly _tagService: TagServiceFactory,
         private readonly _communityService: CommunityServiceFactory,
+        private readonly _userServices: UserServiceFactory,
         private readonly _createPostSubject: ISubject) { }
 
     public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<CreatePostControllerResponse> {
         const { content, tags, files, communityId } = payload.data;
-        const user = payload.user
+        const userId = payload.user?.id as string
 
-        if (!user) throw new AppError('Usuario não autenticado');
+        await this._userServices.getValidateUserCommunity().execute({ communityId, userId });
 
-        const createdPost = await this._postService.getCreatePost().execute({ content, userId: user.id });
+        const createdPost = await this._postService.getCreatePost().execute({ content, userId });
 
         if (tags) {
             createdPost.tags = []
@@ -54,7 +56,7 @@ class CreatePostController implements IController {
         
         if (communityId){
             createdPost.community = await this._communityService.getCreateCommunityPost().execute({ post: createdPost, communityId });
-            await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId: user.id });
+            await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId });
         }
 
         return PostPresenter.createPostPresenter(createdPost);

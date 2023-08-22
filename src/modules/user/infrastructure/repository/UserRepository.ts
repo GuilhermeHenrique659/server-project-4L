@@ -79,6 +79,10 @@ class UserRepository implements IUserRepository {
             delete('file').
             setData('executeWrite');
     }
+
+    public async removeCommunity(userCommunity: Required<UserCommunity>): Promise<void> {
+        await this._dataSource.removeRelationShip(userCommunity.from, userCommunity.to, userCommunity.label);
+    }
 }
 
 export default UserRepository;

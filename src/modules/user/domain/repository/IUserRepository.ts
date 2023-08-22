@@ -16,6 +16,7 @@ interface IUserRepository {
     saveUserPost(userPosts: UserPosted): Promise<void>;
     saveUserCommunity(userCommunity: UserCommunity): Promise<void>
     removeAvatar(userId: string): Promise<void>;
+    removeCommunity(userCommunity: UserCommunity): Promise<void>;
 }
 
 export default IUserRepository;
