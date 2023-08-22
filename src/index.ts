@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { nodeCacheDataBase } from "@common/database/MemoryDataBase";
 import Application from "@common/server/Application";
 import database from "@config/database/DatabaseConnection";

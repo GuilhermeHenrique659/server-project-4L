@@ -23,12 +23,12 @@ export default class Application {
         this._database = database;
     }
 
-    private setUpAllHandles(){
+    private setupAllHandles(){
         const handles = [...this._routes, ...this._sockets];
         handles.forEach(handle => handle.setUpHandles());
     }
 
-    private setUpRoutes(){
+    private setupRoutes(){
         if (this._routes.length){
             this._routes.forEach(route => {
                 const handle = route.handle as RouterConfigurator
@@ -41,27 +41,27 @@ export default class Application {
         }
     }
 
-    private setUpSocket() {
+    private setupSocket() {
         const config = SocketConfigurator.getInstance();
         config.attachServer(this._server);
         config.database = this._cacheDataBase;
         config.inicializerSocket();
     }
 
-    private setUpApplication(){
+    private setupApplication(){
         this._app.use(express.json({limit: '20mb'}));
         this._app.use('/file', express.static('uploads'))
         this._app.use(cors());
-        this.setUpRoutes();
+        this.setupRoutes();
     }
 
     public async run() {
         console.log('Starting server...')
         await this._database.isConnect()
-        this.setUpAllHandles()
-        this.setUpApplication();
+        this.setupAllHandles()
+        this.setupApplication();
         this._server = http.createServer(this._app);
-        this.setUpSocket()
+        this.setupSocket()
         
         this._server.listen(ConfigEnv.getPort(), ConfigEnv.getIpServer(), () => {
             console.log(`Server start in the port: ${ConfigEnv.getPort()}`);

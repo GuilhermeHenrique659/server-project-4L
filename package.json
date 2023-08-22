@@ -37,6 +37,7 @@
     "jsonwebtoken": "^9.0.0",
     "neo4j-driver": "^5.8.0",
     "node-cache": "^5.1.2",
+    "reflect-metadata": "^0.1.13",
     "socket.io": "^4.6.1",
     "uuid": "^9.0.0"
   }

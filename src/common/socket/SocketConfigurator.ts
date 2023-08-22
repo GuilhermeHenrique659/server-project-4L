@@ -3,7 +3,6 @@ import http from 'http'
 import { ListenerConfig } from "@common/types/ListernerConfig";
 import SocketAdapterController from "@common/adapter/controller/SocketAdapterController";
 import { EmmitterToType } from "@common/types/EmitterToType";
-import AuthenticateMiddleware from "@common/middleware/AuthenticateMiddleware";
 import MiddlewareAdapter from "@common/middleware/MidllewareAdapter";
 
 export default class SocketConfigurator {
@@ -39,8 +38,6 @@ export default class SocketConfigurator {
                         const [roomName, roomId] = listener.room.split(':')
                         const room = `${roomName}${data[roomId]}`
                         await socket.join(room);
-                        await this._dataBase.set(`room:${userId}`, room);
-                        await this.emit('user/enter', { data: userId }, { room });
                     }
                     callback(response);
                 } catch (error) {
@@ -61,11 +58,12 @@ export default class SocketConfigurator {
                 const userId = MiddlewareAdapter.isAuthenticate(socket.handshake.headers.authorization, true) as string;
                 await this._dataBase.appendUniqueValues(userId, socket.id);
 
+                await this.emit('user/enter', { data: userId });
+
                 this.configureListeners(socket, userId);
                 socket.on("disconnect", async () => {
                     this._dataBase.delete(userId);
-                    const room = await this._dataBase.get<string>(`room:${userId}`);
-                    await this.emit('user/out', { data: userId }, { room });
+                    await this.emit('user/out', { data: userId });
                 });
 
             } catch (error) {
@@ -76,8 +74,6 @@ export default class SocketConfigurator {
     }
 
     public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, expect?: string): Promise<void> {
-        console.log(`send message ${to?.clientId || to?.room}`);
-
         if (to) {
             if (to.clientId) {
                 const clientId = await this._dataBase.get<string>(to.clientId);
