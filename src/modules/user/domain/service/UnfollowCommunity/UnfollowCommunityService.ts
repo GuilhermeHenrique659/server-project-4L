@@ -5,9 +5,12 @@ import Community from "@modules/community/domain/entity/Community";
 import UserCommunity from "../../entity/UserCommunity";
 import IUserRepository from "../../repository/IUserRepository";
 import AppError from "@common/errors/AppError";
+import { inject, injectable } from "tsyringe";
+import { Repository } from "@common/emun/InjectionsEmun";
 
+@injectable()
 class UnfollowCommunityService implements IService {
-    constructor (private readonly _userRepository: IUserRepository) {}
+    constructor(@inject(Repository.UserRepository) private readonly _userRepository: IUserRepository) { }
 
     public async execute({ communityId, userId }: UnfollowCommunityServiceDTO): Promise<void> {
         const user = new User({ id: userId });
@@ -19,7 +22,7 @@ class UnfollowCommunityService implements IService {
             throw new AppError('Usuario já não está seguindo');
         }
 
-        await this._userRepository.removeCommunity(userCommunity);       
+        await this._userRepository.removeCommunity(userCommunity);
     }
 }
 

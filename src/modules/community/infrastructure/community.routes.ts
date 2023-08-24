@@ -1,16 +1,15 @@
 import RouterConfigurator from "@common/routes/RouterConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
-import CommunityControllerFactory from "./controller/CommunityControllerFactory";
 import CommunityValidator, { communityValidator } from "../validation/CommunityValidator";
 import { HttpMethods } from "@common/emun/HttpMethod";
 import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
-import communityControllerFactory from "./controller";
+import GetCommunityDataController from "./controller/GetCommunityDataController/GetCommunityDataController";
+import CreateCommunityController from "./controller/CreateCommunityController/CreateCommunityController";
 
 
 class CommunityRouter implements IHandleDomain {
-    constructor (private router: RouterConfigurator,
-        private controller: CommunityControllerFactory,
-        private validator: CommunityValidator) {}
+    constructor(private router: RouterConfigurator,
+        private validator: CommunityValidator) { }
 
     setUpHandles(): void {
         this.router.prefix = 'community';
@@ -18,7 +17,7 @@ class CommunityRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/',
-                controller: this.controller.getCreateCommunity(),
+                controller: CreateCommunityController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this.validator.createCommunityValidator(),
@@ -28,7 +27,7 @@ class CommunityRouter implements IHandleDomain {
             {
                 method: HttpMethods.GET,
                 path: '/:communityId',
-                controller: this.controller.getCommunityData(),
+                controller: GetCommunityDataController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this.validator.getCommunityUsers()
@@ -43,5 +42,5 @@ class CommunityRouter implements IHandleDomain {
     }
 }
 
-const communityRouter = new CommunityRouter(new RouterConfigurator(), communityControllerFactory, communityValidator);
+const communityRouter = new CommunityRouter(new RouterConfigurator(), communityValidator);
 export default communityRouter;

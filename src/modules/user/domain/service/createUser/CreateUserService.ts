@@ -4,17 +4,20 @@ import { CreateUserServiceDTO } from "./CreateUserServiceDTO";
 import AppError from "@common/errors/AppError";
 import IUserRepository from "../../repository/IUserRepository";
 import IHashProvider from "@common/provider/hash/IHashProvider";
+import { inject, injectable } from "tsyringe";
+import { Provider, Repository } from "@common/emun/InjectionsEmun";
 
+@injectable()
 class CreateUserService implements IService {
-    constructor (
-        private readonly _userRepository: IUserRepository,
-        private readonly _hashProvider: IHashProvider
-    ) {}
+    constructor(
+        @inject(Repository.UserRepository) private readonly _userRepository: IUserRepository,
+        @inject(Provider.HashProvider) private readonly _hashProvider: IHashProvider
+    ) { }
 
     public async execute(data: serviceDTOType<CreateUserServiceDTO>): Promise<serviceOutputType<User>> {
         const emailExists = await this._userRepository.findByEmail(data.email);
-        
-        if (emailExists) {            
+
+        if (emailExists) {
             throw new AppError('email already used', 403)
         }
 

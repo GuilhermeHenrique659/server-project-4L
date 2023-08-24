@@ -1,14 +1,14 @@
 import IController from "@common/controller/IController";
 import AppError from "@common/errors/AppError";
 import { ControllerInput } from "@common/types/ControllerIO";
-import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFactory";
-import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory";
+import ListRecommendPostService from "@modules/post/domain/service/ListRecommendPostService/ListRecommendPostService";
 import { ListRecommendPostControllerDTO } from "./ListRecommendPostControllerDTO";
 import Post from "@modules/post/domain/entity/Post";
+import { injectable } from "tsyringe";
 
+@injectable()
 class ListRecommendPostController implements IController {
-    constructor (private graphServices: GraphServiceFactory, 
-        private postServices: PostServiceFactory){}
+    constructor(private readonly _listPostService: ListRecommendPostService) { }
 
     public async handle(payload: ControllerInput<ListRecommendPostControllerDTO>): Promise<Post[]> {
         const { user, data } = payload;
@@ -18,11 +18,10 @@ class ListRecommendPostController implements IController {
 
         if (!user) throw new AppError("User não autenticado");
 
-        //await this.graphServices.getGenerateGraph().execute({ name: `socialGraph-${user.id}` });
 
-        const posts = await this.postServices.getListPost().execute({ userId: user.id, limit, skip });
+        const posts = await this._listPostService.execute({ userId: user.id, limit, skip });
 
-        if (posts.length === 0) return await this.postServices.getListPost().execute({ userId: user.id, limit, skip, useAlgorithmic: false });
+        if (posts.length === 0) return await this._listPostService.execute({ userId: user.id, limit, skip, useAlgorithmic: false });
 
         return posts
     }

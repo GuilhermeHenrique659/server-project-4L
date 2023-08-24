@@ -5,18 +5,20 @@ import User from "../../entity/User";
 import UserCommunity from "../../entity/UserCommunity";
 import IUserRepository from "../../repository/IUserRepository";
 import AppError from "@common/errors/AppError";
+import { inject, injectable } from "tsyringe";
+import { Repository } from "@common/emun/InjectionsEmun";
 
-
+@injectable()
 class FollowCommunityService implements IService {
-    constructor (private readonly _userRepository: IUserRepository) {}
+    constructor(@inject(Repository.UserRepository) private readonly _userRepository: IUserRepository) { }
 
-    public async execute({ communityId, userId }: FollowCommunityServiceDTO): Promise<void> {        
+    public async execute({ communityId, userId }: FollowCommunityServiceDTO): Promise<void> {
         const community = new Community({ id: communityId });
         const user = new User({ id: userId });
 
         const userCommunity = new UserCommunity(user, community);
 
-        if(await this._userRepository.hasFollowingCommunity(userCommunity)) 
+        if (await this._userRepository.hasFollowingCommunity(userCommunity))
             throw new AppError('Usuario já está seguindo');
 
         await this._userRepository.saveUserCommunity(userCommunity);

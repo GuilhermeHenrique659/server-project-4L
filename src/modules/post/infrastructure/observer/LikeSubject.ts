@@ -1,11 +1,13 @@
 import IObserver from "@common/observer/IObserver";
 import ISubject from "@common/observer/ISubject";
 import { LikeDataType } from "./LikeDataType";
+import { singleton } from "tsyringe";
 
+@singleton()
 class LikeSubject implements ISubject {
     private observers: Set<IObserver>;
 
-    constructor (){
+    constructor() {
         this.observers = new Set<IObserver>();
     }
 
@@ -13,11 +15,11 @@ class LikeSubject implements ISubject {
         this.observers.add(observer);
     }
 
-    public async notify(data?: LikeDataType): Promise<void> {        
+    public async notify(data?: LikeDataType): Promise<void> {
         this.observers.forEach(async (observer) => {
             await observer.update(data);
         })
     }
 }
 
-export const likeSubject = new LikeSubject();
+export default LikeSubject;

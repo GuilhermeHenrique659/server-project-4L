@@ -1,9 +1,10 @@
 import IController from "@common/controller/IController"
 import { MiddlewareInputType } from "./middlewareInputType";
+import { Type } from "./DecoractorType";
 
-export type ListenerConfig = { 
+export type ListenerConfig = {
     path: string;
-    controller: IController;
+    controller: Type<IController>;
     middleware?: Pick<MiddlewareInputType, 'validator'>
     room?: string;
 }

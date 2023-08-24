@@ -1,28 +1,27 @@
 import IHandleDomain from "@common/types/IHandleDomain";
-import CommunityControllerFactory from "./controller/CommunityControllerFactory";
 import CommunityValidator, { communityValidator } from "../validation/CommunityValidator";
-import communityControllerFactory from "./controller";
 import SocketConfigurator from "@common/socket/SocketConfigurator";
+import GetCommunityFeedController from "./controller/GetCommunityFeedController/GetCommunityFeedController";
+import GetControllerUserController from "./controller/GetCommunityUsersController/GetCommunityUsersController";
 
 
 class CommunityListener implements IHandleDomain {
-    constructor (private socket: SocketConfigurator,
-        private controller: CommunityControllerFactory,
-        private validator: CommunityValidator) {}
+    constructor(private socket: SocketConfigurator,
+        private validator: CommunityValidator) { }
 
     setUpHandles(): void {
         this.socket.socketConfig = [
             {
                 path: 'community/list',
                 room: 'community/:communityId',
-                controller: this.controller.getCommunityFeed(),
+                controller: GetCommunityFeedController,
                 middleware: {
                     validator: this.validator.getCommunityFeed()
                 }
             },
             {
                 path: 'community/list-users',
-                controller: this.controller.getCommunityUsers(),
+                controller: GetControllerUserController,
                 middleware: {
                     validator: this.validator.getCommunityUsers(),
                 }
@@ -35,5 +34,5 @@ class CommunityListener implements IHandleDomain {
     }
 }
 
-const communityListener = new CommunityListener(SocketConfigurator.getInstance(), communityControllerFactory, communityValidator);
+const communityListener = new CommunityListener(SocketConfigurator.getInstance(), communityValidator);
 export default communityListener;

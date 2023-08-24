@@ -1,15 +1,17 @@
 import IController from "@common/controller/IController";
 import { ControllerInput } from "@common/types/ControllerIO";
-import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
+import UnfollowCommunityService from "@modules/user/domain/service/UnfollowCommunity/UnfollowCommunityService";
+import { injectable } from "tsyringe";
 
+@injectable()
 class UnfollowCommunityController implements IController {
-    constructor (private readonly userServices: UserServiceFactory) {}
+    constructor(private readonly _unfollowCommunityService: UnfollowCommunityService) { }
 
     public async handle(payload: ControllerInput<{ communityId: string }>): Promise<boolean> {
         const userId = payload.user?.id as string;
         const { communityId } = payload.data;
 
-        await this.userServices.getUnfollowCommunity().execute({ communityId, userId });
+        await this._unfollowCommunityService.execute({ communityId, userId });
 
         return true;
     }

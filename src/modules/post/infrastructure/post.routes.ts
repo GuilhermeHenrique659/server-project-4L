@@ -1,17 +1,16 @@
 import RouterConfigurator from "@common/routes/RouterConfigurator";
-import SocketConfigurator from "@common/socket/SocketConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
-import PostControllerFactory from "./controller/PostControllerFactory";
-import postControllerFactory from "./controller";
 import { HttpMethods } from "@common/emun/HttpMethod";
 import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
 import PostValidation from "../validation/PostValidation";
+import CreatePostLikedController from "./controller/CreateUserLikedController.ts/CreateUserLikedController";
+import ListRecommendPostController from "./controller/ListRecommendPostController/ListRecoomendPostController";
+import CreatePostController from "./controller/CreatePostController.ts/CreatePostController";
 
 
 class PostRouter implements IHandleDomain {
-        constructor (private readonly router: RouterConfigurator,
-            private readonly postControllerFactory: PostControllerFactory,
-            private readonly postValidation: PostValidation) {}
+    constructor(private readonly router: RouterConfigurator,
+        private readonly postValidation: PostValidation) { }
 
 
     setUpHandles(): void {
@@ -20,7 +19,7 @@ class PostRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/',
-                controller: this.postControllerFactory.getCreatePostController(),
+                controller: CreatePostController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this.postValidation.createPostValidate(),
@@ -30,7 +29,7 @@ class PostRouter implements IHandleDomain {
             {
                 method: HttpMethods.GET,
                 path: '/',
-                controller: this.postControllerFactory.getListPostController(),
+                controller: ListRecommendPostController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this.postValidation.listPost()
@@ -40,7 +39,7 @@ class PostRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/:postId/like',
-                controller: this.postControllerFactory.getCreateLikeController(),
+                controller: CreatePostLikedController,
                 middleware: {
                     validator: this.postValidation.createLike(),
                     isAuthenticate: true
@@ -55,6 +54,6 @@ class PostRouter implements IHandleDomain {
     }
 }
 
-const postRouter = new PostRouter(new RouterConfigurator(), postControllerFactory, new PostValidation());
+const postRouter = new PostRouter(new RouterConfigurator(), new PostValidation());
 
 export default postRouter;

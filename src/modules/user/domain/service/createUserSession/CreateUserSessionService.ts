@@ -5,11 +5,15 @@ import { CreateUserSessionDTO, CreateUserSessionDTOOutput } from "./CreateUserSe
 import AppError from "@common/errors/AppError";
 import AuthenticateProvider from "@common/provider/auth/AuthenticateProvider";
 import UserPresenter from "@modules/user/infrastructure/presenter/UserPresenter";
+import { inject, injectable } from "tsyringe";
+import { Provider, Repository } from "@common/emun/InjectionsEmun";
 
+@injectable()
 class CreateUserSessionService implements IService {
-    constructor (private readonly _userRepository: IUserRepository, 
-        private readonly _hashProvider: IHashProvider,
-        private readonly _authProvider: AuthenticateProvider){}
+    constructor(
+        @inject(Repository.UserRepository) private readonly _userRepository: IUserRepository,
+        @inject(Provider.HashProvider) private readonly _hashProvider: IHashProvider,
+        private readonly _authProvider: AuthenticateProvider) { }
 
     public async execute(data: serviceDTOType<CreateUserSessionDTO>): Promise<serviceOutputType<CreateUserSessionDTOOutput>> {
         const { email, password } = data;

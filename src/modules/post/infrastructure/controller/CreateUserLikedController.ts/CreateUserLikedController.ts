@@ -1,26 +1,29 @@
 import IController from "@common/controller/IController";
 import AppError from "@common/errors/AppError";
-import ISubject from "@common/observer/ISubject";
 import { ControllerInput } from "@common/types/ControllerIO";
-import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory";
-import { broadcastLikeObserver } from "../../observer/BroadcastLikeObserver";
+import { injectable } from "tsyringe";
+import CreatePostLikedService from "@modules/post/domain/service/CreatePostLikedService/CreatePostLikedService";
+import LikeSubject from "../../observer/LikeSubject";
+import BroadcastLikeObserver from "../../observer/BroadcastLikeObserver";
 
+@injectable()
 class CreatePostLikedController implements IController {
-    constructor (private readonly postService: PostServiceFactory,
-        private readonly likeSubject: ISubject){}
+    constructor(private readonly _createPostLiked: CreatePostLikedService,
+        private readonly _likeSubject: LikeSubject,
+        private readonly _broadcastLikeObserver: BroadcastLikeObserver) { }
 
-    public async handle({ data, user }: ControllerInput<{ postId: string}>): Promise<boolean> {
+    public async handle({ data, user }: ControllerInput<{ postId: string }>): Promise<boolean> {
         const { postId } = data;
 
         if (!user) throw new AppError('Usuario não autenticado');
 
-        await this.postService.getCreateLiked().execute({
+        await this._createPostLiked.execute({
             userId: user?.id,
             postId
         });
 
-        this.likeSubject.attach(broadcastLikeObserver);
-        this.likeSubject.notify({
+        this._likeSubject.attach(this._broadcastLikeObserver);
+        this._likeSubject.notify({
             userId: user.id,
             postId
         })

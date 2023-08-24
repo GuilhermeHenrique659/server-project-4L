@@ -1,14 +1,15 @@
 import IController from "@common/controller/IController";
 import { ControllerInput } from "@common/types/ControllerIO";
-import UserServiceFactory from "@modules/user/domain/service/UserServiceFactory";
 import { CreateUserSessionDTO } from "@modules/user/domain/service/createUserSession/CreateUserSessionDTO";
+import CreateUserSessionService from "@modules/user/domain/service/createUserSession/CreateUserSessionService";
+import { injectable } from "tsyringe";
 
-
+@injectable()
 class CreateUserSessionController implements IController {
-    constructor (private userServices: UserServiceFactory) {}
+    constructor(private createUserSession: CreateUserSessionService) { }
 
     public async handle(payload: ControllerInput<CreateUserSessionDTO>) {
-        const token = this.userServices.getCreateSession().execute(payload.data);
+        const token = this.createUserSession.execute(payload.data);
 
         return token
     }

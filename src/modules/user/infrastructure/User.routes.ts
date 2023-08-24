@@ -2,19 +2,22 @@ import { HttpMethods } from "@common/emun/HttpMethod";
 import RouterConfigurator from "@common/routes/RouterConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
 import UserValidation from "../validation/UserValidation";
-import UserControllerFactory from "./controller/UserControllerFactory";
-import { userControllerFactory } from "./controller";
 import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
+import CreateUserSessionController from "./controller/CreateUserSessionController.ts/CreateUserSessionController";
+import CreateUserController from "./controller/CreateUserController/CreateUserController";
+import CreateUserTagsController from "./controller/CreateUserTags/CreateUserTagsController";
+import UpdateUserAvatarController from "./controller/CreateUserAvatar/UpdateUserAvatarController";
+import GetFollowingCommunityController from "./controller/GetFollowingCommunityController/GetFollowingCommunityController";
+import FollowCommunityController from "./controller/FollowCommunityController/FollowCommunityController";
+import UnfollowCommunityController from "./controller/UnfollowCommunityController/UnfollowCommunityController";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
     private _validator: UserValidation;
-    private _controllers: UserControllerFactory
 
-    constructor(router: RouterConfigurator, validator: UserValidation, controllers: UserControllerFactory) {
+    constructor(router: RouterConfigurator, validator: UserValidation) {
         this._routerConfigurator = router;
         this._validator = validator
-        this._controllers = controllers
     }
 
     public setUpHandles(): void {
@@ -23,7 +26,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/',
-                controller: this._controllers.getCreateUser(),
+                controller: CreateUserController,
                 middleware: {
                     validator: this._validator.validateCreateUser(),
                 },
@@ -31,7 +34,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.PATCH,
                 path: '/tags',
-                controller: this._controllers.getCreateUserTags(),
+                controller: CreateUserTagsController,
                 status: HttpReturnMethods.SUCCESS,
                 middleware: {
                     isAuthenticate: true,
@@ -41,7 +44,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.PATCH,
                 path: '/avatar',
-                controller: this._controllers.getUpdateUserAvatar(),
+                controller: UpdateUserAvatarController,
                 status: HttpReturnMethods.SUCCESS,
                 middleware: {
                     isAuthenticate: true,
@@ -51,7 +54,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.POST,
                 path: '/login',
-                controller: this._controllers.getCreateSession(),
+                controller: CreateUserSessionController,
                 middleware: {
                     validator: this._validator.validateCreateSession()
                 }
@@ -59,7 +62,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.GET,
                 path: '/community',
-                controller: this._controllers.getFollowingCommunity(),
+                controller: GetFollowingCommunityController,
                 middleware: {
                     isAuthenticate: true,
                 }
@@ -67,7 +70,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.PATCH,
                 path: '/follow/:communityId',
-                controller: this._controllers.getFollowCommunity(),
+                controller: FollowCommunityController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this._validator.validateFollowCommunity(),
@@ -76,7 +79,7 @@ class UserRouter implements IHandleDomain {
             {
                 method: HttpMethods.PATCH,
                 path: '/unfollow/:communityId',
-                controller: this._controllers.getUnfollowCommunity(),
+                controller: UnfollowCommunityController,
                 middleware: {
                     isAuthenticate: true,
                     validator: this._validator.validateFollowCommunity(),
@@ -84,9 +87,9 @@ class UserRouter implements IHandleDomain {
             }
         ]
     }
-    get handle(): RouterConfigurator  {
+    get handle(): RouterConfigurator {
         return this._routerConfigurator
     }
 }
 
-export const userRouter = new UserRouter(new RouterConfigurator(), new UserValidation(), userControllerFactory)
+export const userRouter = new UserRouter(new RouterConfigurator(), new UserValidation())
