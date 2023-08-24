@@ -9,17 +9,18 @@ import User from "@modules/user/domain/entity/User";
 class GraphRepository implements IGraphRepository {
     constructor (private readonly _dataSource: IDataSource<Graph>) {}
 
-    public async generateNewGraph(graphname: string, relations: IEdge[]): Promise<Graph> {
+    public async generateNewGraph(graphname: string): Promise<Graph> {
         const graph = new Graph({ name: graphname});
         await this._dataSource.getQueryBuilder().query(
             `CALL gds.graph.project(
                 $graphname,
                 {
-                  ${User.name}: {},
-                  ${Tag.name}: {},
-                  ${Post.name}: {}
+                  User: {},
+                  Post: {},
+                  Tag: {},
+                  Community: {}
                 },
-                [${relations.map(relation => `'${relation.label}'`)}]
+                [ 'TAGGED', 'LIKED', 'FOLLOW', 'INTEREST' ]
               )`, { graphname }
         ).setData('executeWrite');
 

@@ -11,6 +11,10 @@ export default class ConfigEnv {
         return process.env.IP ?? '0.0.0.0'
     }
 
+    static getUseDBAlgorithmic() {
+        return !!process.env.DB_ALGO ?? false;
+    }
+
     static getDBConnection() {        
         return {
             conn: process.env.DB_CONNECTION ?? 'neo4j://localhost:7687',

@@ -12,6 +12,7 @@ export default class ExpressAdapterController {
         return async (request: Request, response: Response) => {            
             const controllerInput: ControllerInput<any> = { data: { ...request.body, ...request.params, ...request.query}}
             try {
+                
                 MiddlewareAdapter.run(middleware, controllerInput, request.headers.authorization);
 
                 const controllerOutput = await controller.handle(controllerInput);

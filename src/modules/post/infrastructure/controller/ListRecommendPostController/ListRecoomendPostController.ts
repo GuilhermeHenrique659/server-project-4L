@@ -4,12 +4,13 @@ import { ControllerInput } from "@common/types/ControllerIO";
 import GraphServiceFactory from "@modules/graph/domain/service/GraphServiceFactory";
 import PostServiceFactory from "@modules/post/domain/service/PostServiceFactory";
 import { ListRecommendPostControllerDTO } from "./ListRecommendPostControllerDTO";
+import Post from "@modules/post/domain/entity/Post";
 
 class ListRecommendPostController implements IController {
     constructor (private graphServices: GraphServiceFactory, 
         private postServices: PostServiceFactory){}
 
-    public async handle(payload: ControllerInput<ListRecommendPostControllerDTO>): Promise<any> {
+    public async handle(payload: ControllerInput<ListRecommendPostControllerDTO>): Promise<Post[]> {
         const { user, data } = payload;
         const limit = data.limit ?? 3;
         const skip = data.page === 0 ? 0 : (data.page * limit)
@@ -17,9 +18,13 @@ class ListRecommendPostController implements IController {
 
         if (!user) throw new AppError("User não autenticado");
 
-        //await this.graphServices.getGenerateGraph().execute({ name: user.id });
+        //await this.graphServices.getGenerateGraph().execute({ name: `socialGraph-${user.id}` });
 
-        return await this.postServices.getListPost().execute({ userId: user.id, limit, skip });
+        const posts = await this.postServices.getListPost().execute({ userId: user.id, limit, skip });
+
+        if (posts.length === 0) return await this.postServices.getListPost().execute({ userId: user.id, limit, skip, useAlgorithmic: false });
+
+        return posts
     }
 }
 

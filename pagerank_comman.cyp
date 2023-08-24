@@ -38,6 +38,15 @@ RETURN gds.util.asNode(nodeId).id AS id, score
 ORDER BY score DESC, id ASC
 
 
+//recomandation withou page rank
+            MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
+            OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
+            MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
+            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post)
+            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            ORDER BY commonTags
+
+
 //Personalised PageRank user by post filter
 MATCH (user:User  {name: 'teste'})
 CALL gds.pageRank.stream('socialGraph', {

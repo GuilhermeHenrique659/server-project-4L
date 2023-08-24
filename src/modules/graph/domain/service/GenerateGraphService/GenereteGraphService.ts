@@ -16,18 +16,11 @@ class GenerateGraphService implements IService {
     public async execute(data: { name: string }): Promise<Graph> {
         const { name } = data
 
-        const relations = [
-            new UserTags(new User({}), new Tag({})),
-            new UserPosted(new User({}), new Post({})),
-            new UserLiked(new User({}), new Post({})),
-            new PostTags(new Post({}), new Tag({})),
-        ];
-
         try {
-            return await this._graphRepository.generateNewGraph(name, relations);
+            return await this._graphRepository.generateNewGraph(name);
         } catch {
             await this._graphRepository.dropGraph(name);
-            return await this._graphRepository.generateNewGraph(name, relations);
+            return await this._graphRepository.generateNewGraph(name);
         } 
     }
 }

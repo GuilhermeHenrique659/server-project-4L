@@ -1,4 +1,5 @@
 import IDataSource from "@common/database/datasource/IDataSource";
+import IQueryBuilder from "@common/database/datasource/IQueryBuilder";
 import Post from "@modules/post/domain/entity/Post";
 import PostFiles from "@modules/post/domain/entity/PostFiles";
 import PostTags from "@modules/post/domain/entity/PostTags";
@@ -49,9 +50,22 @@ export default class PostRepository implements IPostRepository {
             getMany<Post>('executeRead')
     }
 
-    public async listRecommendPost(userId: string, skip: number, limit: number): Promise<Post[]> {
-        return await this._dataSource.getQueryBuilder().
-            match('(post:Post)').goIn('p:POSTED', 'userPost:User').
+    private recomendationAlgorithmic(userId: string): IQueryBuilder{
+        return this._dataSource.getQueryBuilder().query(`
+            MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
+            OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
+            MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
+            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post)
+            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            ORDER BY commonTags
+        `)
+    }
+
+    public async listRecommendPost(userId: string, skip: number, limit: number, useAlgorithmic = true): Promise<Post[]> {
+        const query = useAlgorithmic ? this.recomendationAlgorithmic(userId) : this._dataSource.getQueryBuilder()
+
+        return await query.
+            match('(post)').goIn('p:POSTED', 'userPost:User').
             optional().match('(userPost)').goOut('r:AVATAR', 'avatar:File').
             optional().match('(post)').goOut('t:TAGGED', 'postTags:Tag').
             optional().match('(post)').goOut('f:HAS', 'file:File').
