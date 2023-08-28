@@ -27,6 +27,8 @@ class ControllerMidleware {
                 if (err.retriable) {
                     const response = await Injection.resolve(controller, fileProvider, tx).handle(payload);
 
+                    await tx.commit();
+
                     return response
                 } else {
                     console.log(`Query fail: ${err.message}`);
