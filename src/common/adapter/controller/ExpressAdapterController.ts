@@ -19,7 +19,6 @@ export default class ExpressAdapterController {
 
                 const controllerOutput = await ControllerMidleware.run(controller, controllerInput);
                 return response.status(statusResponse).json({ data: controllerOutput });
-
             } catch (err) {
 
                 if (err instanceof AppError) {

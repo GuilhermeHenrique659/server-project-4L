@@ -24,7 +24,7 @@ import { Type } from "@common/types/DecoractorType";
 import { Transaction } from "neo4j-driver";
 
 class Injection {
-    static resolve<T>(target: Type<T>, tx?: Transaction): T {
+    static resolve<T>(target: Type<T>, fileProvider: IFileProvider, tx?: Transaction): T {
         if (tx) {
             container.register<IUserRepository>(Repository.UserRepository, { useValue: new UserRepository(GetDatasource(User, tx)) });
             container.register<IPostRepository>(Repository.PostRepository, { useValue: new PostRepository(GetDatasource(Post, tx)) });
@@ -33,7 +33,7 @@ class Injection {
             container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag, tx)) });
         }
         container.register<IHashProvider>(Provider.HashProvider, MockHashProvider);
-        container.register<IFileProvider>(Provider.FileProvider, LocalFileProvider);
+        container.register<IFileProvider>(Provider.FileProvider, { useValue: fileProvider });
 
         return container.resolve(target);
     }

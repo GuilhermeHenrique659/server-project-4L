@@ -1,6 +1,6 @@
 import IController from "@common/controller/IController";
-import AppError from "@common/errors/AppError";
 import Injection from "@common/helpers/InjectionContainer";
+import LocalFileProvider from "@common/provider/file/LocalFileProvider";
 import { ControllerInput, ControllerOutput } from "@common/types/ControllerIO";
 import { Type } from "@common/types/DecoractorType";
 import database from "@config/database/DatabaseConnection";
@@ -12,16 +12,20 @@ class ControllerMidleware {
         const session = database.getDriver().session();
         const tx = session.beginTransaction();
 
+        const fileProvider = new LocalFileProvider();
         try {
-            const response = await Injection.resolve(controller, tx).handle(payload);
+
+            const response = await Injection.resolve(controller, fileProvider, tx).handle(payload);
 
             await tx.commit();
 
             return response;
         } catch (err) {
+            await fileProvider.rollback();
+
             if (err instanceof Neo4jError) {
                 if (err.retriable) {
-                    const response = await Injection.resolve(controller, tx).handle(payload);
+                    const response = await Injection.resolve(controller, fileProvider, tx).handle(payload);
 
                     return response
                 } else {
