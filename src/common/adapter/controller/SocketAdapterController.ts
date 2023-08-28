@@ -1,10 +1,10 @@
 import IController from "@common/controller/IController";
 import AppError from "@common/errors/AppError";
 import ValidationError from "@common/errors/ValidationError";
+import ControllerMidleware from "@common/middleware/ControllerMidleware";
 import MiddlewareAdapter from "@common/middleware/MidllewareAdapter";
 import { Type } from "@common/types/DecoractorType";
 import { MiddlewareInputType } from "@common/types/middlewareInputType";
-import { container } from "tsyringe";
 
 export default class SocketAdapterController {
     static async adapter(controller: Type<IController>, { user, ...data }: any, middleware?: MiddlewareInputType) {
@@ -13,7 +13,7 @@ export default class SocketAdapterController {
         try {
             MiddlewareAdapter.run(middleware, controllerInput);
 
-            const controllerOutput = await container.resolve(controller).handle(controllerInput);
+            const controllerOutput = await ControllerMidleware.run(controller, controllerInput);
 
             return { data: controllerOutput }
         } catch (err) {
@@ -23,11 +23,12 @@ export default class SocketAdapterController {
                 }
             } else if (err instanceof ValidationError) {
                 return {
-                    error: err,
+                    error: {
+                        message: err.message,
+                        context: err.context,
+                    },
                 }
             } else {
-                console.log(err);
-
                 return {
                     message: 'internal server error',
                     error: err

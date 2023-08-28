@@ -2,12 +2,12 @@ import IController from "@common/controller/IController";
 import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
 import AppError from "@common/errors/AppError";
 import ValidationError from "@common/errors/ValidationError";
+import ControllerMidleware from "@common/middleware/ControllerMidleware";
 import MiddlewareAdapter from "@common/middleware/MidllewareAdapter";
 import { ControllerInput } from "@common/types/ControllerIO";
 import { Type } from "@common/types/DecoractorType";
 import { MiddlewareInputType } from "@common/types/middlewareInputType";
 import { Request, Response } from "express";
-import container from "@common/helpers/InjectionContainer";
 
 export default class ExpressAdapterController {
     static adapter(controller: Type<IController>, statusResponse: HttpReturnMethods, middleware?: MiddlewareInputType) {
@@ -17,7 +17,7 @@ export default class ExpressAdapterController {
 
                 MiddlewareAdapter.run(middleware, controllerInput, request.headers.authorization);
 
-                const controllerOutput = await container.resolve(controller).handle(controllerInput);
+                const controllerOutput = await ControllerMidleware.run(controller, controllerInput);
                 return response.status(statusResponse).json({ data: controllerOutput });
 
             } catch (err) {

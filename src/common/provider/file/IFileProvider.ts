@@ -6,5 +6,5 @@ export type fileData = {
 
 export default interface IFileProvider {
     save(files: fileData[]): Promise<string[]>;
-    remove(filename: string): Promise<void> 
+    remove(filename: string): Promise<void>;
 }

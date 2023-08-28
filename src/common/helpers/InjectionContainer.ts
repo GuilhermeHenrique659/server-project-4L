@@ -20,14 +20,26 @@ import ITagRepository from "@modules/tag/domain/repository/ITagRepository";
 import LocalFileProvider from "@common/provider/file/LocalFileProvider";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import { Provider, Repository } from "@common/emun/InjectionsEmun";
+import { Type } from "@common/types/DecoractorType";
+import { Transaction } from "neo4j-driver";
 
-container.register<IUserRepository>(Repository.UserRepository, { useValue: new UserRepository(GetDatasource(User)) });
-container.register<IPostRepository>(Repository.PostRepository, { useValue: new PostRepository(GetDatasource(Post)) });
-container.register<ICommunityRepository>(Repository.CommunityRepository, { useValue: new CommunityRepository(GetDatasource(Community)) });
-container.register<IFileRepository>(Repository.FileRepository, { useValue: new FileRepository(GetDatasource(File)) });
-container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag)) });
+class Injection {
+    static resolve<T>(target: Type<T>, tx?: Transaction): T {
+        if (tx) {
+            container.register<IUserRepository>(Repository.UserRepository, { useValue: new UserRepository(GetDatasource(User, tx)) });
+            container.register<IPostRepository>(Repository.PostRepository, { useValue: new PostRepository(GetDatasource(Post, tx)) });
+            container.register<ICommunityRepository>(Repository.CommunityRepository, { useValue: new CommunityRepository(GetDatasource(Community, tx)) });
+            container.register<IFileRepository>(Repository.FileRepository, { useValue: new FileRepository(GetDatasource(File, tx)) });
+            container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag, tx)) });
+        }
+        container.register<IHashProvider>(Provider.HashProvider, MockHashProvider);
+        container.register<IFileProvider>(Provider.FileProvider, LocalFileProvider);
 
-container.register<IHashProvider>(Provider.HashProvider, MockHashProvider);
-container.register<IFileProvider>(Provider.FileProvider, LocalFileProvider);
+        return container.resolve(target);
+    }
+}
 
-export default container;
+
+export default Injection;
+
+

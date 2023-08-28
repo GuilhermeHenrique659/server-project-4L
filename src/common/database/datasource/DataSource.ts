@@ -4,7 +4,6 @@ import IQueryBuilder from "./IQueryBuilder";
 import { relationType } from "./types/RelationTypes";
 import IEdge from "./types/IEdge";
 import QueryBuilder from "./QueryBuilder";
-import database from "@config/database/DatabaseConnection";
 
 class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
@@ -49,9 +48,16 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     }
 
     public async update(entity: E): Promise<E> {
-        const { label, id, ...data } = entity;
+        const { label, id, createdAt, ...data } = entity;
+
         data.updatedAt = new Date().toISOString();
-        return await this._queryBuilder.match(`(e:${label})`).where(`e.id = $id`, { id }).set(data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
+
+        return await this._queryBuilder.
+            match(`(e:${label ?? this._label})`).
+            where(`e.id = $id`, { id }).
+            set(data).
+            return(`e{.*, label: labels(e)[0]}`).
+            getOne() as E;
     }
 
     public async create(entity: E): Promise<E> {
@@ -63,7 +69,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     public async createRelationship(edge: Required<IEdge>): Promise<void> {
         const { from, to, label } = edge;
         if (!from.id && !to.id) return;
-        
+
         await this._queryBuilder
             .match(`(f:${from.label}), (t:${to.label})`)
             .where('f.id = $fid AND t.id = $tid', {
@@ -87,7 +93,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     }
 
     public getQueryBuilder(): IQueryBuilder {
-        return new QueryBuilder(database.getDriver())
+        return new QueryBuilder(this._queryBuilder.getTx())
     }
 }
 

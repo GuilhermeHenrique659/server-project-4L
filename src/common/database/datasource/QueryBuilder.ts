@@ -1,20 +1,24 @@
-import { Driver, QueryResult } from 'neo4j-driver';
+import { QueryResult, Transaction } from 'neo4j-driver';
 import IQueryBuilder, { direction } from '@common/database/datasource/IQueryBuilder';
 import { executeType } from '@common/database/datasource//types/executeTypes';
 
 export default class QueryBuilder implements IQueryBuilder {
     private _query: string = '';
     private _queryParams: object;
-    private _driver: Driver;
+    private _tx: Transaction;
 
-    constructor(drive: Driver) {
-        this._driver = drive;
+    constructor(tx: Transaction) {
+        this._tx = tx;
+    }
+
+    public getTx() {
+        return this._tx;
     }
 
     public query(query: string, params?: object) {
         this._query += query;
         this._queryParams = { ...params };
-        
+
         return this;
     }
 
@@ -53,7 +57,7 @@ export default class QueryBuilder implements IQueryBuilder {
     }
 
     public set(properties: object): IQueryBuilder {
-        this._query += `SET ${Object.entries(properties).map(([key, value]) => `${key} = $${key}`).join(', ')} `;
+        this._query += `SET ${Object.entries(properties).map(([key, value]) => `e.${key} = $${key}`).join(', ')} `;
         this._queryParams = { ...this._queryParams, ...properties };
         return this;
     }
@@ -111,57 +115,27 @@ export default class QueryBuilder implements IQueryBuilder {
     public async getOne<T = any>(execute: executeType = 'executeRead'): Promise<T | undefined> {
         console.log(this.build());
 
-        const session = this._driver.session();
-        try {
-            const result = await session[execute](async tx => {
-                return await tx.run(this._query, this._queryParams);
-            });
+        const result = await this._tx.run(this._query, this._queryParams);
+        this.clearQuery();
 
-            const [data] = this._normalizeData(result);
-            return data;
-        } catch (err) {
-            console.log(`query fail because:\n ${err}`);
-            throw new Error('Query Fail');
-        } finally {
-            this.clearQuery();
-            session.close();
-        }
+        const [data] = this._normalizeData(result);
+        return data;
     }
 
     public async getMany<T = any>(execute: executeType = 'executeRead'): Promise<T[]> {
         console.log(this.build());
 
-        const session = this._driver.session();
-        try {
-            const result = await session[execute](async tx => {
-                return await tx.run(this._query, this._queryParams);
-            });
-            
-            return this._normalizeData(result);
-        } catch (err) {
-            console.log(`query fail because:\n ${err}`);
-            throw new Error('Query Fail');
-        } finally {
-            this.clearQuery();
-            session.close();
-        }
+        const result = await this._tx.run(this._query, this._queryParams);
+        this.clearQuery();
+
+        return this._normalizeData(result);
     }
 
     public async setData(execute: executeType = 'executeWrite'): Promise<void> {
         if (execute !== 'executeWrite') throw Error('Use write transaction');
 
-        const session = this._driver.session();
-        try {
-            await session[execute](async tx => {
-                await tx.run(this._query, this._queryParams);
-            });
-        } catch (err) {
-            console.log(`query fail because:\n ${err}`);
-            throw new Error('Query Fail');
-        } finally {
-            this.clearQuery();
-            session.close();
-        }
+        await this._tx.run(this._query, this._queryParams);
+        this.clearQuery();
     }
 
     public clearQuery() {
@@ -194,7 +168,7 @@ export default class QueryBuilder implements IQueryBuilder {
                 const value = record.get(field);
                 data = this._normalizeValue(value);
             });
-            
+
             return data as any;
         }
         );
@@ -204,7 +178,7 @@ export default class QueryBuilder implements IQueryBuilder {
         if (Array.isArray(value)) {
             return value.map((item) => this._normalizeValue(item));
         }
-        
+
         return value
     }
 
