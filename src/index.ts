@@ -9,7 +9,11 @@ import postRouter from "@modules/post/infrastructure/post.routes";
 import tagRouter from "@modules/tag/infrastructure/Tag.routes";
 import { userRouter } from "@modules/user/infrastructure/User.routes";
 import express from "express";
+import commentListener from "@modules/comments/infrastructure/comment.listener";
 
 
-const app = new Application(express(), nodeCacheDataBase, database, [userRouter, postRouter, tagRouter, communityRouter], [postListener, communityListener])
+const app = new Application(express(), nodeCacheDataBase, database,
+    [userRouter, postRouter, tagRouter, communityRouter],
+    [postListener, communityListener, commentListener]
+)
 app.run()

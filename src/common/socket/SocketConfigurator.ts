@@ -14,7 +14,7 @@ export default class SocketConfigurator {
 
     constructor() {
         this._socket = new Server(undefined, {
-            maxHttpBufferSize: 1e8, 
+            maxHttpBufferSize: 1e8,
             pingTimeout: 60000,
             cors: { origin: '*' }
         });
@@ -35,9 +35,7 @@ export default class SocketConfigurator {
                     const response = await SocketAdapterController.adapter(listener.controller, data, listener.middleware);
 
                     if (listener.room && !response.error) {
-                        const [roomName, roomId] = listener.room.split(':')
-                        const room = `${roomName}${data[roomId]}`
-                        await socket.join(room);
+                        await this.configureRoom(socket, listener.room, data);
                     }
                     callback(response);
                 } catch (error) {
@@ -47,6 +45,19 @@ export default class SocketConfigurator {
         });
     }
 
+
+    private async configureRoom(socket: Socket, room: string, data: Record<string, any>) {
+        for (const clientRoom of socket.rooms) {
+            if (clientRoom !== socket.id) {
+                const [roomName] = room.split('/');
+                const [clientRoomName] = clientRoom.split('/')
+                if (roomName === clientRoomName) socket.leave(clientRoom);
+            }
+        }
+
+        const [roomName, roomId] = room.split(':');
+        await socket.join(`${roomName}${data[roomId]}`);
+    }
 
     public attachServer(server: http.Server) {
         this._socket.attach(server);

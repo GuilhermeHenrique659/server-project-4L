@@ -3,10 +3,12 @@ import Tag from "@modules/tag/domain/entity/Tag";
 import PostTags from "../entity/PostTags";
 import UserLiked from "@modules/user/domain/entity/UserLiked";
 import PostFiles from "../entity/PostFiles";
+import PostComment from "../entity/PostComment";
 
 interface IPostRepository {
     save(post: Post): Promise<Post>;
     savePostTag(postTags: PostTags): Promise<void>;
+    savePostComment(postComment: PostComment): Promise<void>;
     listRecommendPost(userId: string, page: number, limit: number, useAlgorithmic?: boolean): Promise<Post[]>;
     findById(id: string): Promise<Post | undefined>;
     hasUserLiked(like: UserLiked): Promise<boolean>;

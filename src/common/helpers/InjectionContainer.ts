@@ -17,11 +17,13 @@ import IPostRepository from "@modules/post/domain/repository/IPostRepository";
 import ICommunityRepository from "@modules/community/domain/repository/ICommunityRepository";
 import IFileRepository from "@modules/file/domain/repository/IFileRepository";
 import ITagRepository from "@modules/tag/domain/repository/ITagRepository";
-import LocalFileProvider from "@common/provider/file/LocalFileProvider";
 import IFileProvider from "@common/provider/file/IFileProvider";
 import { Provider, Repository } from "@common/emun/InjectionsEmun";
 import { Type } from "@common/types/DecoractorType";
 import { Transaction } from "neo4j-driver";
+import ICommentRepository from "@modules/comments/domain/repository/ICommentRepository";
+import CommentRepository from "@modules/comments/infrastructure/repository/CommentRepository";
+import Comment from "@modules/comments/domain/entity/Comment";
 
 class Injection {
     static resolve<T>(target: Type<T>, fileProvider: IFileProvider, tx?: Transaction): T {
@@ -31,6 +33,7 @@ class Injection {
             container.register<ICommunityRepository>(Repository.CommunityRepository, { useValue: new CommunityRepository(GetDatasource(Community, tx)) });
             container.register<IFileRepository>(Repository.FileRepository, { useValue: new FileRepository(GetDatasource(File, tx)) });
             container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag, tx)) });
+            container.register<ICommentRepository>(Repository.CommentRepository, { useValue: new CommentRepository(GetDatasource(Comment, tx)) });
         }
         container.register<IHashProvider>(Provider.HashProvider, MockHashProvider);
         container.register<IFileProvider>(Provider.FileProvider, { useValue: fileProvider });

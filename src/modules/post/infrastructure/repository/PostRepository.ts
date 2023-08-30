@@ -1,6 +1,7 @@
 import IDataSource from "@common/database/datasource/IDataSource";
 import IQueryBuilder from "@common/database/datasource/IQueryBuilder";
 import Post from "@modules/post/domain/entity/Post";
+import PostComment from "@modules/post/domain/entity/PostComment";
 import PostFiles from "@modules/post/domain/entity/PostFiles";
 import PostTags from "@modules/post/domain/entity/PostTags";
 import IPostRepository from "@modules/post/domain/repository/IPostRepository";
@@ -15,6 +16,10 @@ export default class PostRepository implements IPostRepository {
 
     public async savePostTag(postTags: PostTags): Promise<void> {
         await this._dataSource.createRelationship(postTags);
+    }
+
+    public async savePostComment(postComment: PostComment): Promise<void> {
+        await this._dataSource.createRelationship(postComment);
     }
 
     public async findById(id: string): Promise<Post | undefined> {
@@ -35,7 +40,7 @@ export default class PostRepository implements IPostRepository {
 
     public async listPostCommunity(userId: string, skip: number, limit: number, communityId: string): Promise<Post[]> {
         return await this._dataSource.getQueryBuilder().
-            match('(community:Community { id: $id})', { id: communityId}).goOut('i:INSIDE', 'post:Post').
+            match('(community:Community { id: $id})', { id: communityId }).goOut('i:INSIDE', 'post:Post').
             match('(post)').goIn('p:POSTED', 'userPost:User').
             optional().match('(userPost)').goOut('r:AVATAR', 'avatar:File').
             optional().match('(post)').goOut('t:TAGGED', 'postTags:Tag').
@@ -50,7 +55,7 @@ export default class PostRepository implements IPostRepository {
             getMany<Post>('executeRead')
     }
 
-    private recomendationAlgorithmic(userId: string): IQueryBuilder{
+    private recomendationAlgorithmic(userId: string): IQueryBuilder {
         return this._dataSource.getQueryBuilder().query(`
             MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
             OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)

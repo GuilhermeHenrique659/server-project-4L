@@ -9,8 +9,8 @@ class CommunityAdmin implements IEdge {
 
     public readonly to?: User;
 
-    constructor(from?: Community, to?: User){
-        this.label = 'ADMIN',
+    constructor(from?: Community, to?: User) {
+        this.label = 'ADMIN';
         this.from = from;
         this.to = to;
     }
