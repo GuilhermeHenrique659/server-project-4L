@@ -28,11 +28,11 @@ class UserRepository implements IUserRepository {
 
     public async findByIdWithAvatar(id: string): Promise<User | undefined> {
         return await this._dataSource.getQueryBuilder()
-        .match('(u:User {id: $id})', { id })
-        .optional().match('(u)')
-        .goOut('r:AVATAR', 'file:File')
-        .return('u{.*, avatar: file{.*}}')
-        .getOne<User>('executeRead');
+            .match('(u:User {id: $id})', { id })
+            .optional().match('(u)')
+            .goOut('r:AVATAR', 'file:File')
+            .return('u{.*, label: labels(u)[0],avatar: file{.*}}')
+            .getOne<User>('executeRead');
     }
 
     public async findById(id: string): Promise<User | undefined> {
@@ -52,7 +52,7 @@ class UserRepository implements IUserRepository {
     public async saveTag(userTags: UserTags): Promise<void> {
         await this._dataSource.createRelationship(userTags);
     }
-    
+
     public async saveAvatar(userAvatar: UserAvatar): Promise<void> {
         await this._dataSource.createRelationship(userAvatar);
     }
@@ -63,7 +63,7 @@ class UserRepository implements IUserRepository {
 
     public async findUserTag(userId: string, tagId: string): Promise<boolean> {
         const data = await this._dataSource.getQueryBuilder().
-            match('(user:User {id: $userId})', { userId}).
+            match('(user:User {id: $userId})', { userId }).
             goOut('r:INTEREST', `tag:Tag {id: '${tagId}'}`).
             return('r').
             getMany('executeRead');

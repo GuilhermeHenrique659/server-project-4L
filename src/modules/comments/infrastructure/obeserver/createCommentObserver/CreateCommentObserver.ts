@@ -6,7 +6,7 @@ import { CreateCommentDTO } from "./CreateCommentDTO";
 @singleton()
 class CreateCommentObserver implements IObserver {
     public async update({ comment, postId }: CreateCommentDTO): Promise<void> {
-        SocketConfigurator.getInstance().emit('comment/added', comment, { room: `comment/${postId}` });
+        SocketConfigurator.getInstance().emit('comment/added', { data: comment }, { room: `comment/${postId}` });
     }
 }
 

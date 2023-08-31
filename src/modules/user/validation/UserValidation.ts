@@ -1,6 +1,20 @@
 import Joi from "joi"
 
 class UserValidation {
+    public userTypeValidate() {
+        return Joi.object({
+            context: Joi.object({
+                id: Joi.string().uuid().required(),
+                name: Joi.string().required(),
+                hasContent: Joi.boolean(),
+            }).required(),
+            userData: Joi.object({
+                id: Joi.string().uuid().required(),
+                name: Joi.string().required(),
+                avatar: Joi.string(),
+            }).required(),
+        })
+    }
 
     public validateCreateUser() {
         return Joi.object({

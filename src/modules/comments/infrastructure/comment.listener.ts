@@ -1,6 +1,6 @@
 import SocketConfigurator from "@common/socket/SocketConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
-import CommentValidator from "./validation/CommentValidation";
+import CommentValidator from "../validation/CommentValidation";
 import CreateCommentController from "./controller/createCommentController/CreateCommentController";
 import ListCommentController from "./controller/listCommentController/ListCommentController";
 
@@ -10,7 +10,7 @@ class CommentListener implements IHandleDomain {
     setUpHandles(): void {
         this.socket.socketConfig = [
             {
-                path: 'comment/create',
+                path: 'comment/add',
                 controller: CreateCommentController,
                 middleware: {
                     validator: this.validator.createCommentValidate()

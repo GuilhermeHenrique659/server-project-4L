@@ -1,6 +1,6 @@
-import Comment from "@modules/comments/domain/entity/Comment";
+import { CreateCommentControllerOutputDTO } from "../../controller/createCommentController/CreateCommentControllerDTO";
 
 export type CreateCommentDTO = {
     postId: string;
-    comment: Comment;
+    comment: CreateCommentControllerOutputDTO;
 };

@@ -20,11 +20,18 @@ export default class SocketConfigurator {
         });
     }
 
-    public static getInstance(): SocketConfigurator {
+    static getInstance(): SocketConfigurator {
         if (!SocketConfigurator.instance) {
             SocketConfigurator.instance = new SocketConfigurator();
         }
         return SocketConfigurator.instance;
+    }
+
+    private async _getExceptClientId(expect?: string) {
+        if (!expect) return;
+
+        const clientId = await this._dataBase.get<Set<string>>(expect);
+        if (clientId) return Array.from(clientId)[0];
     }
 
     private configureListeners(socket: Socket, userId: string) {
@@ -92,10 +99,18 @@ export default class SocketConfigurator {
                     this._socket.to(clientId).emit(event, data);
                 }
             } else if (to.room) {
-                this._socket.to(to.room).emit(event, data)
+                if (expect) {
+                    const clientId = await this._getExceptClientId(expect);
+                    if (clientId) {
+                        this._socket.to(to.room).except(clientId).emit(event, data);
+                    }
+                }
+                else {
+                    this._socket.to(to.room).emit(event, data);
+                }
             }
         } else if (expect) {
-            const clientId = await this._dataBase.get<string>(expect);
+            const clientId = await this._getExceptClientId(expect);
             if (clientId) {
                 this._socket.except(clientId).emit(event, data);
             }

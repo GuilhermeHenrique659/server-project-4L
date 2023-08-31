@@ -2,8 +2,7 @@ import IController from "@common/controller/IController";
 import { ControllerInput, ControllerOutput } from "@common/types/ControllerIO";
 import CreateCommentService from "@modules/comments/domain/service/createCommentService/CreateCommentService";
 import { injectable } from "tsyringe";
-import { CreateCommentControllerInputDTO } from "./CreateCommentControllerDTO";
-import Comment from "@modules/comments/domain/entity/Comment";
+import { CreateCommentControllerInputDTO, CreateCommentControllerOutputDTO } from "./CreateCommentControllerDTO";
 import CreateCommentSubject from "../../obeserver/createCommentObserver/CreateCommentSubject";
 import CreateCommentObserver from "../../obeserver/createCommentObserver/CreateCommentObserver";
 
@@ -13,7 +12,7 @@ class CreateCommentController implements IController {
         private readonly createCommentSubject: CreateCommentSubject,
         private readonly createCommentObserver: CreateCommentObserver) { }
 
-    public async handle({ data, user }: ControllerInput<CreateCommentControllerInputDTO>): Promise<ControllerOutput<Comment>> {
+    public async handle({ data, user }: ControllerInput<CreateCommentControllerInputDTO>): Promise<ControllerOutput<CreateCommentControllerOutputDTO>> {
         const { content, postId } = data;
         const userId = user?.id as string;
 

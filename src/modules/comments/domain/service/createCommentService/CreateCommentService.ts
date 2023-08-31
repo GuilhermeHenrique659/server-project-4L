@@ -7,30 +7,34 @@ import AppError from "@common/errors/AppError";
 import Comment from "../../entity/Comment";
 import PostComment from "@modules/post/domain/entity/PostComment";
 import CommentUser from "../../entity/CommentUser";
-import User from "@modules/user/domain/entity/User";
 import ICommentRepository from "../../repository/ICommentRepository";
+import IUserRepository from "@modules/user/domain/repository/IUserRepository";
+import CommentPresenter from "@modules/comments/infrastructure/presenter/CommentPresenter";
 
 @injectable()
 class CreateCommentService implements IService {
-    constructor(@inject(Repository.PostRepository) private readonly postRepository: IPostRepository,
-        @inject(Repository.CommentRepository) private readonly commentRepository: ICommentRepository) { }
+    constructor(@inject(Repository.PostRepository) private readonly _postRepository: IPostRepository,
+        @inject(Repository.CommentRepository) private readonly _commentRepository: ICommentRepository,
+        @inject(Repository.UserRepository) private readonly _userRepository: IUserRepository) { }
 
-    public async execute(data: CreateCOmmentServiceDTO): Promise<Comment> {
+    public async execute(data: CreateCOmmentServiceDTO) {
         const { userId, postId, content } = data;
-        const post = await this.postRepository.findById(postId);
+        const post = await this._postRepository.findById(postId);
+        const user = await this._userRepository.findByIdWithAvatar(userId);
 
-        if (!post) throw new AppError('Post não encontrado');
+        if (!post || !user) throw new AppError(`Post ou Usuario não encontrado`);
 
         const comment = new Comment({ content });
 
         const postComment = new PostComment(post, comment);
-        const commentUser = new CommentUser(comment, new User({ id: userId }));
+        const commentUser = new CommentUser(comment, user);
 
-        await this.commentRepository.save(comment);
-        await this.commentRepository.saveCommentUser(commentUser);
-        await this.postRepository.savePostComment(postComment);
+        await this._commentRepository.save(comment);
+        await this._commentRepository.saveCommentUser(commentUser);
+        await this._postRepository.savePostComment(postComment);
+        comment.user = user
 
-        return comment;
+        return CommentPresenter.createComment(comment);;
     }
 }
 

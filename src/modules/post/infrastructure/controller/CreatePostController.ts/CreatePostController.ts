@@ -64,10 +64,6 @@ class CreatePostController implements IController {
         }
 
         if (communityId) {
-            console.log(this._createPostObserver);
-            console.log(this._createPostSubject);
-
-
             createdPost.community = await this._createCommunityPost.execute({ post: createdPost, communityId });
             this._createPostSubject.attach(this._createPostObserver);
             await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId });
