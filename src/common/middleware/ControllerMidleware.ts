@@ -11,6 +11,7 @@ class ControllerMidleware {
     static async run(controller: Type<IController>, payload: ControllerInput<any>): Promise<ControllerOutput<any>> {
         const session = database.getDriver().session();
         const tx = session.beginTransaction();
+        console.log(`Run Controller ${controller.name}`);
 
         const fileProvider = new LocalFileProvider();
         try {

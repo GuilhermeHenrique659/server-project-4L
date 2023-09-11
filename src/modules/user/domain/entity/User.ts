@@ -32,9 +32,9 @@ class User implements IEntity {
 
     public updatedAt?: string;
 
-    constructor (props: Partial<User>) {
+    constructor(props: Partial<User>) {
         Object.assign(this, props);
-        
+
         if (!props.id) {
             this.id = uuidv4()
         }

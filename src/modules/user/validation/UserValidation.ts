@@ -16,6 +16,32 @@ class UserValidation {
         })
     }
 
+    public validateUpdateUser() {
+        return Joi.object({
+            name: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string(),
+            passwordToConfirm: Joi.string().required(),
+            avatar: Joi.object({
+                data: Joi.string().required(),
+                type: Joi.string().required(),
+            }),
+            tags: Joi.array().items(
+                Joi.object({
+                    id: Joi.string(),
+                    description: Joi.string().min(3),
+                    createdAt: Joi.string(),
+                }).or('description', 'id')
+            )
+        })
+    }
+
+    public getUser() {
+        return Joi.object({
+            id: Joi.string().uuid().required()
+        })
+    }
+
     public validateCreateUser() {
         return Joi.object({
             name: Joi.string().required(),

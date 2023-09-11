@@ -5,13 +5,14 @@ import UserTags from "../../entity/UserTags";
 import AppError from "@common/errors/AppError";
 import { inject, injectable } from "tsyringe";
 import { Repository } from "@common/emun/InjectionsEmun";
+import Tag from "@modules/tag/domain/entity/Tag";
 
 
 @injectable()
 class CreateInterestUserService implements IService {
     constructor(@inject(Repository.UserRepository) private readonly _userRepository: IUserRepository) { }
 
-    public async execute(data: serviceDTOType<CreateInterestUserServiceDTO>): Promise<void> {
+    public async execute(data: serviceDTOType<CreateInterestUserServiceDTO>): Promise<Tag | undefined> {
         const { userId, tag } = data;
 
         const user = await this._userRepository.findById(userId);
@@ -24,6 +25,7 @@ class CreateInterestUserService implements IService {
 
         const userTags = new UserTags(user, tag)
         await this._userRepository.saveTag(userTags);
+        return tag;
     }
 }
 

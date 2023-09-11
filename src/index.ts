@@ -17,4 +17,9 @@ const app = new Application(express(), nodeCacheDataBase, database,
     [userRouter, postRouter, tagRouter, communityRouter],
     [postListener, communityListener, commentListener, userListener]
 );
-app.run();
+try {
+    app.run();
+} catch (err) {
+    console.log(`server stop, reson ${err}, retry start`);
+    app.run();
+}

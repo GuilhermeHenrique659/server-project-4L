@@ -4,36 +4,32 @@ import neo4j, { Driver } from 'neo4j-driver'
 export default class DataBase {
     private _driver: Driver;
 
-    constructor (private _connectionConfig: DataBaseConnectionConfig) {
+    constructor(private _connectionConfig: DataBaseConnectionConfig) {
         this.getConnection()
     }
 
-    public getDriver(){        
+    public getDriver() {
         return this._driver;
     }
 
     public async isConnect(): Promise<void> {
-        try {
-            await this._driver.getServerInfo();
-            const serverInfo = await this._driver.getServerInfo();
-            console.log('Connection estabilished');
-            console.log(serverInfo);
-        } catch (err) {
-            console.log(`Connection error\n${err}\n`);        
-        }
+        await this._driver.getServerInfo();
+        const serverInfo = await this._driver.getServerInfo();
+        console.log('Connection estabilished');
+        console.log(serverInfo);
     }
 
     private getConnection() {
         try {
-            this._driver = neo4j.driver(this._connectionConfig.conn, 
+            this._driver = neo4j.driver(this._connectionConfig.conn,
                 neo4j.auth.basic(
                     this._connectionConfig.user,
                     this._connectionConfig.password
                 ));
 
-        }catch (err) {
+        } catch (err) {
             Error("Connection enclosed")
-            console.log(`Connection error\n${err}\n`); 
+            console.log(`Connection error\n${err}\n`);
         }
         return this._driver
     }

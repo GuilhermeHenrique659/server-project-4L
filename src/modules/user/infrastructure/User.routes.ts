@@ -10,6 +10,8 @@ import UpdateUserAvatarController from "./controller/CreateUserAvatar/UpdateUser
 import GetFollowingCommunityController from "./controller/GetFollowingCommunityController/GetFollowingCommunityController";
 import FollowCommunityController from "./controller/FollowCommunityController/FollowCommunityController";
 import UnfollowCommunityController from "./controller/UnfollowCommunityController/UnfollowCommunityController";
+import GetUserController from "./controller/getUserController/GetUserControlle";
+import UpdateUserController from "./controller/updateUser/UpdateUserController";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
@@ -39,6 +41,16 @@ class UserRouter implements IHandleDomain {
                 middleware: {
                     isAuthenticate: true,
                     validator: this._validator.validateCreateTag(),
+                }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/',
+                controller: UpdateUserController,
+                status: HttpReturnMethods.SUCCESS,
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this._validator.validateUpdateUser()
                 }
             },
             {
@@ -84,7 +96,16 @@ class UserRouter implements IHandleDomain {
                     isAuthenticate: true,
                     validator: this._validator.validateFollowCommunity(),
                 }
-            }
+            },
+            {
+                method: HttpMethods.GET,
+                path: '/:id',
+                controller: GetUserController,
+                middleware: {
+                    validator: this._validator.getUser(),
+                    isAuthenticate: true
+                }
+            },
         ]
     }
     get handle(): RouterConfigurator {

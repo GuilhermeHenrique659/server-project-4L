@@ -57,8 +57,10 @@ export default class QueryBuilder implements IQueryBuilder {
     }
 
     public set(properties: object): IQueryBuilder {
-        this._query += `SET ${Object.entries(properties).map(([key, value]) => `e.${key} = $${key}`).join(', ')} `;
-        this._queryParams = { ...this._queryParams, ...properties };
+        const data = Object.entries(properties)
+
+        this._query += `SET ${data.map(([key, value]) => value !== undefined ? `e.${key} = $${key}` : '').filter(Boolean).join(', ')} `;
+        this._queryParams = { ...this._queryParams, ...Object.fromEntries(data.filter(([key, value]) => value !== undefined)) };
         return this;
     }
 

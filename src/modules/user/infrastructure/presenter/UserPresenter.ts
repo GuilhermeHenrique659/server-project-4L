@@ -11,6 +11,21 @@ class UserPresenter {
             token
         }
     }
+
+    static updateUser(user: Partial<User>) {
+        delete user.password;
+        return user
+    }
+
+    static getUser(user: User) {
+        if (user.password) {
+            const { password, ...data } = user;
+            return {
+                ...data
+            };
+        }
+        return user;
+    }
 }
 
 export default UserPresenter;
