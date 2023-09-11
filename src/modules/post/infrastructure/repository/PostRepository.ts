@@ -10,6 +10,27 @@ import UserLiked from "@modules/user/domain/entity/UserLiked";
 export default class PostRepository implements IPostRepository {
     constructor(private readonly _dataSource: IDataSource<Post>) { }
 
+    private recomendationAlgorithmic(userId: string): IQueryBuilder {
+        return this._dataSource.getQueryBuilder().query(`
+            MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
+            OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
+            MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
+            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post)
+            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            ORDER BY commonTags
+        `)
+    }
+
+    private orderByRelevancy(query: IQueryBuilder): void {
+        query.query(`
+            MATCH (post)
+            OPTIONAL MATCH (post)-[:HAS]->(comments:Comment)
+            OPTIONAL MATCH (post)<-[:LIKED]-(likes:User)
+            WITH post, COUNT(comments) as numComments, COUNT(likes) as numLikes
+            ORDER BY post.createdAt DESC, numComments DESC, numLikes DESC
+        `)
+    }
+
     public async save(post: Post): Promise<Post> {
         return await this._dataSource.store(post);
     }
@@ -55,19 +76,10 @@ export default class PostRepository implements IPostRepository {
             getMany<Post>('executeRead')
     }
 
-    private recomendationAlgorithmic(userId: string): IQueryBuilder {
-        return this._dataSource.getQueryBuilder().query(`
-            MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
-            OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
-            MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
-            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post)
-            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
-            ORDER BY commonTags
-        `)
-    }
-
     public async listRecommendPost(userId: string, skip: number, limit: number, useAlgorithmic = true): Promise<Post[]> {
         const query = useAlgorithmic ? this.recomendationAlgorithmic(userId) : this._dataSource.getQueryBuilder()
+
+        this.orderByRelevancy(query);
 
         return await query.
             match('(post)').goIn('p:POSTED', 'userPost:User').
