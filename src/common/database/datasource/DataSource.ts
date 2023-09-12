@@ -1,9 +1,10 @@
 import IDataSource from "./IDataSource";
 import IEntity from "@common/database/datasource/types/IEntity";
 import IQueryBuilder from "./IQueryBuilder";
-import { relationType } from "./types/RelationTypes";
 import IEdge from "./types/IEdge";
 import QueryBuilder from "./QueryBuilder";
+import { DateTime, LocalDateTime } from 'neo4j-driver'
+import DateFactory from "../neo4j/DateFactory";
 
 class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
@@ -50,7 +51,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
     public async update(entity: E): Promise<E> {
         const { label, id, createdAt, ...data } = entity;
 
-        data.updatedAt = new Date().toISOString();
+        data.updatedAt = DateFactory.getNewDate(new Date());
 
         return await this._queryBuilder.
             match(`(e:${label ?? this._label})`).
@@ -62,7 +63,7 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
 
     public async create(entity: E): Promise<E> {
         const { label, ...data } = entity
-        data.createdAt = new Date().toISOString()
+        data.createdAt = DateFactory.getNewDate(new Date());
         return await this._queryBuilder.create(label, data).return(`e{.*, label: labels(e)[0]}`).getOne('executeWrite') as E;
     }
 

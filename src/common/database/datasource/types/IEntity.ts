@@ -1,6 +1,8 @@
+import { EntityDateType } from "./EntityDateType";
+
 export default interface IEntity {
     id: string;
     label: string;
-    createdAt: string;
-    updatedAt?: string;
+    createdAt: EntityDateType;
+    updatedAt?: EntityDateType;
 }

@@ -1,3 +1,4 @@
+import { EntityDateType } from "@common/database/datasource/types/EntityDateType";
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import Community from "@modules/community/domain/entity/Community";
@@ -26,12 +27,12 @@ class Post implements IEntity {
 
     public likeCount: number;
 
-    public createdAt: string;
+    public createdAt: EntityDateType;
 
-    public updatedAt?: string;
+    public updatedAt?: EntityDateType;
 
 
-    constructor (props: Partial<Post>) {
+    constructor(props: Partial<Post>) {
         Object.assign(this, props);
 
         if (!props.id) {

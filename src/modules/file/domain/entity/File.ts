@@ -1,3 +1,4 @@
+import { EntityDateType } from "@common/database/datasource/types/EntityDateType";
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import { v4 as uuidv4 } from 'uuid';
@@ -12,13 +13,13 @@ class File implements IEntity {
 
     public type: string;
 
-    public createdAt: string;
+    public createdAt: EntityDateType;
 
-    public updatedAt?: string;
+    public updatedAt?: EntityDateType;
 
-    constructor (props: Partial<File>){
+    constructor(props: Partial<File>) {
         Object.assign(this, props);
-        
+
         if (!props.id) {
             this.id = uuidv4()
         }

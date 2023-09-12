@@ -1,3 +1,4 @@
+import { EntityDateType } from "@common/database/datasource/types/EntityDateType";
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import File from "@modules/file/domain/entity/File";
@@ -31,11 +32,11 @@ class Community implements IEntity {
 
     public hasFollowing?: boolean;
 
-    public createdAt: string;
+    public createdAt: EntityDateType;
 
-    public updatedAt?: string;
+    public updatedAt?: EntityDateType;
 
-    constructor(props: Partial<Community>){
+    constructor(props: Partial<Community>) {
         Object.assign(this, props)
 
         if (!props.id) {

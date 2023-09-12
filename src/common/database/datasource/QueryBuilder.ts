@@ -1,4 +1,4 @@
-import { QueryResult, Transaction } from 'neo4j-driver';
+import { DateTime, QueryResult, Transaction } from 'neo4j-driver';
 import IQueryBuilder, { direction } from '@common/database/datasource/IQueryBuilder';
 import { executeType } from '@common/database/datasource//types/executeTypes';
 
@@ -149,7 +149,10 @@ export default class QueryBuilder implements IQueryBuilder {
             for (const key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key];
-                    if (value && typeof value === 'object' && 'low' in value && 'high' in value) {
+                    if (key === 'createdAt' || key === 'updatedAt') {
+                        obj[key] = new Date(obj[key]);
+                    }
+                    else if (value && typeof value === 'object' && 'low' in value && 'high' in value) {
                         obj[key] = value.low + (value.high * Math.pow(2, 32));
                     } else if (typeof value === 'object') {
                         obj[key] = this._parseObjectInteger64(value);

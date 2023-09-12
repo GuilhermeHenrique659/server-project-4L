@@ -1,3 +1,4 @@
+import { EntityDateType } from "@common/database/datasource/types/EntityDateType";
 import IEntity from "@common/database/datasource/types/IEntity";
 import InjectEntityLabel from "@common/helpers/InjectEntityLabel";
 import User from "@modules/user/domain/entity/User";
@@ -13,9 +14,9 @@ class Comment implements IEntity {
 
     public user: User;
 
-    public createdAt: string;
+    public createdAt: EntityDateType;
 
-    public updatedAt?: string;
+    public updatedAt?: EntityDateType;
 
     constructor(props: Partial<Comment>) {
         Object.assign(this, props);
