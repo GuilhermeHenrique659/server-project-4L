@@ -3,9 +3,10 @@ import IHandleDomain from "@common/types/IHandleDomain";
 import { HttpMethods } from "@common/emun/HttpMethod";
 import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
 import PostValidation from "../validation/PostValidation";
-import CreatePostLikedController from "./controller/CreateUserLikedController.ts/CreateUserLikedController";
+import CreatePostLikedController from "./controller/CreateUserLikedController/CreateUserLikedController";
 import ListRecommendPostController from "./controller/ListRecommendPostController/ListRecoomendPostController";
-import CreatePostController from "./controller/CreatePostController.ts/CreatePostController";
+import CreatePostController from "./controller/CreatePostController/CreatePostController";
+import DeletePostController from "./controller/deletePostController/DeletePostController";
 
 
 class PostRouter implements IHandleDomain {
@@ -33,6 +34,16 @@ class PostRouter implements IHandleDomain {
                 middleware: {
                     isAuthenticate: true,
                     validator: this.postValidation.listPost()
+                },
+                status: HttpReturnMethods.SUCCESS
+            },
+            {
+                method: HttpMethods.DELETE,
+                path: '/:postId',
+                controller: DeletePostController,
+                middleware: {
+                    isAuthenticate: true,
+                    validator: this.postValidation.createLike()
                 },
                 status: HttpReturnMethods.SUCCESS
             },

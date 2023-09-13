@@ -24,6 +24,10 @@ class CommentRepository implements ICommentRepository {
             return('comment{.*, user}').
             getMany();
     }
+
+    public async remove(id: string): Promise<void> {
+        await this._dataSource.remove(id);
+    }
 }
 
 export default CommentRepository;

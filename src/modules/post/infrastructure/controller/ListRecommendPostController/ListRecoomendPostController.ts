@@ -13,7 +13,7 @@ class ListRecommendPostController implements IController {
     public async handle(payload: ControllerInput<ListRecommendPostControllerDTO>): Promise<Post[]> {
         const { user, data } = payload;
         const limit = data.limit ?? 3;
-        const skip = data.page === 0 ? 0 : (data.page * limit)
+        let skip = data.page === 0 ? 0 : (data.page * limit)
 
 
         if (!user) throw new AppError("User não autenticado");
@@ -21,7 +21,9 @@ class ListRecommendPostController implements IController {
 
         const posts = await this._listPostService.execute({ userId: user.id, limit, skip });
 
-        if (posts.length === 0) return await this._listPostService.execute({ userId: user.id, limit, skip, useAlgorithmic: false });
+        if (posts.length === 0)
+            return await this._listPostService.execute({ userId: user.id, limit, skip, useAlgorithmic: false });
+
 
         return posts
     }

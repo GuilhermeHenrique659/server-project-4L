@@ -130,7 +130,11 @@ export default class QueryBuilder implements IQueryBuilder {
         const result = await this._tx.run(this._query, this._queryParams);
         this.clearQuery();
 
-        return this._normalizeData(result);
+        const data = this._normalizeData(result);
+
+        if (!data[0]) return [];
+
+        return data;
     }
 
     public async setData(execute: executeType = 'executeWrite'): Promise<void> {

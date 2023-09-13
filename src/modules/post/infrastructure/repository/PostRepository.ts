@@ -1,5 +1,7 @@
 import IDataSource from "@common/database/datasource/IDataSource";
 import IQueryBuilder from "@common/database/datasource/IQueryBuilder";
+import Comment from "@modules/comments/domain/entity/Comment";
+import File from "@modules/file/domain/entity/File";
 import Post from "@modules/post/domain/entity/Post";
 import PostComment from "@modules/post/domain/entity/PostComment";
 import PostFiles from "@modules/post/domain/entity/PostFiles";
@@ -10,12 +12,13 @@ import UserLiked from "@modules/user/domain/entity/UserLiked";
 export default class PostRepository implements IPostRepository {
     constructor(private readonly _dataSource: IDataSource<Post>) { }
 
-    private recomendationAlgorithmic(userId: string): IQueryBuilder {
+    private getRecommendationPost(userId: string): IQueryBuilder {
         return this._dataSource.getQueryBuilder().query(`
             MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
             OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
+            OPTIONAL MATCH (community)<-[:FOLLOW]-(user:User)-[:INTEREST]->(userCommunityTag:Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
-            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post)
+            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post)
             WITH user, post, COUNT(DISTINCT postTag) AS commonTags
             ORDER BY commonTags
         `)
@@ -45,6 +48,22 @@ export default class PostRepository implements IPostRepository {
 
     public async findById(id: string): Promise<Post | undefined> {
         return await this._dataSource.findOne({ id });
+    }
+
+    public async findPostFiles(postId: string): Promise<File[]> {
+        return await this._dataSource.getQueryBuilder().
+            match('(post: Post {id: $postId})', { postId }).
+            optional().match('(post)').goOut('f:HAS', 'file:File').
+            return('file{.*, label: labels(file)[0]}').
+            getMany();
+    }
+
+    public async findPostComments(postId: string): Promise<Comment[]> {
+        return await this._dataSource.getQueryBuilder().
+            match('(post: Post {id: $postId})', { postId }).
+            optional().match('(post)').goOut('f:HAS', 'comment:Comment').
+            return('comment{.*, label: labels(comment)[0]}').
+            getMany();
     }
 
     public async hasUserLiked(like: UserLiked): Promise<boolean> {
@@ -77,9 +96,10 @@ export default class PostRepository implements IPostRepository {
     }
 
     public async listRecommendPost(userId: string, skip: number, limit: number, useAlgorithmic = true): Promise<Post[]> {
-        const query = useAlgorithmic ? this.recomendationAlgorithmic(userId) : this._dataSource.getQueryBuilder()
+        const query = useAlgorithmic ? this.getRecommendationPost(userId) : this._dataSource.getQueryBuilder().match('(post: Post)');
 
-        this.orderByRelevancy(query);
+        if (useAlgorithmic)
+            this.orderByRelevancy(query);
 
         return await query.
             match('(post)').goIn('p:POSTED', 'userPost:User').
@@ -95,5 +115,9 @@ export default class PostRepository implements IPostRepository {
             skip(skip).
             limit(limit).
             getMany<Post>('executeRead')
+    }
+
+    public async remove(id: string): Promise<void> {
+        await this._dataSource.remove(id);
     }
 }

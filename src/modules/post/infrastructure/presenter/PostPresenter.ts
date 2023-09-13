@@ -1,8 +1,8 @@
 import Post from "@modules/post/domain/entity/Post";
-import { CreatePostControllerResponse } from "../controller/CreatePostController.ts/CreatePostControllerResponse";
+import { CreatePostControllerResponse } from "../controller/CreatePostController/CreatePostControllerResponse";
 
 class PostPresenter {
-    static createPostPresenter({ user, ...data}: Post): CreatePostControllerResponse{
+    static createPostPresenter({ user, ...data }: Post): CreatePostControllerResponse {
         return {
             ...data,
             user: {

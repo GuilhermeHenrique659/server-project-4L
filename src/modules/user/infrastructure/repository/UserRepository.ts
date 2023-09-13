@@ -5,6 +5,7 @@ import UserAvatar from "@modules/user/domain/entity/UserAvatar";
 import UserTags from "@modules/user/domain/entity/UserTags";
 import UserPosted from "@modules/user/domain/entity/UserPosted";
 import UserCommunity from "@modules/user/domain/entity/UserCommunity";
+import IEdge from "@common/database/datasource/types/IEdge";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
@@ -55,6 +56,10 @@ class UserRepository implements IUserRepository {
 
     public async hasFollowingCommunity(userCommunity: UserCommunity): Promise<boolean> {
         return await this._dataSource.hasRelationShip(userCommunity)
+    }
+
+    public async hasOwneship(userOwner: IEdge): Promise<boolean> {
+        return await this._dataSource.hasRelationShip(userOwner);
     }
 
     public async saveUserPost(userPosts: UserPosted): Promise<void> {

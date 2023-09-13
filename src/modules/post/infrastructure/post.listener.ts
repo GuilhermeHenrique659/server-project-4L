@@ -2,8 +2,8 @@ import SocketConfigurator from "@common/socket/SocketConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
 
 import PostValidation from "../validation/PostValidation";
-import CreatePostLikedController from "./controller/CreateUserLikedController.ts/CreateUserLikedController";
-import CreatePostController from "./controller/CreatePostController.ts/CreatePostController";
+import CreatePostLikedController from "./controller/CreateUserLikedController/CreateUserLikedController";
+import CreatePostController from "./controller/CreatePostController/CreatePostController";
 
 
 class PostListener implements IHandleDomain {

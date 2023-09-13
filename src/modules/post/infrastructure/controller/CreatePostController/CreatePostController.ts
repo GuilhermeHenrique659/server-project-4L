@@ -32,8 +32,6 @@ class CreatePostController implements IController {
         const { content, tags, files, communityId } = payload.data;
         const userId = payload.user?.id as string
 
-        await this._validateUserCommunityService.execute({ communityId, userId });
-
         const createdPost = await this._createPostService.execute({ content, userId });
 
         if (tags) {
@@ -64,6 +62,7 @@ class CreatePostController implements IController {
         }
 
         if (communityId) {
+            await this._validateUserCommunityService.execute({ communityId, userId });
             createdPost.community = await this._createCommunityPost.execute({ post: createdPost, communityId });
             this._createPostSubject.attach(this._createPostObserver);
             await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId });

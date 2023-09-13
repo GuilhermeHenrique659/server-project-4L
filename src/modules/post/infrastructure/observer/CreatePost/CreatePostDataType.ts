@@ -1,4 +1,4 @@
-import { CreatePostControllerResponse } from "../../controller/CreatePostController.ts/CreatePostControllerResponse"
+import { CreatePostControllerResponse } from "../../controller/CreatePostController/CreatePostControllerResponse"
 
 export type CreatePostDataObserverType = {
     data: CreatePostControllerResponse;
