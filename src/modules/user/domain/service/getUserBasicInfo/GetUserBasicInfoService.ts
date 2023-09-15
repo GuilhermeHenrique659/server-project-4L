@@ -8,14 +8,15 @@ import { Repository } from "@common/emun/InjectionsEmun";
 class GetUserBasicInfoService implements IService {
     constructor(@inject(Repository.UserRepository) private readonly _userRepository: IUserRepository) { }
 
-    public async execute(data: { userId: string }): Promise<Partial<User>> {
+    public async execute(data: { userId: string, currentUserId: string }): Promise<Partial<User>> {
 
-        const { name, id, avatar } = await this._userRepository.findByIdWithAvatar(data.userId) as User;
+        const { name, id, avatar, hasFollowing } = await this._userRepository.findByIdWithAvatar(data.userId, true, data.currentUserId) as User;
 
         return {
             id,
             name,
-            avatar
+            avatar,
+            hasFollowing
         }
     }
 }

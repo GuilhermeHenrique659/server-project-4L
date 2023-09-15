@@ -17,7 +17,7 @@ export default class QueryBuilder implements IQueryBuilder {
 
     public query(query: string, params?: object) {
         this._query += query;
-        this._queryParams = { ...params };
+        this._queryParams = { ...this._queryParams, ...params };
 
         return this;
     }

@@ -17,7 +17,7 @@ class ValidateUserOwnershipPostService implements IService {
         const post = new Post({ id: data.postId });
         const user = new User({ id: data.userId });
 
-        if (!(await this._userRepository.hasOwneship(new UserPosted(user, post)))) {
+        if (!(await this._userRepository.hasRelation(new UserPosted(user, post)))) {
             throw new AppError('Usuario não é dono do post');
         }
     }

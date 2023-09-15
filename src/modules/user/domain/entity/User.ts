@@ -27,6 +27,8 @@ class User implements IEntity {
 
     public communities?: Community[];
 
+    public hasFollowing?: boolean;
+
     public isOnline?: boolean;
 
     public createdAt: EntityDateType;

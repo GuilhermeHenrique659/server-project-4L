@@ -6,6 +6,7 @@ import UserTags from "@modules/user/domain/entity/UserTags";
 import UserPosted from "@modules/user/domain/entity/UserPosted";
 import UserCommunity from "@modules/user/domain/entity/UserCommunity";
 import IEdge from "@common/database/datasource/types/IEdge";
+import UserFollow from "@modules/user/domain/entity/UserFollow";
 
 class UserRepository implements IUserRepository {
     private readonly _dataSource: IDataSource<User>;
@@ -27,12 +28,18 @@ class UserRepository implements IUserRepository {
             .getOne<User>('executeRead');
     }
 
-    public async findByIdWithAvatar(id: string): Promise<User | undefined> {
-        return await this._dataSource.getQueryBuilder()
+    public async findByIdWithAvatar(id: string, isFolling = false, currentUserId?: string): Promise<User | undefined> {
+
+        const query = await this._dataSource.getQueryBuilder()
             .match('(u:User {id: $id})', { id })
             .optional().match('(u)')
             .goOut('r:AVATAR', 'file:File')
-            .return('u{.*, label: labels(u)[0],avatar: file{.*}}')
+
+        if (isFolling && currentUserId) query.query(`OPTIONAL MATCH (u)-[f:FOLLOW]-(u1 {id: "${currentUserId}"}) `);
+
+        return query
+            .with(`u{.*} as user, labels(u)[0] as label , file{.*} as avatar ${isFolling ? ', count(DISTINCT f) > 0 as hasFollowing' : ''}`)
+            .return(`user{.*, label, avatar${isFolling ? ', hasFollowing' : ' '}}`)
             .getOne<User>('executeRead');
     }
 
@@ -58,7 +65,7 @@ class UserRepository implements IUserRepository {
         return await this._dataSource.hasRelationShip(userCommunity)
     }
 
-    public async hasOwneship(userOwner: IEdge): Promise<boolean> {
+    public async hasRelation(userOwner: IEdge): Promise<boolean> {
         return await this._dataSource.hasRelationShip(userOwner);
     }
 
@@ -72,6 +79,10 @@ class UserRepository implements IUserRepository {
 
     public async saveAvatar(userAvatar: UserAvatar): Promise<void> {
         await this._dataSource.createRelationship(userAvatar);
+    }
+
+    public async saveUserFollow(userFollow: UserFollow): Promise<void> {
+        await this._dataSource.createRelationship(userFollow);
     }
 
     public async saveUserCommunity(userCommunity: UserCommunity): Promise<void> {
@@ -95,6 +106,10 @@ class UserRepository implements IUserRepository {
             delete('r').
             delete('file').
             setData('executeWrite');
+    }
+
+    public async removeUserFollow(userFollow: Required<UserFollow>): Promise<void> {
+        await this._dataSource.removeRelationShip(userFollow.from, userFollow.to, userFollow.label);
     }
 
     public async removeCommunity(userCommunity: Required<UserCommunity>): Promise<void> {

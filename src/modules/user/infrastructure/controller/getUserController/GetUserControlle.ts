@@ -17,7 +17,7 @@ class GetUserController implements IController {
         if (userId === data.id)
             userData = await this._getUserService.execute({ userId: data.id });
         else
-            userData = await this._getUserBasicInfo.execute({ userId: data.id }) as User;
+            userData = await this._getUserBasicInfo.execute({ userId: data.id, currentUserId: userId }) as User;
 
         return UserPresenter.getUser(userData);
     }

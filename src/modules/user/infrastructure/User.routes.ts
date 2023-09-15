@@ -12,6 +12,8 @@ import FollowCommunityController from "./controller/FollowCommunityController/Fo
 import UnfollowCommunityController from "./controller/UnfollowCommunityController/UnfollowCommunityController";
 import GetUserController from "./controller/getUserController/GetUserControlle";
 import UpdateUserController from "./controller/updateUser/UpdateUserController";
+import FollowUserController from "./controller/followUserController/FollowUserController";
+import UnfollowUserController from "./controller/unfollowUserController/UnfollowUserController";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
@@ -95,6 +97,24 @@ class UserRouter implements IHandleDomain {
                 middleware: {
                     isAuthenticate: true,
                     validator: this._validator.validateFollowCommunity(),
+                }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/follow/user/:id',
+                controller: FollowUserController,
+                middleware: {
+                    validator: this._validator.getUser(),
+                    isAuthenticate: true
+                }
+            },
+            {
+                method: HttpMethods.PATCH,
+                path: '/unfollow/user/:id',
+                controller: UnfollowUserController,
+                middleware: {
+                    validator: this._validator.getUser(),
+                    isAuthenticate: true
                 }
             },
             {
