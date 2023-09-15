@@ -12,6 +12,8 @@ interface IUserRepository {
     findByIdWithAvatar(id: string, isFolling?: boolean, currentUserId?: string): Promise<User | undefined>;
     findByIdCompleteData(id: string): Promise<User | undefined>;
     findUserTag(userId: string, tagId: string): Promise<boolean>;
+    getFollowingUsers(userId: string): Promise<User[]>;
+    getFollowersUsers(userId: string): Promise<User[]>;
     hasFollowingCommunity(userCommunity: UserCommunity): Promise<boolean>;
     hasRelation(userOwner: IEdge): Promise<boolean>;
     save(user: User): Promise<User>;

@@ -17,7 +17,7 @@ export default class PostRepository implements IPostRepository {
             MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
             OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
             OPTIONAL MATCH (community)<-[:FOLLOW]-(user:User)-[:INTEREST]->(userCommunityTag:Tag)
-            OPTIONAL MATCH (user)-[:FOLLOW]-(u1: User)-[:INTEREST]->(userFollowingTag:Tag)
+            OPTIONAL MATCH (user)-[:FOLLOW]->(u1: User)-[:INTEREST]->(userFollowingTag:Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
             WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
             WITH user, post, COUNT(DISTINCT postTag) AS commonTags

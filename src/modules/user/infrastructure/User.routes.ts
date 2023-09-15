@@ -14,6 +14,7 @@ import GetUserController from "./controller/getUserController/GetUserControlle";
 import UpdateUserController from "./controller/updateUser/UpdateUserController";
 import FollowUserController from "./controller/followUserController/FollowUserController";
 import UnfollowUserController from "./controller/unfollowUserController/UnfollowUserController";
+import GetFollowingUsersController from "./controller/GetFollowingUsersController/GetFollowingUsersController";
 
 class UserRouter implements IHandleDomain {
     private _routerConfigurator: RouterConfigurator;
@@ -114,6 +115,14 @@ class UserRouter implements IHandleDomain {
                 controller: UnfollowUserController,
                 middleware: {
                     validator: this._validator.getUser(),
+                    isAuthenticate: true
+                }
+            },
+            {
+                method: HttpMethods.GET,
+                path: '/following/users',
+                controller: GetFollowingUsersController,
+                middleware: {
                     isAuthenticate: true
                 }
             },

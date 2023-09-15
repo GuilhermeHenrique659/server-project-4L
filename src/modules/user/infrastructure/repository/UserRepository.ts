@@ -35,7 +35,7 @@ class UserRepository implements IUserRepository {
             .optional().match('(u)')
             .goOut('r:AVATAR', 'file:File')
 
-        if (isFolling && currentUserId) query.query(`OPTIONAL MATCH (u)-[f:FOLLOW]-(u1 {id: "${currentUserId}"}) `);
+        if (isFolling && currentUserId) query.query(`OPTIONAL MATCH (u)<-[f:FOLLOW]-(u1 {id: "${currentUserId}"}) `);
 
         return query
             .with(`u{.*} as user, labels(u)[0] as label , file{.*} as avatar ${isFolling ? ', count(DISTINCT f) > 0 as hasFollowing' : ''}`)
@@ -59,6 +59,24 @@ class UserRepository implements IUserRepository {
         return await this._dataSource.findOne({
             id: id
         })
+    }
+
+    public async getFollowingUsers(userId: string): Promise<User[]> {
+        return await this._dataSource.getQueryBuilder()
+            .match('(user:User {id: $id})', { id: userId })
+            .optional().match('(user)').goOut('f:FOLLOW', 'userF:User')
+            .optional().match('(userF)').goOut('r:AVATAR', 'file:File')
+            .return(`userF{id: userF.id, name: userF.name, label: labels(userF)[0], avatar: file{.*}}`)
+            .getMany();
+    }
+
+    public async getFollowersUsers(userId: string): Promise<User[]> {
+        return await this._dataSource.getQueryBuilder()
+            .match('(user:User {id: $id})', { id: userId })
+            .optional().match('(user)').goIn('f:FOLLOW', 'userF:User')
+            .optional().match('(userF)').goOut('r:AVATAR', 'file:File')
+            .return(`userF{id: userF.id, name: userF.name, label: labels(userF)[0], avatar: file{.*}}`)
+            .getMany();
     }
 
     public async hasFollowingCommunity(userCommunity: UserCommunity): Promise<boolean> {
