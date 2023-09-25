@@ -14,11 +14,7 @@ class CreateUserController implements IController {
     ) { }
 
     public async handle(payload: ControllerInput<CreateUserControllerDTO>): Promise<ControllerOutput<CreateUserSessionDTOOutput>> {
-        const { ...user } = payload.data;
-
-        const { email, password } = await this._createUserService.execute(user);
-
-        return await this._createUserSessionService.execute({ email, password })
+        return await this._createUserService.execute(payload.data);
     }
 }
 

@@ -24,6 +24,7 @@ import { Transaction } from "neo4j-driver";
 import ICommentRepository from "@modules/comments/domain/repository/ICommentRepository";
 import CommentRepository from "@modules/comments/infrastructure/repository/CommentRepository";
 import Comment from "@modules/comments/domain/entity/Comment";
+import HashProvider from "@common/provider/hash/HashProvider";
 
 class Injection {
     static resolve<T>(target: Type<T>, fileProvider: IFileProvider, tx?: Transaction): T {
@@ -35,7 +36,7 @@ class Injection {
             container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag, tx)) });
             container.register<ICommentRepository>(Repository.CommentRepository, { useValue: new CommentRepository(GetDatasource(Comment, tx)) });
         }
-        container.register<IHashProvider>(Provider.HashProvider, MockHashProvider);
+        container.register<IHashProvider>(Provider.HashProvider, HashProvider);
         container.register<IFileProvider>(Provider.FileProvider, { useValue: fileProvider });
 
         return container.resolve(target);
