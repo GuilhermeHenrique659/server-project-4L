@@ -2,7 +2,7 @@ import path from "path";
 import crypto from "crypto";
 import ConfigEnv from "@config/env/ConfigEnv";
 
-const uploadFolder = path.resolve(__dirname, "..", "..", "..", "uploads");
+const uploadFolder = path.resolve(__dirname, "..", "..", "..", "static");
 
 export default {
     directory: uploadFolder,
