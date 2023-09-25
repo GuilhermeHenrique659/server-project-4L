@@ -3,9 +3,14 @@ import RouterConfigurator from '@common/routes/RouterConfigurator';
 import SocketConfigurator from '@common/socket/SocketConfigurator';
 import IHandleDomain from '@common/types/IHandleDomain';
 import ConfigEnv from '@config/env/ConfigEnv';
+import AWS from 'aws-sdk';
 import cors from 'cors';
 import express, { Express } from 'express'
 import http from 'http'
+import uploadConfig from "@config/upload/s3config";
+import fs from 'fs'
+import path from 'path'
+
 
 export default class Application {
     private _server: http.Server;
@@ -14,7 +19,7 @@ export default class Application {
     private _app: Express;
     private _cacheDataBase: IMemoryDataBase;
     private _database: DataBase
-    
+
     constructor(app: Express, cacheDataBase: IMemoryDataBase, database: DataBase, routes: IHandleDomain[], sockets: IHandleDomain[]) {
         this._app = app;
         this._routes = routes;
@@ -23,20 +28,20 @@ export default class Application {
         this._database = database;
     }
 
-    private setupAllHandles(){
+    private setupAllHandles() {
         const handles = [...this._routes, ...this._sockets];
         handles.forEach(handle => handle.setUpHandles());
     }
 
-    private setupRoutes(){
-        if (this._routes.length){
+    private setupRoutes() {
+        if (this._routes.length) {
             this._routes.forEach(route => {
                 const handle = route.handle as RouterConfigurator
                 console.log(`====>[${handle.getPrefix()}]<==== - configure all routes:`);
                 handle.inicializeRoutes();
                 this._app.use(`/${handle.getPrefix()}`, handle.getRouter())
             });
-        }else {
+        } else {
             console.log('Routes is empty');
         }
     }
@@ -48,9 +53,22 @@ export default class Application {
         config.inicializerSocket();
     }
 
-    private setupApplication(){
-        this._app.use(express.json({limit: '20mb'}));
-        this._app.use('/file', express.static('uploads'))
+    private setupApplication() {
+        this._app.use(express.json({ limit: '20mb' }));
+        this._app.use('/file/:filename', (req, res) => {
+            const s3 = new AWS.S3(uploadConfig.options);
+
+            const streamFile = s3.getObject({
+                Bucket: uploadConfig.bucket,
+                Key: req.params.filename
+            }).createReadStream()
+
+            streamFile.pipe(res);
+
+            streamFile.on('error', (error) => {
+                return fs.createReadStream(uploadConfig.directory + '/image-not-found-icon.png').pipe(res)
+            });
+        })
         this._app.use(cors());
         this.setupRoutes();
     }
@@ -62,7 +80,7 @@ export default class Application {
         this.setupApplication();
         this._server = http.createServer(this._app);
         this.setupSocket()
-        
+
         this._server.listen(ConfigEnv.getPort(), ConfigEnv.getIpServer(), () => {
             console.log(`Server start in the port: ${ConfigEnv.getPort()}`);
         })

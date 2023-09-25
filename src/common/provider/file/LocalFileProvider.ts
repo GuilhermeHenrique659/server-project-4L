@@ -2,6 +2,7 @@ import uploadConfig from "@config/upload/uploadConfig";
 import IFileProvider, { fileData } from "./IFileProvider";
 import fs from 'fs'
 import path from 'path'
+import AppError from "@common/errors/AppError";
 
 class LocalFileProvider implements IFileProvider {
     private _bucket: string[];
