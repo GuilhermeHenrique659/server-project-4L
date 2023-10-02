@@ -4,7 +4,8 @@ export enum Repository {
     CommunityRepository = 'CommunityRepository',
     FileRepository = 'FileRepository',
     TagRepository = 'TagRepository',
-    CommentRepository = 'CommentRepository'
+    CommentRepository = 'CommentRepository',
+    NotificationRepository = 'NotificationRepository'
 }
 
 export enum Provider {

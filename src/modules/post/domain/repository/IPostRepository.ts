@@ -6,12 +6,14 @@ import PostFiles from "../entity/PostFiles";
 import PostComment from "../entity/PostComment";
 import File from "@modules/file/domain/entity/File";
 import Comment from "@modules/comments/domain/entity/Comment";
+import User from "@modules/user/domain/entity/User";
 
 interface IPostRepository {
     save(post: Post): Promise<Post>;
     savePostTag(postTags: PostTags): Promise<void>;
     savePostComment(postComment: PostComment): Promise<void>;
     listRecommendPost(userId: string, page: number, limit: number, useAlgorithmic?: boolean): Promise<Post[]>;
+    findPostOwner(id: string): Promise<User | undefined>;
     findById(id: string): Promise<Post | undefined>;
     findPostFiles(postId: string): Promise<File[]>;
     findPostComments(postId: string): Promise<Comment[]>;

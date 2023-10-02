@@ -7,6 +7,7 @@ import PostComment from "@modules/post/domain/entity/PostComment";
 import PostFiles from "@modules/post/domain/entity/PostFiles";
 import PostTags from "@modules/post/domain/entity/PostTags";
 import IPostRepository from "@modules/post/domain/repository/IPostRepository";
+import User from "@modules/user/domain/entity/User";
 import UserLiked from "@modules/user/domain/entity/UserLiked";
 
 export default class PostRepository implements IPostRepository {
@@ -77,6 +78,14 @@ export default class PostRepository implements IPostRepository {
 
     public async saveLike(like: UserLiked): Promise<void> {
         await this._dataSource.createRelationship(like);
+    }
+
+    public async findPostOwner(id: string): Promise<User | undefined> {
+        return await this._dataSource.getQueryBuilder().
+            match('(post:Post { id: $id })', { id }).
+            match('(post)').goIn('p:POSTED', 'userPost:User').
+            return('userPost{.* }').
+            getOne()
     }
 
     public async listPostCommunity(userId: string, skip: number, limit: number, communityId: string): Promise<Post[]> {

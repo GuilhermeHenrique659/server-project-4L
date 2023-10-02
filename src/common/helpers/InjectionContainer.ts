@@ -4,7 +4,6 @@ import { container } from "tsyringe";
 import GetDatasource from "./GetDataSource";
 import User from "@modules/user/domain/entity/User";
 import IHashProvider from "@common/provider/hash/IHashProvider";
-import MockHashProvider from "@common/provider/hash/MockHashProvider";
 import PostRepository from "@modules/post/infrastructure/repository/PostRepository";
 import CommunityRepository from "@modules/community/infrastructure/repository/CommunityRepository";
 import FileRepository from "@modules/file/infrastructure/repository/FileRepository";
@@ -25,6 +24,9 @@ import ICommentRepository from "@modules/comments/domain/repository/ICommentRepo
 import CommentRepository from "@modules/comments/infrastructure/repository/CommentRepository";
 import Comment from "@modules/comments/domain/entity/Comment";
 import HashProvider from "@common/provider/hash/HashProvider";
+import INotificationRepository from "@modules/notification/domain/repository/INotifcationRepository";
+import NotificationRepository from "@modules/notification/infrastructure/repository/NotificationRepository";
+import Notification from "@modules/notification/domain/entity/Notification";
 
 class Injection {
     static resolve<T>(target: Type<T>, fileProvider: IFileProvider, tx?: Transaction): T {
@@ -35,6 +37,7 @@ class Injection {
             container.register<IFileRepository>(Repository.FileRepository, { useValue: new FileRepository(GetDatasource(File, tx)) });
             container.register<ITagRepository>(Repository.TagRepository, { useValue: new TagRepository(GetDatasource(Tag, tx)) });
             container.register<ICommentRepository>(Repository.CommentRepository, { useValue: new CommentRepository(GetDatasource(Comment, tx)) });
+            container.register<INotificationRepository>(Repository.NotificationRepository, { useValue: new NotificationRepository(GetDatasource(Notification, tx)) });
         }
         container.register<IHashProvider>(Provider.HashProvider, HashProvider);
         container.register<IFileProvider>(Provider.FileProvider, { useValue: fileProvider });

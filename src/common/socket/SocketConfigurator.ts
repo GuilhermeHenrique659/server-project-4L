@@ -91,16 +91,18 @@ export default class SocketConfigurator {
         });
     }
 
-    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, expect?: string): Promise<void> {
+    public async emit<T = Record<string, unknown>>(event: string, data: T, to?: EmmitterToType, except?: string): Promise<void> {
+
         if (to) {
             if (to.clientId) {
-                const clientId = await this._dataBase.get<string>(to.clientId);
-                if (clientId) {
-                    this._socket.to(clientId).emit(event, data);
+                const clientsIds = await this._dataBase.get<Set<string>>(to.clientId);
+                console.log(`Emit event ${event}\ndata: ${JSON.stringify(data)}\nto: ${clientsIds}\nexcept: ${except}`);
+                if (clientsIds) {
+                    this._socket.to(Array.from(clientsIds)).emit(event, data);
                 }
             } else if (to.room) {
-                if (expect) {
-                    const clientId = await this._getExceptClientId(expect);
+                if (except) {
+                    const clientId = await this._getExceptClientId(except);
                     if (clientId) {
                         this._socket.to(to.room).except(clientId).emit(event, data);
                     }
@@ -109,8 +111,8 @@ export default class SocketConfigurator {
                     this._socket.to(to.room).emit(event, data);
                 }
             }
-        } else if (expect) {
-            const clientId = await this._getExceptClientId(expect);
+        } else if (except) {
+            const clientId = await this._getExceptClientId(except);
             if (clientId) {
                 this._socket.except(clientId).emit(event, data);
             }

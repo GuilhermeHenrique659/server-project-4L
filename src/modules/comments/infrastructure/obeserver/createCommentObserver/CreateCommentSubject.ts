@@ -1,9 +1,9 @@
 import IObserver from "@common/observer/IObserver";
 import ISubject from "@common/observer/ISubject";
-import { singleton } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 import { CreateCommentDTO } from "./CreateCommentDTO";
 
-@singleton()
+@injectable()
 class CreateCommentSubject implements ISubject {
     private observers: Set<IObserver>;
 
@@ -16,9 +16,13 @@ class CreateCommentSubject implements ISubject {
     }
 
     public async notify(data?: CreateCommentDTO): Promise<void> {
-        this.observers.forEach(async (observer) => {
+        console.log(this.observers);
+        console.log(this.observers.size);
+
+
+        for (const observer of this.observers) {
             await observer.update(data);
-        })
+        }
     }
 }
 

@@ -1,9 +1,9 @@
 import IObserver from "@common/observer/IObserver";
 import ISubject from "@common/observer/ISubject";
 import { LikeDataType } from "./LikeDataType";
-import { singleton } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 
-@singleton()
+@injectable()
 class LikeSubject implements ISubject {
     private observers: Set<IObserver>;
 
@@ -16,9 +16,9 @@ class LikeSubject implements ISubject {
     }
 
     public async notify(data?: LikeDataType): Promise<void> {
-        this.observers.forEach(async (observer) => {
-            await observer.update(data);
-        })
+        for (const subject of this.observers) {
+            await subject.update(data);
+        }
     }
 }
 

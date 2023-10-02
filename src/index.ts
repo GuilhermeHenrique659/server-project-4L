@@ -11,10 +11,11 @@ import { userRouter } from "@modules/user/infrastructure/User.routes";
 import express from "express";
 import commentListener from "@modules/comments/infrastructure/comment.listener";
 import userListener from "@modules/user/infrastructure/User.listener";
+import notificationRouter from "@modules/notification/infrastructure/notification.routes";
 
 
 const app = new Application(express(), nodeCacheDataBase, database,
-    [userRouter, postRouter, tagRouter, communityRouter],
+    [userRouter, postRouter, tagRouter, communityRouter, notificationRouter],
     [postListener, communityListener, commentListener, userListener]
 );
 try {

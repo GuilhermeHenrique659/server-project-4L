@@ -3,13 +3,15 @@ import AppError from "@common/errors/AppError";
 import { ControllerInput } from "@common/types/ControllerIO";
 import { injectable } from "tsyringe";
 import CreatePostLikedService from "@modules/post/domain/service/CreatePostLikedService/CreatePostLikedService";
-import LikeSubject from "../../observer/LikeSubject";
-import BroadcastLikeObserver from "../../observer/BroadcastLikeObserver";
+import LikeSubject from "../../observer/addLike/LikeSubject";
+import BroadcastLikeObserver from "../../observer/addLike/BroadcastLikeObserver";
+import CreateNotifcationSubject from "../../observer/addLike/createNotification";
 
 @injectable()
 class CreatePostLikedController implements IController {
     constructor(private readonly _createPostLiked: CreatePostLikedService,
         private readonly _likeSubject: LikeSubject,
+        private readonly _createNotificationSubject: CreateNotifcationSubject,
         private readonly _broadcastLikeObserver: BroadcastLikeObserver) { }
 
     public async handle({ data, user }: ControllerInput<{ postId: string }>): Promise<boolean> {
@@ -23,7 +25,8 @@ class CreatePostLikedController implements IController {
         });
 
         this._likeSubject.attach(this._broadcastLikeObserver);
-        this._likeSubject.notify({
+        this._likeSubject.attach(this._createNotificationSubject);
+        await this._likeSubject.notify({
             userId: user.id,
             postId
         })
