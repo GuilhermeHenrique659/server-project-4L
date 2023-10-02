@@ -1,8 +1,8 @@
 import RouterConfigurator from "@common/routes/RouterConfigurator";
 import IHandleDomain from "@common/types/IHandleDomain";
 import { HttpMethods } from "@common/emun/HttpMethod";
-import { HttpReturnMethods } from "@common/emun/HttpReturnMethods";
 import ListNotificationController from "./controller/listNotification/ListNotificationController";
+import DeleteNotificationController from "./controller/deleteNotification/DeleteNotificationController";
 
 
 class NotificationRouter implements IHandleDomain {
@@ -15,6 +15,14 @@ class NotificationRouter implements IHandleDomain {
                     method: HttpMethods.GET,
                     path: '/',
                     controller: ListNotificationController,
+                    middleware: {
+                        isAuthenticate: true,
+                    }
+                },
+                {
+                    method: HttpMethods.DELETE,
+                    path: '/:id',
+                    controller: DeleteNotificationController,
                     middleware: {
                         isAuthenticate: true,
                     }

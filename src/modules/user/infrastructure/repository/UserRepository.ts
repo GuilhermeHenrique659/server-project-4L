@@ -38,8 +38,8 @@ class UserRepository implements IUserRepository {
         if (isFolling && currentUserId) query.query(`OPTIONAL MATCH (u)<-[f:FOLLOW]-(u1 {id: "${currentUserId}"}) `);
 
         return query
-            .with(`u{.*} as user, labels(u)[0] as label , file{.*} as avatar ${isFolling ? ', count(DISTINCT f) > 0 as hasFollowing' : ''}`)
-            .return(`user{.*, label, avatar${isFolling ? ', hasFollowing' : ' '}}`)
+            .with(`u{.*} as user, labels(u)[0] as label , file{.*} as avatar ${isFolling && currentUserId ? ', count(DISTINCT f) > 0 as hasFollowing' : ''}`)
+            .return(`user{.*, label, avatar${isFolling && currentUserId ? ', hasFollowing' : ' '}}`)
             .getOne<User>('executeRead');
     }
 

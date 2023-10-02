@@ -21,6 +21,10 @@ class NotificationRepository implements INotificationRepository {
             return('notification{.*}').
             getMany();
     }
+
+    public async delete(id: string) {
+        await this.dataSource.remove(id);
+    }
 }
 
 export default NotificationRepository

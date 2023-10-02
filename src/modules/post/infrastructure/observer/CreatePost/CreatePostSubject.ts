@@ -1,9 +1,9 @@
 import IObserver from "@common/observer/IObserver";
 import ISubject from "@common/observer/ISubject";
 import { CreatePostDataObserverType } from "./CreatePostDataType";
-import { singleton } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 
-@singleton()
+@injectable()
 class CreatePostSubject implements ISubject {
     private observers: Set<IObserver>;
 
@@ -16,9 +16,9 @@ class CreatePostSubject implements ISubject {
     }
 
     public async notify(data?: CreatePostDataObserverType): Promise<void> {
-        this.observers.forEach(async (observer) => {
+        for (const observer of this.observers) {
             await observer.update(data);
-        })
+        }
     }
 }
 

@@ -14,6 +14,7 @@ import CreatePostSubject from "../../observer/CreatePost/CreatePostSubject";
 import CreatePostTagService from "@modules/post/domain/service/CreatePostTagService/CreatePostTagService";
 import CreatePostFileService from "@modules/post/domain/service/CreatePostFile/CreatePostFileService";
 import CreateCommunityPostService from "@modules/community/domain/service/CreateCommunityPost/CreateCommunityPostService";
+import CreatePostNotificationObserver from "../../observer/CreatePost/createPostNotification";
 
 @injectable()
 class CreatePostController implements IController {
@@ -26,7 +27,8 @@ class CreatePostController implements IController {
         private readonly _createPostFile: CreatePostFileService,
         private readonly _createCommunityPost: CreateCommunityPostService,
         private readonly _createPostSubject: CreatePostSubject,
-        private readonly _createPostObserver: CreatePostNotifyCommunityObserver) { }
+        private readonly _createPostObserver: CreatePostNotifyCommunityObserver,
+        private readonly _createNotification: CreatePostNotificationObserver) { }
 
     public async handle(payload: ControllerInput<CreatePostControllerDTO>): Promise<CreatePostControllerResponse> {
         const { content, tags, files, communityId } = payload.data;
@@ -65,6 +67,7 @@ class CreatePostController implements IController {
             await this._validateUserCommunityService.execute({ communityId, userId });
             createdPost.community = await this._createCommunityPost.execute({ post: createdPost, communityId });
             this._createPostSubject.attach(this._createPostObserver);
+            this._createPostSubject.attach(this._createNotification);
             await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId });
         }
 
