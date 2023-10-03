@@ -1,5 +1,5 @@
 import IFileProvider, { fileData } from "./IFileProvider";
-import AWS, { S3 } from 'aws-sdk'
+import { DeleteObjectCommand, S3 } from '@aws-sdk/client-s3'
 import uploadConfig from "@config/upload/s3config";
 
 class S3FileProvider implements IFileProvider {
@@ -7,7 +7,8 @@ class S3FileProvider implements IFileProvider {
     private _s3: S3
 
     constructor() {
-        this._s3 = new AWS.S3(uploadConfig.options);
+
+        this._s3 = new S3(uploadConfig.options);
         this._bucket = [];
     }
 
@@ -17,13 +18,13 @@ class S3FileProvider implements IFileProvider {
             const filename = uploadConfig.storage.filename() + `.${file.type}`;
             const buffer = Buffer.from(file.data, 'base64');
 
-            await this._s3.upload({
+            await this._s3.putObject({
                 Bucket: uploadConfig.bucket,
                 Key: filename,
                 Body: buffer,
                 ContentEncoding: 'base64',
                 ContentType: `image/${file.type}`
-            }).promise();
+            });
 
             filenames.push(filename);
         }
@@ -32,7 +33,8 @@ class S3FileProvider implements IFileProvider {
     }
 
     public async remove(filename: string): Promise<void> {
-        await this._s3.deleteObject({ Bucket: uploadConfig.bucket, Key: filename }).promise()
+        const command = new DeleteObjectCommand({ Bucket: uploadConfig.bucket, Key: filename });
+        await this._s3.send(command);
     }
 
     public async rollback(): Promise<void> {

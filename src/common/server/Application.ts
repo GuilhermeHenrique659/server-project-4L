@@ -3,13 +3,13 @@ import RouterConfigurator from '@common/routes/RouterConfigurator';
 import SocketConfigurator from '@common/socket/SocketConfigurator';
 import IHandleDomain from '@common/types/IHandleDomain';
 import ConfigEnv from '@config/env/ConfigEnv';
-import AWS from 'aws-sdk';
+import AWS, { S3, GetObjectCommand } from '@aws-sdk/client-s3'
 import cors from 'cors';
 import express, { Express } from 'express'
 import http from 'http'
 import uploadConfig from "@config/upload/s3config";
 import fs from 'fs'
-import path from 'path'
+import { Readable } from 'stream'
 
 
 export default class Application {
@@ -55,20 +55,25 @@ export default class Application {
 
     private setupApplication() {
         this._app.use(express.json({ limit: '20mb' }));
-        this._app.use('/file/:filename', (req, res) => {
-            const s3 = new AWS.S3(uploadConfig.options);
+        this._app.use('/file/:filename', async (req, res) => {
+            try {
+                const s3 = new S3(uploadConfig.options);
 
-            const streamFile = s3.getObject({
-                Bucket: uploadConfig.bucket,
-                Key: req.params.filename
-            }).createReadStream()
+                const data = await s3.getObject({
+                    Bucket: uploadConfig.bucket,
+                    Key: req.params.filename
+                })
 
-            streamFile.pipe(res);
+                if (!data || !data.Body) {
+                    return fs.createReadStream(uploadConfig.directory + '/image-not-found-icon.png').pipe(res)
+                }
 
-            streamFile.on('error', (error) => {
+                const stream = Readable.from(data.Body as unknown as Iterable<any>);
+                stream.pipe(res);
+            } catch (err) {
                 return fs.createReadStream(uploadConfig.directory + '/image-not-found-icon.png').pipe(res)
-            });
-        })
+            }
+        });
         this._app.use(cors());
         this.setupRoutes();
     }

@@ -119,7 +119,8 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goIn('hl:LIKED', `hu:User {id: '${userId}'}`).
             optional().match('(post)').goIn('l:LIKED', `u:User`).
             optional().match('(post)').goIn('c:INSIDE', 'community:Community').
-            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*} as community').
+            optional().match('(community)').goOut('fc:AVATAR', 'cAvatar:File').
+            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*, avatar: cAvatar{.*}} as community').
             return('post{.*, user, tags, files, hasLike, likeCount, community}').
             orderBy('post.createdAt', 'DESC').
             skip(skip).

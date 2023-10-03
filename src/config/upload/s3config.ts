@@ -9,7 +9,7 @@ export default {
     bucket: ConfigEnv.getBucketName(),
     options: {
         region: ConfigEnv.getAwsRegion(),
-        apiVersion: '2006-03-01',
+        apiVersion: '2012-10-17',
         credentials: {
             accessKeyId: ConfigEnv.getAwsKey(),
             secretAccessKey: ConfigEnv.getAwsSecret(),

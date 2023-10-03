@@ -3,16 +3,18 @@ import IEntity from "@common/database/datasource/types/IEntity";
 import IQueryBuilder from "./IQueryBuilder";
 import IEdge from "./types/IEdge";
 import QueryBuilder from "./QueryBuilder";
-import { DateTime, LocalDateTime } from 'neo4j-driver'
 import DateFactory from "../neo4j/DateFactory";
+import { Type } from "@common/types/DecoractorType";
 
 class DataSource<E extends IEntity> implements IDataSource<E> {
     private _queryBuilder: IQueryBuilder;
-    private _label: string
+    private _label: string;
+    private _entity: Type<E>;
 
-    constructor(queryBuilder: IQueryBuilder, entity: new (props: Partial<E>) => IEntity) {
+    constructor(queryBuilder: IQueryBuilder, entity: Type<E>) {
         this._queryBuilder = queryBuilder;
         this._label = entity.name
+        this._entity = entity
     }
 
     public async findOne<E extends IEntity>(attribute: Partial<E>): Promise<E | undefined> {
@@ -21,7 +23,11 @@ class DataSource<E extends IEntity> implements IDataSource<E> {
 
         const query = this._queryBuilder.match(`(${query_prop}:${this._label} {${key}: $${key}})`, attribute)
 
-        return await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
+        const data = await query.return(`${query_prop}{.*, label: labels(${query_prop})[0]}`).getOne<E>('executeRead');
+        if (data)
+            return new this._entity(data) as unknown as E;
+        else
+            return undefined
     }
 
     public async hasRelationShip({ from, label, to }: Required<IEdge>): Promise<boolean> {
