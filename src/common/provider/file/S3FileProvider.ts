@@ -33,8 +33,11 @@ class S3FileProvider implements IFileProvider {
     }
 
     public async remove(filename: string): Promise<void> {
-        const command = new DeleteObjectCommand({ Bucket: uploadConfig.bucket, Key: filename });
-        await this._s3.send(command);
+        this._s3.deleteObject({
+            Bucket: uploadConfig.bucket,
+            Key: filename
+        })
+
     }
 
     public async rollback(): Promise<void> {

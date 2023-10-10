@@ -10,6 +10,7 @@ import http from 'http'
 import uploadConfig from "@config/upload/s3config";
 import fs from 'fs'
 import { Readable } from 'stream'
+import AppError from '@common/errors/AppError';
 
 
 export default class Application {
@@ -57,19 +58,29 @@ export default class Application {
         this._app.use(express.json({ limit: '20mb' }));
         this._app.use('/file/:filename', async (req, res) => {
             try {
-                const s3 = new S3(uploadConfig.options);
+                let attemps = 0;
+                const handle = async () => {
+                    const s3 = new S3(uploadConfig.options);
 
-                const data = await s3.getObject({
-                    Bucket: uploadConfig.bucket,
-                    Key: req.params.filename
-                })
+                    const data = await s3.getObject({
+                        Bucket: uploadConfig.bucket,
+                        Key: req.params.filename
+                    });
 
-                if (!data || !data.Body) {
-                    return fs.createReadStream(uploadConfig.directory + '/image-not-found-icon.png').pipe(res)
+
+                    if (!data || !data.Body) {
+                        if (attemps < 3) {
+                            ++attemps;
+                            await handle();
+                        } else {
+                            throw new AppError('Image not found');
+                        }
+                    }
+
+                    const stream = Readable.from(data.Body as unknown as Iterable<any>);
+                    stream.pipe(res);
                 }
-
-                const stream = Readable.from(data.Body as unknown as Iterable<any>);
-                stream.pipe(res);
+                await handle();
             } catch (err) {
                 return fs.createReadStream(uploadConfig.directory + '/image-not-found-icon.png').pipe(res)
             }
