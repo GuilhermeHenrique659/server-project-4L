@@ -10,11 +10,11 @@ import ValidateUserCommunityService from "@modules/user/domain/service/validateU
 import CreatePostService from "@modules/post/domain/service/CreatePostService/CreatePostService";
 import CreateTagService from "@modules/tag/domain/service/CreateTagService/CreateTagService";
 import FindTagService from "@modules/tag/domain/service/FindTagService/FindTagService";
-import CreatePostSubject from "../../observer/CreatePost/CreatePostSubject";
 import CreatePostTagService from "@modules/post/domain/service/CreatePostTagService/CreatePostTagService";
 import CreatePostFileService from "@modules/post/domain/service/CreatePostFile/CreatePostFileService";
 import CreateCommunityPostService from "@modules/community/domain/service/CreateCommunityPost/CreateCommunityPostService";
 import CreatePostNotificationObserver from "../../observer/CreatePost/createPostNotification";
+import EmitterSubject from "@common/observer/subject/EmitterSubject";
 
 @injectable()
 class CreatePostController implements IController {
@@ -26,7 +26,7 @@ class CreatePostController implements IController {
         private readonly _createPostTag: CreatePostTagService,
         private readonly _createPostFile: CreatePostFileService,
         private readonly _createCommunityPost: CreateCommunityPostService,
-        private readonly _createPostSubject: CreatePostSubject,
+        private readonly _emitterSubject: EmitterSubject,
         private readonly _createPostObserver: CreatePostNotifyCommunityObserver,
         private readonly _createNotification: CreatePostNotificationObserver) { }
 
@@ -66,12 +66,15 @@ class CreatePostController implements IController {
         if (communityId) {
             await this._validateUserCommunityService.execute({ communityId, userId });
             createdPost.community = await this._createCommunityPost.execute({ post: createdPost, communityId });
-            this._createPostSubject.attach(this._createPostObserver);
-            this._createPostSubject.attach(this._createNotification);
-            await this._createPostSubject.notify({ data: PostPresenter.createPostPresenter(createdPost), communityId, userId });
+            this._emitterSubject.attach(this._createPostObserver);
+            this._emitterSubject.attach(this._createNotification);
         }
 
-        return PostPresenter.createPostPresenter(createdPost);
+        const response = PostPresenter.createPostPresenter(createdPost);
+
+        await this._emitterSubject.notify({ data: response, communityId, userId });
+
+        return response;
     }
 }
 

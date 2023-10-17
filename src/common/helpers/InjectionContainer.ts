@@ -27,9 +27,10 @@ import HashProvider from "@common/provider/hash/HashProvider";
 import INotificationRepository from "@modules/notification/domain/repository/INotifcationRepository";
 import NotificationRepository from "@modules/notification/infrastructure/repository/NotificationRepository";
 import Notification from "@modules/notification/domain/entity/Notification";
+import EmitterSubject from "@common/observer/subject/EmitterSubject";
 
 class Injection {
-    static resolve<T>(target: Type<T>, fileProvider: IFileProvider, tx?: Transaction): T {
+    static resolve<T>(target: Type<T>, fileProvider: IFileProvider, emitterSubject: EmitterSubject, tx?: Transaction): T {
         if (tx) {
             container.register<IUserRepository>(Repository.UserRepository, { useValue: new UserRepository(GetDatasource(User, tx)) });
             container.register<IPostRepository>(Repository.PostRepository, { useValue: new PostRepository(GetDatasource(Post, tx)) });
@@ -39,6 +40,8 @@ class Injection {
             container.register<ICommentRepository>(Repository.CommentRepository, { useValue: new CommentRepository(GetDatasource(Comment, tx)) });
             container.register<INotificationRepository>(Repository.NotificationRepository, { useValue: new NotificationRepository(GetDatasource(Notification, tx)) });
         }
+
+        container.registerInstance(EmitterSubject, emitterSubject);
         container.register<IHashProvider>(Provider.HashProvider, HashProvider);
         container.register<IFileProvider>(Provider.FileProvider, { useValue: fileProvider });
 

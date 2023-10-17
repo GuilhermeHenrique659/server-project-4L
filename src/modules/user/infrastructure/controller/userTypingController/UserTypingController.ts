@@ -3,16 +3,16 @@ import { UserTypingControllerInputDTO } from "./UserTypingControllerDTO";
 import { ControllerInput } from "@common/types/ControllerIO";
 import { injectable } from "tsyringe";
 import UserTypingObserver from "../../observers/userTypingObserver/UserTypingObserver";
-import UserTypingSubject from "../../observers/userTypingObserver/UserTypingSubject";
+import EmitterSubject from "@common/observer/subject/EmitterSubject";
 
 @injectable()
 class UserTypingController implements IController {
     constructor(private readonly userTypingObserver: UserTypingObserver,
-        private readonly userTypingSubject: UserTypingSubject) { }
+        private readonly _emitterSubject: EmitterSubject) { }
 
     public async handle({ data }: ControllerInput<UserTypingControllerInputDTO>): Promise<void> {
-        this.userTypingSubject.attach(this.userTypingObserver);
-        await this.userTypingSubject.notify(data);
+        this._emitterSubject.attach(this.userTypingObserver);
+        await this._emitterSubject.notify(data);
     }
 }
 

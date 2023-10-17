@@ -1,5 +1,6 @@
 import IController from "@common/controller/IController";
 import Injection from "@common/helpers/InjectionContainer";
+import EmitterSubject from "@common/observer/subject/EmitterSubject";
 import LocalFileProvider from "@common/provider/file/LocalFileProvider";
 import S3FileProvider from "@common/provider/file/S3FileProvider";
 import { ControllerInput, ControllerOutput } from "@common/types/ControllerIO";
@@ -15,9 +16,9 @@ class ControllerMidleware {
         console.log(`Run Controller ${controller.name}`);
 
         const fileProvider = new S3FileProvider();
+        const emitterSubject = new EmitterSubject()
         try {
-
-            const response = await Injection.resolve(controller, fileProvider, tx).handle(payload);
+            const response = await Injection.resolve(controller, fileProvider, emitterSubject, tx).handle(payload);
 
             await tx.commit();
 
@@ -27,7 +28,8 @@ class ControllerMidleware {
 
             if (err instanceof Neo4jError) {
                 if (err.retriable) {
-                    const response = await Injection.resolve(controller, fileProvider, tx).handle(payload);
+                    emitterSubject.clear();
+                    const response = await Injection.resolve(controller, fileProvider, emitterSubject, tx).handle(payload);
 
                     await tx.commit();
 

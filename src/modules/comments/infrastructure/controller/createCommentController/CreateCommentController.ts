@@ -3,14 +3,14 @@ import { ControllerInput, ControllerOutput } from "@common/types/ControllerIO";
 import CreateCommentService from "@modules/comments/domain/service/createCommentService/CreateCommentService";
 import { injectable } from "tsyringe";
 import { CreateCommentControllerInputDTO, CreateCommentControllerOutputDTO } from "./CreateCommentControllerDTO";
-import CreateCommentSubject from "../../obeserver/createCommentObserver/CreateCommentSubject";
 import CreateCommentObserver from "../../obeserver/createCommentObserver/CreateCommentObserver";
 import CreateCommentNotificationObserver from "../../obeserver/createCommentObserver/createNotification";
+import EmitterSubject from "@common/observer/subject/EmitterSubject";
 
 @injectable()
 class CreateCommentController implements IController {
     constructor(private readonly createCommentService: CreateCommentService,
-        private readonly createCommentSubject: CreateCommentSubject,
+        private readonly emitterSuject: EmitterSubject,
         private readonly createCommentNotification: CreateCommentNotificationObserver,
         private readonly createCommentObserver: CreateCommentObserver) { }
 
@@ -20,9 +20,9 @@ class CreateCommentController implements IController {
 
         const comment = await this.createCommentService.execute({ content, userId, postId });
 
-        this.createCommentSubject.attach(this.createCommentObserver);
-        this.createCommentSubject.attach(this.createCommentNotification)
-        await this.createCommentSubject.notify({ comment, postId });
+        this.emitterSuject.attach(this.createCommentObserver);
+        this.emitterSuject.attach(this.createCommentNotification)
+        await this.emitterSuject.notify({ comment, postId });
 
         return comment;
     }
