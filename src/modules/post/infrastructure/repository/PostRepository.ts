@@ -22,7 +22,7 @@ export default class PostRepository implements IPostRepository {
             OPTIONAL MATCH (user)-[:LIKED]->(postLiked: Post)-[:TAGGED]->(postLikedTag: Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
             WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, DISTINCT post, COUNT(postTag) AS commonTags
+            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
             ORDER BY commonTags
         `)
     }
@@ -123,8 +123,8 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goIn('l:LIKED', `u:User`).
             optional().match('(post)').goIn('c:INSIDE', 'community:Community').
             optional().match('(community)').goOut('fc:AVATAR', 'cAvatar:File').
-            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*, avatar: cAvatar{.*}} as community').
-            return('post{.*, user, tags, files, hasLike, likeCount, community}').
+            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*, avatar: cAvatar{.*}} as community, commonTags').
+            return('post{.*, user, tags, files, hasLike, likeCount, community, commonTags}').
             orderBy('post.createdAt', 'DESC').
             skip(skip).
             limit(limit).
