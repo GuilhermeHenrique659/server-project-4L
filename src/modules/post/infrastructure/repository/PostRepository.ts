@@ -24,7 +24,8 @@ export default class PostRepository implements IPostRepository {
             WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) 
             OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) 
             OR (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, post
+            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            ORDER BY commonTags
         `)
     }
 
