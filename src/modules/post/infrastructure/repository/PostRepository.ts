@@ -17,11 +17,12 @@ export default class PostRepository implements IPostRepository {
         return this._dataSource.getQueryBuilder().query(`
             MATCH (user:User {id: '${userId}'})-[:INTEREST]->(userTag:Tag)
             OPTIONAL MATCH (user)-[:FOLLOW]->(community:Community)-[:TAGGED]->(communityTag:Tag)
-            OPTIONAL MATCH (community)<-[:FOLLOW]-(user:User)-[:INTEREST]->(userCommunityTag:Tag)
+            OPTIONAL MATCH (community)<-[:FOLLOW]-(userCommunity:User)-[:INTEREST]->(userCommunityTag:Tag)
             OPTIONAL MATCH (user)-[:FOLLOW]->(u1: User)-[:INTEREST]->(userFollowingTag:Tag)
+            OPTIONAL MATCH (user)-[:LIKED]->(postLiked: Post)-[:TAGGED]->(postLikedTag: Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
-            WHERE (user)-[:LIKED]->(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
+            WITH user, post, COUNT(postTag) AS commonTags
             ORDER BY commonTags
         `)
     }
@@ -106,7 +107,9 @@ export default class PostRepository implements IPostRepository {
     }
 
     public async listRecommendPost(userId: string, skip: number, limit: number, useAlgorithmic = true): Promise<Post[]> {
-        const query = useAlgorithmic ? this.getRecommendationPost(userId) : this._dataSource.getQueryBuilder().match('(post: Post)');
+        const query = useAlgorithmic ? 
+            this.getRecommendationPost(userId) : 
+            this._dataSource.getQueryBuilder().match('(post: Post)');
 
         if (useAlgorithmic)
             this.orderByRelevancy(query);
