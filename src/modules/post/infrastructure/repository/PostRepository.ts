@@ -21,8 +21,10 @@ export default class PostRepository implements IPostRepository {
             OPTIONAL MATCH (user)-[:FOLLOW]->(u1: User)-[:INTEREST]->(userFollowingTag:Tag)
             OPTIONAL MATCH (user)-[:LIKED]->(postLiked: Post)-[:TAGGED]->(postLikedTag: Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
-            WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, post, COUNT(DISTINCT postTag) AS commonTags
+            WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) 
+            OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) 
+            OR (userFollowingTag)<-[:TAGGED]-(post)
+            WITH user, post, COUNT(postTag) AS commonTags
             ORDER BY commonTags
         `)
     }
@@ -32,7 +34,7 @@ export default class PostRepository implements IPostRepository {
             MATCH (post)
             OPTIONAL MATCH (post)-[:HAS]->(comments:Comment)
             OPTIONAL MATCH (post)<-[:LIKED]-(likes:User)
-            WITH post, COUNT(comments) as numComments, COUNT(likes) as numLikes, commonTags
+            WITH post, COUNT(comments) as numComments, COUNT(likes) as numLikes
             ORDER BY post.createdAt DESC, numComments DESC, numLikes DESC
         `)
     }
@@ -124,12 +126,12 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goIn('c:INSIDE', 'community:Community').
             optional().match('(community)').goOut('fc:AVATAR', 'cAvatar:File').
             with(
-                `post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, 
+                `DISTINCT post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, 
                 collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, 
                 count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, 
-                community{.*, avatar: cAvatar{.*}} as community, commonTags`
+                community{.*, avatar: cAvatar{.*}} as community`
                 ).
-            return('post{.*, user, tags, files, hasLike, likeCount, community, commonTags}').
+            return('post{.*, user, tags, files, hasLike, likeCount, community}').
             orderBy('post.createdAt', 'DESC').
             skip(skip).
             limit(limit).
