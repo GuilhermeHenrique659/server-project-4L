@@ -24,8 +24,7 @@ export default class PostRepository implements IPostRepository {
             WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) 
             OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) 
             OR (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, post, COUNT(postTag) AS commonTags
-            ORDER BY commonTags
+            WITH user, post
         `)
     }
 
@@ -126,7 +125,7 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goIn('c:INSIDE', 'community:Community').
             optional().match('(community)').goOut('fc:AVATAR', 'cAvatar:File').
             with(
-                `DISTINCT post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, 
+                `post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, 
                 collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, 
                 count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, 
                 community{.*, avatar: cAvatar{.*}} as community`
