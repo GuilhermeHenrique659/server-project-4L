@@ -80,7 +80,7 @@ class UserRouter implements IHandleDomain {
                 controller: GetFollowingCommunityController,
                 middleware: {
                     isAuthenticate: true,
-                    validator: this._validator.getUser()
+                    validator: this._validator.getCommunity()
                 }
             },
             {

@@ -42,6 +42,12 @@ class UserValidation {
         })
     }
 
+    public getCommunity(){
+        return Joi.object({
+            userId: Joi.string().uuid().required()
+        })
+    }
+
     public validateCreateUser() {
         return Joi.object({
             name: Joi.string().required(),
