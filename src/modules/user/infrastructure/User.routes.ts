@@ -76,10 +76,11 @@ class UserRouter implements IHandleDomain {
             },
             {
                 method: HttpMethods.GET,
-                path: '/community',
+                path: '/community/:userId',
                 controller: GetFollowingCommunityController,
                 middleware: {
                     isAuthenticate: true,
+                    validator: this._validator.getUser()
                 }
             },
             {

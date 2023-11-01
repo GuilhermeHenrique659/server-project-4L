@@ -8,8 +8,8 @@ import { injectable } from "tsyringe";
 class GetFollowingCommunityController implements IController {
     constructor(private readonly _getFollowingCommunityService: GetFollowingCommunityService) { }
 
-    public async handle(payload: ControllerInput<void>): Promise<ControllerOutput<Community[]>> {
-        const userId = payload.user?.id as string;
+    public async handle(payload: ControllerInput<{userId: string}>): Promise<ControllerOutput<Community[]>> {
+        const userId = payload.data.userId;
 
         return await this._getFollowingCommunityService.execute({ userId });
     }
