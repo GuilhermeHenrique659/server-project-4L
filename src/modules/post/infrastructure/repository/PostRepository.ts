@@ -32,7 +32,7 @@ export default class PostRepository implements IPostRepository {
             MATCH (post)
             OPTIONAL MATCH (post)-[:HAS]->(comments:Comment)
             OPTIONAL MATCH (post)<-[:LIKED]-(likes:User)
-            WITH post, COUNT(comments) as numComments, COUNT(likes) as numLikes
+            WITH post, COUNT(comments) as numComments, COUNT(likes) as numLikes, commonTags
             ORDER BY post.createdAt DESC, numComments DESC, numLikes DESC
         `)
     }
@@ -107,8 +107,8 @@ export default class PostRepository implements IPostRepository {
     }
 
     public async listRecommendPost(userId: string, skip: number, limit: number, useAlgorithmic = true): Promise<Post[]> {
-        const query = useAlgorithmic ? 
-            this.getRecommendationPost(userId) : 
+        const query = useAlgorithmic ?
+            this.getRecommendationPost(userId) :
             this._dataSource.getQueryBuilder().match('(post: Post)');
 
         if (useAlgorithmic)
@@ -123,7 +123,12 @@ export default class PostRepository implements IPostRepository {
             optional().match('(post)').goIn('l:LIKED', `u:User`).
             optional().match('(post)').goIn('c:INSIDE', 'community:Community').
             optional().match('(community)').goOut('fc:AVATAR', 'cAvatar:File').
-            with('post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, community{.*, avatar: cAvatar{.*}} as community, commonTags').
+            with(
+                `post, userPost{name: userPost.name, id: userPost.id, avatar: avatar{.*}} as user, 
+                collect(DISTINCT postTags{.*}) as tags, collect(DISTINCT file{.*}) as files, 
+                count(DISTINCT hl) > 0 as hasLike, count(DISTINCT l) as likeCount, 
+                community{.*, avatar: cAvatar{.*}} as community, commonTags`
+                ).
             return('post{.*, user, tags, files, hasLike, likeCount, community, commonTags}').
             orderBy('post.createdAt', 'DESC').
             skip(skip).
