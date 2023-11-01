@@ -22,7 +22,7 @@ export default class PostRepository implements IPostRepository {
             OPTIONAL MATCH (user)-[:LIKED]->(postLiked: Post)-[:TAGGED]->(postLikedTag: Tag)
             MATCH (post:Post)-[:TAGGED]->(postTag:Tag)
             WHERE (postLikedTag)<-[:TAGGED]-(post) OR (userTag)<-[:TAGGED]-(post) OR (communityTag)<-[:TAGGED]-(post) OR (userCommunityTag)<-[:TAGGED]-(post) or (userFollowingTag)<-[:TAGGED]-(post)
-            WITH user, post, COUNT(postTag) AS commonTags
+            WITH user, DISTINCT post, COUNT(postTag) AS commonTags
             ORDER BY commonTags
         `)
     }
